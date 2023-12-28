@@ -29,8 +29,8 @@ void main()
     while (1) {
         mainMenu();
         scanf("%d", &choice);
-        getchar(); // TODO: add comment
-        system("cls");
+        getchar(); // To avoid extra \n (enter) in the buffer
+        system("cls"); // Clear screen for better ui
 
         switch (choice)
         {
@@ -54,6 +54,8 @@ void main()
     }
 }
 
+
+// Function to display main menu
 void mainMenu()
 {
     printf("\n\n");
@@ -65,6 +67,7 @@ void mainMenu()
     printf("Choose an action from above menu: ");
 }
 
+// Function to do the sign in proccess
 void signIn() // TODO: check validation
 {
     char temp_pass1[16], temp_pass2[16], ch;
@@ -76,6 +79,7 @@ void signIn() // TODO: check validation
     if (profiles) {
         printf("Please enter your information below:\n\n");
 
+        // Allocate a structure, get information from user and save it to "profiles.txt" file
         node = malloc(sizeof(user));
         if (node) {
             printf("Surname: ");
@@ -102,30 +106,34 @@ void signIn() // TODO: check validation
             fgets(node->username, 20, stdin);
             fputs(node->username, profiles);
             
+            // Get the password twice to avoid typing mistakes
             while (1) {
                 printf("Password: ");
+                // Loop until user press enter
                 do {
                     ch = getch();
-                    putchar('*');
+                    putchar('*'); // display * instead of password for better security
                     temp_pass1[index] = ch;
                     index++;
-                } while (ch != 13);
+                } while (ch != 13); 
 
-                temp_pass1[index] = '\0';
+                temp_pass1[index] = '\0'; // initialize the last character ro \0 manually
                 printf("\n");
                 index = 0;
 
                 printf("Confirm Your Password: ");
+                // Loop until user press enter
                 do {
                     ch = getch();
-                    putchar('*');
+                    putchar('*'); // display * instead of password for better security
                     temp_pass2[index] = ch;
                     index++;
                 } while (ch != 13);
 
-                temp_pass2[index] = '\0';
+                temp_pass2[index] = '\0'; // initialize the last character ro \0 manually
                 printf("\n");
 
+                // If two passwords are same saves it and breaks
                 if (strcmp(temp_pass1, temp_pass2) == 0) {
                     strcpy(node->password, temp_pass1);
                     fputs(node->password, profiles);
@@ -144,9 +152,6 @@ void signIn() // TODO: check validation
     }
     else
         printf("Could not access profiles. Please try again later.");
-
-    printf("hi");
-    printf("hhd");
 }
 
 void logIn()
