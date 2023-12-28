@@ -143,6 +143,7 @@ void signIn() // TODO: check validation
                 printf("Passwords don't match.");
             }
 
+            printf("You have been signed up successfully. Enter a key to go back to main menu...");
             free(node);
         }
         else
