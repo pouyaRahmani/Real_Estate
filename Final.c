@@ -144,6 +144,8 @@ void signIn() // TODO: check validation
             }
 
             printf("You have been signed up successfully. Enter a key to go back to main menu...");
+            getch(); // Wait for a key press before clearing screen
+            system("cls");
             free(node);
         }
         else
