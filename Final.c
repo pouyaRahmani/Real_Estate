@@ -21,6 +21,7 @@ user *start = NULL, *end, *node;
 void mainMenu();
 void signIn();
 void logIn();
+void mainMenu();
 
 void main()
 {
@@ -143,7 +144,7 @@ void signIn() // TODO: check validation
                 printf("Passwords don't match.");
             }
 
-            printf("You have been signed up successfully. Enter a key to go back to main menu...");
+            printf("You have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
             system("cls");
             free(node);
@@ -160,4 +161,9 @@ void signIn() // TODO: check validation
 void logIn()
 {
 
+}
+
+void mainMenu()
+{
+    
 }
