@@ -122,6 +122,9 @@ void signIn()
     }
     else
         printf("Could not access profiles. Please try again later.");
+
+    printf("hi");
+    printf("hhd");
 }
 
 void logIn()
