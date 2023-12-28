@@ -9,8 +9,8 @@ typedef struct u {
     char password[16];
     char name[20];
     char family[20];
-    char id[11];
-    char phone_no[12];
+    char id[12];
+    char phone_no[13];
     char email[50];
     int estates;
     struct u *next;
@@ -47,7 +47,7 @@ void main()
             break;
         
         default:
-            printf("Invalid input.");
+            printf("Invalid input.\n");
             continue;
             break;
         }
@@ -65,12 +65,13 @@ void mainMenu()
     printf("Choose an action from above menu: ");
 }
 
-void signIn()
+void signIn() // TODO: check validation
 {
-    char temp_pass1[16], temp_pass2[16];
+    char temp_pass1[16], temp_pass2[16], ch;
     FILE *profiles;
+    int index = 0;
 
-    profiles = fopen("profiles.txt", "a+");
+    profiles = fopen("profiles.txt", "a");
 
     if (profiles) {
         printf("Please enter your information below:\n\n");
@@ -78,7 +79,7 @@ void signIn()
         node = malloc(sizeof(user));
         if (node) {
             printf("Surname: ");
-            gets(node->name);
+            fgets(node->name, 20, stdin);
             fputs(node->name, profiles);
             
             printf("Last Name: ");
@@ -86,15 +87,15 @@ void signIn()
             fputs(node->family, profiles);
             
             printf("ID: ");
-            fgets(node->id, 11, stdin);
+            fgets(node->id, 12, stdin);
             fputs(node->id, profiles);
             
             printf("Phone Number: ");
-            fgets(node->phone_no, 20, stdin);
+            fgets(node->phone_no, 13, stdin);
             fputs(node->phone_no, profiles);
             
             printf("Email: ");
-            fgets(node->email, 20, stdin);
+            fgets(node->email, 50, stdin);
             fputs(node->email, profiles);
             
             printf("Username: "); // TODO: the word before username
@@ -103,10 +104,27 @@ void signIn()
             
             while (1) {
                 printf("Password: ");
-                fgets(temp_pass1, 20, stdin);
+                do {
+                    ch = getch();
+                    putchar('*');
+                    temp_pass1[index] = ch;
+                    index++;
+                } while (ch != 13);
+
+                temp_pass1[index] = '\0';
+                printf("\n");
+                index = 0;
 
                 printf("Confirm Your Password: ");
-                fgets(temp_pass2, 20, stdin);
+                do {
+                    ch = getch();
+                    putchar('*');
+                    temp_pass2[index] = ch;
+                    index++;
+                } while (ch != 13);
+
+                temp_pass2[index] = '\0';
+                printf("\n");
 
                 if (strcmp(temp_pass1, temp_pass2) == 0) {
                     strcpy(node->password, temp_pass1);
@@ -116,9 +134,13 @@ void signIn()
 
                 printf("Passwords don't match.");
             }
+
+            free(node);
         }
         else
             printf("Your computer is low on memory.");
+
+        fclose(profiles);
     }
     else
         printf("Could not access profiles. Please try again later.");
