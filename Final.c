@@ -18,17 +18,21 @@ typedef struct u { // TODO: add date
 
 user *start = NULL, *end, *node;
 
-void mainMenu();
+void firstMenu();
 void signIn();
 void logIn();
 void mainMenu();
+void Register();
+void Delete();
+void report();
+void settings();
 
 void main()
 {
     int choice;
 
     while (1) {
-        mainMenu();
+        firstMenu();
         scanf("%d", &choice);
         getchar(); // To avoid extra \n (enter) in the buffer
         system("cls"); // Clear screen for better ui
@@ -40,7 +44,7 @@ void main()
             break;
 
         case 2:
-            logIn();
+            mainMenu(); // TODO: change to log in
             break;
 
         case 3:
@@ -57,7 +61,7 @@ void main()
 
 
 // Function to display main menu
-void mainMenu()
+void firstMenu()
 {
     printf("\n\n");
 
@@ -165,5 +169,70 @@ void logIn()
 
 void mainMenu()
 {
+    int choice;
+
+    printf("What do you want to do?\n\n");
+
+    printf("1. Register New Estate\n");
+    printf("2. Delete Estate\n");
+    printf("3. Reports\n");
+    printf("4. Account Settings\n");
+    printf("5. Log Out\n");
+    printf("6. Exit App\n\n");
+
+    printf("Choose an action from above menu: ");
+    scanf("%d", &choice);
+    getchar();
+
+    switch (choice)
+    {
+    case 1:
+        Register();
+        break;
     
+    case 2:
+        Delete();
+        break;
+    
+    case 3:
+        report();
+        break;
+    
+    case 4:
+        settings();
+        break;
+    
+    case 5:
+        system("cls");
+        return;
+        break;
+    
+    case 6:
+        exit(0);
+        break;
+    
+    default:
+        printf("Invalid input.\n");
+        break;
+    }
+}
+
+void Delete()
+{
+
+}
+
+void Register()
+{
+
+}
+
+void settings()
+{
+
+}
+
+void report()
+{
+
 }
