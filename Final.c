@@ -16,9 +16,9 @@ typedef struct u { // TODO: add date
     struct u *next;
 } user;
 
-user *start = NULL, *end, *node;
+user *start_user = NULL, *end_user, *User;
 
-void mainMenu();
+void firstMenu();
 void signIn();
 void logIn();
 
@@ -27,7 +27,7 @@ void main()
     int choice;
 
     while (1) {
-        mainMenu();
+        firstMenu();
         scanf("%d", &choice);
         getchar(); // To avoid extra \n (enter) in the buffer
         system("cls"); // Clear screen for better ui
@@ -56,7 +56,7 @@ void main()
 
 
 // Function to display main menu
-void mainMenu()
+void firstMenu()
 {
     printf("\n\n");
 
@@ -80,31 +80,31 @@ void signIn() // TODO: check validation
         printf("Please enter your information below:\n\n");
 
         // Allocate a structure, get information from user and save it to "profiles.txt" file
-        node = malloc(sizeof(user));
-        if (node) {
+        User = malloc(sizeof(user));
+        if (User) {
             printf("Surname: ");
-            fgets(node->name, 20, stdin);
-            fputs(node->name, profiles);
+            fgets(User->name, 20, stdin);
+            fputs(User->name, profiles);
             
             printf("Last Name: ");
-            fgets(node->family, 20, stdin);
-            fputs(node->family, profiles);
+            fgets(User->family, 20, stdin);
+            fputs(User->family, profiles);
             
             printf("ID: ");
-            fgets(node->id, 12, stdin);
-            fputs(node->id, profiles);
+            fgets(User->id, 12, stdin);
+            fputs(User->id, profiles);
             
             printf("Phone Number: ");
-            fgets(node->phone_no, 13, stdin);
-            fputs(node->phone_no, profiles);
+            fgets(User->phone_no, 13, stdin);
+            fputs(User->phone_no, profiles);
             
             printf("Email: ");
-            fgets(node->email, 50, stdin);
-            fputs(node->email, profiles);
+            fgets(User->email, 50, stdin);
+            fputs(User->email, profiles);
             
             printf("Username: "); // TODO: the word before username
-            fgets(node->username, 20, stdin);
-            fputs(node->username, profiles);
+            fgets(User->username, 20, stdin);
+            fputs(User->username, profiles);
             
             // Get the password twice to avoid typing mistakes
             while (1) {
@@ -135,18 +135,20 @@ void signIn() // TODO: check validation
 
                 // If two passwords are same saves it and breaks
                 if (strcmp(temp_pass1, temp_pass2) == 0) {
-                    strcpy(node->password, temp_pass1);
-                    fputs(node->password, profiles);
+                    strcpy(User->password, temp_pass1);
+                    fputs(User->password, profiles); // TODO: encryption
                     break;
                 }
 
                 printf("Passwords don't match.");
             }
 
+            fputs("0\n", profiles);
+
             printf("You have been signed up successfully. Enter a key to go back to main menu...");
             getch(); // Wait for a key press before clearing screen
             system("cls");
-            free(node);
+            free(User);
         }
         else
             printf("Your computer is low on memory.");
@@ -157,7 +159,63 @@ void signIn() // TODO: check validation
         printf("Could not access profiles. Please try again later.");
 }
 
-void logIn()
+void logIn() // FIXME: fix
 {
+    FILE *profiles;
+    char admin_pass[16], estate[16];
 
+    profiles = fopen("profiles.txt", "r");
+    fgets(admin_pass, 16, profiles);
+    fgets(admin_pass, 16, profiles);
+
+    if (profiles) {
+        while (!feof(profiles)) {
+            User = malloc(sizeof(user));
+
+            if (start_user == NULL) {
+                start_user = User;
+                end_user = User;
+                start_user->next = NULL;
+
+                fgets(start_user->name, 20, profiles);
+                fgets(start_user->family, 20, profiles);
+                fgets(start_user->id, 12, profiles);
+                fgets(start_user->phone_no, 13, profiles);
+                fgets(start_user->email, 50, profiles);
+                fgets(start_user->username, 20, profiles);
+                fgets(start_user->password, 16, profiles);
+                fgets(estate, 16, profiles);
+                start_user->estates = atoi(estate);
+            }
+            else {
+                end_user->next = User;
+                end_user = User;
+                end_user->next = NULL;
+
+                fgets(end_user->name, 20, profiles);
+                fgets(end_user->family, 20, profiles);
+                fgets(end_user->id, 12, profiles);
+                fgets(end_user->phone_no, 13, profiles);
+                fgets(end_user->email, 50, profiles);
+                fgets(end_user->username, 20, profiles);
+                fgets(end_user->password, 16, profiles);
+                fgets(estate, 16, profiles);
+                end_user->estates = atoi(estate);
+            }
+        }
+
+        User = start_user;
+        while (User) {
+            puts(User->name);
+            puts(User->family);
+            puts(User->id);
+            puts(User->phone_no);
+            puts(User->email);
+            puts(User->username);
+            puts(User->password);
+            printf("%d\n", User->estates);
+                
+            User = User->next;
+        }
+    }
 }
