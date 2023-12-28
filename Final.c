@@ -4,6 +4,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct date {
+    char year[5];
+    char month[3];
+    char day[3];
+    char hour[3];
+    char min[3];
+    char sec[3];
+} Date;
+
 typedef struct u { // TODO: add date
     char username[20];
     char password[16];
@@ -13,8 +22,15 @@ typedef struct u { // TODO: add date
     char phone_no[13];
     char email[50];
     int estates;
+    Date enter;
     struct u *next;
 } user;
+
+typedef struct sale_house {
+    char area[3];
+    char address[300];
+    
+} sale_house;
 
 user *start = NULL, *end, *node;
 
