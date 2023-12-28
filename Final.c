@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct u {
+typedef struct u { // TODO: add date
     char username[20];
     char password[16];
     char name[20];
