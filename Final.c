@@ -10,10 +10,10 @@ typedef struct u {
     char id[12];
     char phone_no[13];
     char email[50];
-    int estates;
     char username[20];
     char password[16];
     char enter[9];
+    char estates[3];
     struct u *next;
 } user;
 
@@ -133,6 +133,7 @@ user *start_user = NULL, *end_user, *User;
 void firstMenu();
 void signIn();
 void logIn();
+void readProfiles();
 void mainMenu();
 void Register();
 void Delete();
@@ -255,6 +256,7 @@ void signIn() // TODO: check validation
                 printf("\nPasswords don't match.\n");
             }
 
+            // Save information in file
             fputs(User->name, profiles);
             fputs(User->family, profiles);
             fputs(User->id, profiles);
@@ -263,9 +265,11 @@ void signIn() // TODO: check validation
             fputs(User->username, profiles);
             fputs(User->password, profiles);
             
+            // save the sign up date
             t = time(NULL);
             local = localtime(&t);
             fprintf(profiles, "%0d/%0d/%0d\n", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+            fputs("0\n", profiles); // At first user have not registered any estate
 
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
@@ -283,9 +287,32 @@ void signIn() // TODO: check validation
 
 void logIn() // FIXME: fix
 {
-    FILE *profiles;
-    char admin_pass[16], estate[16];
+    char username[20], password[16];
+    
+    readProfiles();
 
+
+
+        /*User = start_user;
+        while (User->next) {
+            puts(User->name);
+            puts(User->family);
+            puts(User->id);
+            puts(User->phone_no);
+            puts(User->email);
+            puts(User->username);
+            puts(User->password);
+            puts(User->enter);
+            puts(User->estates);
+                
+            User = User->next;
+        }*/
+}
+
+void readProfiles()
+{
+    FILE *profiles;
+    char admin_pass[16];
     profiles = fopen("profiles.txt", "r");
     fgets(admin_pass, 16, profiles);
     fgets(admin_pass, 16, profiles);
@@ -306,8 +333,9 @@ void logIn() // FIXME: fix
                 fgets(start_user->email, 50, profiles);
                 fgets(start_user->username, 20, profiles);
                 fgets(start_user->password, 16, profiles);
-                fgets(estate, 16, profiles);
-                start_user->estates = atoi(estate);
+                fgets(start_user->enter, 9, profiles);
+                fgetc(profiles);
+                fgets(start_user->estates, 3, profiles);     
             }
             else {
                 end_user->next = User;
@@ -321,25 +349,14 @@ void logIn() // FIXME: fix
                 fgets(end_user->email, 50, profiles);
                 fgets(end_user->username, 20, profiles);
                 fgets(end_user->password, 16, profiles);
-                fgets(estate, 16, profiles);
-                end_user->estates = atoi(estate);
+                fgets(end_user->enter, 9, profiles);
+                fgetc(profiles);
+                fgets(end_user->estates, 3, profiles);
             }
         }
-
-        User = start_user;
-        while (User) {
-            puts(User->name);
-            puts(User->family);
-            puts(User->id);
-            puts(User->phone_no);
-            puts(User->email);
-            puts(User->username);
-            puts(User->password);
-            printf("%d\n", User->estates);
-                
-            User = User->next;
-        }
     }
+    else
+        printf("Could not access profiles. Please try again later.");
 }
 
 void mainMenu()
