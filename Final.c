@@ -14,7 +14,7 @@ typedef struct u {
     char email[50];
     char username[20];
     char password[16];
-    char enter[9];
+    char date[9];
     char estates[3];
     struct u *next;
 } user;
@@ -37,7 +37,7 @@ typedef struct sale_house { // TODO: complete it
     char warehouse;
     char elevator;
     char telephone;
-    char enter[9];
+    char date[9];
     char isDelete;
     struct sale_house *next;    
 } sale_house;
@@ -56,7 +56,7 @@ typedef struct sale_office { // TODO: complete it
     char rooms[3];
     char price[9];
     char tot_price[9];
-    char enter[9];
+    char date[9];
     char isDelete;
     struct sale_office *next;    
 } sale_office;
@@ -71,7 +71,7 @@ typedef struct sale_land { // TODO: complete it
     char owner_phone_no[13];
     char price[9];
     char tot_price[9];
-    char enter[9];
+    char date[9];
     char isDelete;
     struct sale_land *next;    
 } sale_land;
@@ -94,7 +94,7 @@ typedef struct rent_house { // TODO: complete it
     char warehouse;
     char elevator;
     char telephone;
-    char enter[9];
+    char date[9];
     char isDelete;
     struct rent_house *next;    
 } rent_house;
@@ -113,7 +113,7 @@ typedef struct rent_office { // TODO: complete it
     char rooms[3];
     char rent[9];
     char mortgage[9];
-    char enter[9];
+    char date[9];
     char isDelete;
     struct rent_office *next;    
 } rent_office;
@@ -128,7 +128,7 @@ typedef struct rent_land { // TODO: complete it
     char owner_phone_no[13];
     char rent[9];
     char mortgage[9];
-    char enter[9];
+    char date[9];
     char isDelete;
     struct rent_land *next;    
 } rent_land;
@@ -139,11 +139,13 @@ void firstMenu();
 void signIn();
 void logIn();
 void mainMenu(user *a);
-void Register();
-void Delete();
-void report();
-void settings();
+void Register(user *a);
+void Delete(user *a);
+void report(user *a);
+void settings(user *a);
 void readProfiles();
+void sale(user *a);
+void rent(user *a);
 
 void main()
 {
@@ -280,7 +282,7 @@ void signIn() // TODO: check validation
             // Save the sign up date
             t = time(NULL);
             local = localtime(&t);
-            sprintf(User->enter, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+            sprintf(User->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
             strcpy(User->estates, "0"); // At first user haven't register any estates
             fwrite(User, sizeof(user), 1, profiles); // Write the information in file
 
@@ -298,7 +300,7 @@ void signIn() // TODO: check validation
         printf("Could not access profiles. Please try again later.");
 }
 
-void logIn()
+void logIn() // TODO: 2-step verification
 {
     char username[20], password[16], ch;
     int index;
@@ -373,7 +375,7 @@ void logIn()
                     break;
                 }
                 else
-                    printf("\nWrong password!! Please try agin.\n");
+                    printf("\nWrong password!! Please try agin.\n"); // TODO: add comments
             }
         }
         else if (!User->next->next) {
@@ -394,9 +396,12 @@ void logIn()
 
         User = User->next;
     }
+
+    free(start_user);
+    free(end_user);
 }
 
-void readProfiles()
+void readProfiles() // TODO: add comments
 {
     FILE *profiles;
 
@@ -424,6 +429,8 @@ void readProfiles()
             else
                 printf("Your computer is low on memory.");
         }
+
+        fclose(profiles);
     }
     else
         printf("Could not access profiles. Please try again later.");
@@ -451,19 +458,19 @@ void mainMenu(user *a) // TODO: better name
         switch (choice)
         {
         case '1':
-            Register();
+            Register(a);
             break;
         
         case '2':
-            Delete();
+            Delete(a);
             break;
         
         case '3':
-            report();
+            report(a);
             break;
         
         case '4':
-            settings();
+            settings(a);
             break;
         
         case '5': // FIXME: fix
@@ -481,23 +488,59 @@ void mainMenu(user *a) // TODO: better name
     }
 }
 
-void Delete()
+void Delete(user *a)
 {
 
 }
 
-void Register()
+void Register(user *a)
+{
+    char choice;
+
+    printf("What do you want to register?\n\n");
+
+    printf("1. Sales registration\n");
+    printf("2. Rent registration\n");
+    printf("3. Return back\n\n");
+
+    printf("Enter your choice: ");
+
+    switch (choice)
+    {
+    case '1':
+        sale(a);
+        break;
+        
+    case '2':
+        rent(a);
+        break;
+        
+    case '3':
+        return;
+        break;
+        
+    default:
+        printf("Invalid input.\n");
+        break;
+    }
+}
+
+void settings(user *a)
 {
 
 }
 
-void settings()
+void report(user *a)
 {
 
 }
 
-void report()
+void sale(user *a)
 {
 
 }
 
+void rent(user *a)
+{
+
+}
