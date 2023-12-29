@@ -7,13 +7,13 @@
 typedef struct u {
     char name[20];
     char family[20];
-    char id[12];
-    char phone_no[13];
+    char id[11];
+    char phone_no[12];
     char email[50];
-    int estates;
     char username[20];
     char password[16];
     char enter[9];
+    char estates[3];
     struct u *next;
 } user;
 
@@ -30,6 +30,7 @@ typedef struct sale_house { // TODO: complete it
     char owner_phone_no[13];
     char rooms[3];
     char price[9];
+    char tot_price[9];
     char parking;
     char warehouse;
     char elevator;
@@ -52,6 +53,7 @@ typedef struct sale_office { // TODO: complete it
     char owner_phone_no[13];
     char rooms[3];
     char price[9];
+    char tot_price[9];
     char enter[9];
     char isDelete;
     struct sale_office *next;    
@@ -66,6 +68,7 @@ typedef struct sale_land { // TODO: complete it
     char land[5];
     char owner_phone_no[13];
     char price[9];
+    char tot_price[9];
     char enter[9];
     char isDelete;
     struct sale_land *next;    
@@ -193,7 +196,7 @@ void signIn() // TODO: check validation
     FILE *profiles;
     int index = 0;
 
-    profiles = fopen("profiles.txt", "a");
+    profiles = fopen("profiles.hex", "ab+");
 
     if (profiles) {
         printf("Please enter your information below:\n\n");
@@ -202,22 +205,22 @@ void signIn() // TODO: check validation
         User = malloc(sizeof(user));
         if (User) {
             printf("Surname: ");
-            fgets(User->name, 20, stdin);
+            gets(User->name);
             
             printf("Last Name: ");
-            fgets(User->family, 20, stdin);
+            gets(User->family);
             
             printf("ID: ");
-            fgets(User->id, 12, stdin);
+            gets(User->id);
             
             printf("Phone Number: ");
-            fgets(User->phone_no, 13, stdin);
+            gets(User->phone_no);
             
             printf("Email: ");
-            fgets(User->email, 50, stdin);
+            gets(User->email);
             
             printf("Username: "); // TODO: the word before username
-            fgets(User->username, 20, stdin);
+            gets(User->username);
             
             // Get the password twice to avoid typing mistakes
             while (1) {
@@ -225,23 +228,40 @@ void signIn() // TODO: check validation
                 // Loop until user press enter
                 do {
                     ch = getch();
+
+                    if (ch == 13)
+                        break;
+                    else if (ch == 8) {
+                        printf("\b \b");
+                        index--;
+                        continue;
+                    }
+
                     putchar('*'); // display * instead of password for better security
                     temp_pass1[index] = ch;
                     index++;
-                } while (ch != 13); 
+                } while (1); 
 
                 temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
-                printf("\n");
                 index = 0;
 
                 printf("Confirm Your Password: ");
                 // Loop until user press enter
                 do {
                     ch = getch();
+
+                    if (ch == 13)
+                        break;
+                    else if (ch == 8) {
+                        printf("\b \b");
+                        index--;
+                        continue;
+                    }
+                    
                     putchar('*'); // display * instead of password for better security
                     temp_pass2[index] = ch;
                     index++;
-                } while (ch != 13);
+                } while (1);
 
                 temp_pass2[index] = '\0'; // Initialize the last character to \0 manually
                 printf("\n");
@@ -254,23 +274,17 @@ void signIn() // TODO: check validation
 
                 printf("\nPasswords don't match.\n");
             }
-
-            fputs(User->name, profiles);
-            fputs(User->family, profiles);
-            fputs(User->id, profiles);
-            fputs(User->phone_no, profiles);
-            fputs(User->email, profiles);
-            fputs(User->username, profiles);
-            fputs(User->password, profiles);
             
             t = time(NULL);
             local = localtime(&t);
-            fprintf(profiles, "%0d/%0d/%0d\n", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+            sprintf(User->enter, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+            strcpy(User->estates, "0");
+            fwrite(User, sizeof(user), 1, profiles);
 
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
-            system("cls");
             free(User);
+            system("cls");
         }
         else
             printf("Your computer is low on memory.");
