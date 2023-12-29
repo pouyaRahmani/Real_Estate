@@ -4,23 +4,140 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct u { // TODO: add date
-    char username[20];
-    char password[16];
+typedef struct u {
     char name[20];
     char family[20];
     char id[12];
     char phone_no[13];
     char email[50];
     int estates;
+    char username[20];
+    char password[16];
+    char enter[9];
     struct u *next;
 } user;
 
+typedef struct sale_house { // TODO: complete it
+    char registrar[20];
+    char deleter[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char age[3];
+    char infrastructure[5];
+    char floor[3];
+    char land[5];
+    char owner_phone_no[13];
+    char rooms[3];
+    char price[9];
+    char parking;
+    char warehouse;
+    char elevator;
+    char telephone;
+    char enter[9];
+    char isDelete;
+    struct sale_house *next;    
+} sale_house;
+
+typedef struct sale_office { // TODO: complete it
+    char registrar[20];
+    char deleter[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char age[3];
+    char infrastructure[5];
+    char floor[3];
+    char land[5];
+    char owner_phone_no[13];
+    char rooms[3];
+    char price[9];
+    char enter[9];
+    char isDelete;
+    struct sale_office *next;    
+} sale_office;
+ 
+typedef struct sale_land { // TODO: complete it
+    char registrar[20];
+    char deleter[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char land[5];
+    char owner_phone_no[13];
+    char price[9];
+    char enter[9];
+    char isDelete;
+    struct sale_land *next;    
+} sale_land;
+ 
+typedef struct rent_house { // TODO: complete it
+    char registrar[20];
+    char deleter[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char age[3];
+    char infrastructure[5];
+    char floor[3];
+    char land[5];
+    char owner_phone_no[13];
+    char rooms[3];
+    char rent[9];
+    char mortgage[9];
+    char parking;
+    char warehouse;
+    char elevator;
+    char telephone;
+    char enter[9];
+    char isDelete;
+    struct rent_house *next;    
+} rent_house;
+
+typedef struct rent_office { // TODO: complete it
+    char registrar[20];
+    char deleter[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char age[3];
+    char infrastructure[5];
+    char floor[3];
+    char land[5];
+    char owner_phone_no[13];
+    char rooms[3];
+    char rent[9];
+    char mortgage[9];
+    char enter[9];
+    char isDelete;
+    struct rent_office *next;    
+} rent_office;
+ 
+typedef struct rent_land { // TODO: complete it
+    char registrar[20];
+    char deleter[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char land[5];
+    char owner_phone_no[13];
+    char rent[9];
+    char mortgage[9];
+    char enter[9];
+    char isDelete;
+    struct rent_land *next;    
+} rent_land;
+ 
 user *start_user = NULL, *end_user, *User;
 
 void firstMenu();
 void signIn();
 void logIn();
+void mainMenu();
+void Register();
+void Delete();
+void report();
+void settings();
 
 void main()
 {
@@ -39,7 +156,7 @@ void main()
             break;
 
         case 2:
-            logIn();
+            mainMenu(); // TODO: change to log in
             break;
 
         case 3:
@@ -55,7 +172,7 @@ void main()
 }
 
 
-// Function to display main menu
+// Function to display first menu
 void firstMenu()
 {
     printf("\n\n");
@@ -70,6 +187,8 @@ void firstMenu()
 // Function to do the sign in proccess
 void signIn() // TODO: check validation
 {
+    time_t t;
+    struct tm *local;
     char temp_pass1[16], temp_pass2[16], ch;
     FILE *profiles;
     int index = 0;
@@ -84,27 +203,21 @@ void signIn() // TODO: check validation
         if (User) {
             printf("Surname: ");
             fgets(User->name, 20, stdin);
-            fputs(User->name, profiles);
             
             printf("Last Name: ");
             fgets(User->family, 20, stdin);
-            fputs(User->family, profiles);
             
             printf("ID: ");
             fgets(User->id, 12, stdin);
-            fputs(User->id, profiles);
             
             printf("Phone Number: ");
             fgets(User->phone_no, 13, stdin);
-            fputs(User->phone_no, profiles);
             
             printf("Email: ");
             fgets(User->email, 50, stdin);
-            fputs(User->email, profiles);
             
             printf("Username: "); // TODO: the word before username
             fgets(User->username, 20, stdin);
-            fputs(User->username, profiles);
             
             // Get the password twice to avoid typing mistakes
             while (1) {
@@ -117,7 +230,7 @@ void signIn() // TODO: check validation
                     index++;
                 } while (ch != 13); 
 
-                temp_pass1[index] = '\0'; // initialize the last character ro \0 manually
+                temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
                 printf("\n");
                 index = 0;
 
@@ -130,22 +243,31 @@ void signIn() // TODO: check validation
                     index++;
                 } while (ch != 13);
 
-                temp_pass2[index] = '\0'; // initialize the last character ro \0 manually
+                temp_pass2[index] = '\0'; // Initialize the last character to \0 manually
                 printf("\n");
 
                 // If two passwords are same saves it and breaks
                 if (strcmp(temp_pass1, temp_pass2) == 0) {
                     strcpy(User->password, temp_pass1);
-                    fputs(User->password, profiles); // TODO: encryption
                     break;
                 }
 
-                printf("Passwords don't match.");
+                printf("\nPasswords don't match.\n");
             }
 
-            fputs("0\n", profiles);
+            fputs(User->name, profiles);
+            fputs(User->family, profiles);
+            fputs(User->id, profiles);
+            fputs(User->phone_no, profiles);
+            fputs(User->email, profiles);
+            fputs(User->username, profiles);
+            fputs(User->password, profiles);
+            
+            t = time(NULL);
+            local = localtime(&t);
+            fprintf(profiles, "%0d/%0d/%0d\n", local->tm_year-100, local->tm_mon+1, local->tm_mday);
 
-            printf("You have been signed up successfully. Enter a key to go back to main menu...");
+            printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
             system("cls");
             free(User);
@@ -219,3 +341,74 @@ void logIn() // FIXME: fix
         }
     }
 }
+
+void mainMenu()
+{
+    int choice;
+
+    printf("What do you want to do?\n\n");
+
+    printf("1. Register New Estate\n");
+    printf("2. Delete Estate\n");
+    printf("3. Reports\n");
+    printf("4. Account Settings\n");
+    printf("5. Log Out\n");
+    printf("6. Exit App\n\n");
+
+    printf("Choose an action from above menu: ");
+    scanf("%d", &choice);
+    getchar();
+
+    switch (choice)
+    {
+    case 1:
+        Register();
+        break;
+    
+    case 2:
+        Delete();
+        break;
+    
+    case 3:
+        report();
+        break;
+    
+    case 4:
+        settings();
+        break;
+    
+    case 5:
+        system("cls");
+        return;
+        break;
+    
+    case 6:
+        exit(0);
+        break;
+    
+    default:
+        printf("Invalid input.\n");
+        break;
+    }
+}
+
+void Delete()
+{
+
+}
+
+void Register()
+{
+
+}
+
+void settings()
+{
+
+}
+
+void report()
+{
+
+}
+
