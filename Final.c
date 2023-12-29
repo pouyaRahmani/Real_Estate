@@ -156,7 +156,7 @@ void main()
             break;
 
         case 2:
-            mainMenu(); // TODO: change to log in
+            logIn(); // TODO: change to log in
             break;
 
         case 3:
