@@ -154,6 +154,7 @@ void main()
     while (1) {
         firstMenu();
         choice = getchar();
+        getchar(); // Avoid exta enter
         system("cls"); // Clear screen for better ui
 
         switch (choice)
@@ -453,6 +454,7 @@ void mainMenu(user *a) // TODO: better name
 
         printf("Choose an action from above menu: ");
         choice = getchar();
+        getchar(); // Avoid exta enter
         system("cls");
 
         switch (choice)
@@ -504,6 +506,9 @@ void Register(user *a)
     printf("3. Return back\n\n");
 
     printf("Enter your choice: ");
+    choice = getchar();
+    getchar(); // Avoid exta enter
+    system("cls");
 
     switch (choice)
     {
@@ -537,7 +542,42 @@ void report(user *a)
 
 void sale(user *a)
 {
+    char choice;
 
+    printf("What type of estate do you want to register?\n\n");
+
+    printf("1. Residential property (for live)\n");
+    printf("2. Office property (for work)\n");
+    printf("3. Land property\n");
+    printf("4. Return back\n\n");
+
+    printf("Enter your choice: ");
+    choice = getchar();
+    getchar(); // Avoid exta enter
+    system("cls");
+
+    switch (choice)
+    {
+    case '1':
+        sale(a);
+        break;
+        
+    case '2':
+        rent(a);
+        break;
+        
+    case '3':
+        return;
+        break;
+
+    case '4':
+        return;
+        break;
+        
+    default:
+        printf("Invalid input.\n");
+        break;
+    }
 }
 
 void rent(user *a)
