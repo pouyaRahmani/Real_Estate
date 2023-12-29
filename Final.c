@@ -3,6 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef struct u {
     char name[20];
@@ -141,6 +142,7 @@ void Register();
 void Delete();
 void report();
 void settings();
+void readProfiles();
 
 void main()
 {
@@ -243,6 +245,7 @@ void signIn() // TODO: check validation
                 } while (1); 
 
                 temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
+                printf("\n");
                 index = 0;
 
                 printf("Confirm Your Password: ");
@@ -297,12 +300,66 @@ void signIn() // TODO: check validation
 
 void logIn()
 {
-    char username[20], password[16];
+    char username[20], password[16], ch;
+    int index;
     
     readProfiles();
+    printf("Username: ");
+    gets(username);
 
+    User = start_user;
+    while (User->next) {
+        if (!strcmp(username, User->username)) {
+            while (1) {
+                printf("Password: ");
+                index = 0;
 
+                do {
+                    ch = getch();
 
+                    if (ch == 13)
+                        break;
+                    else if (ch == 8) {
+                        printf("\b \b");
+                        index--;
+                        continue;
+                    }
+
+                    putchar('*');
+                    password[index] = ch;
+                    index++;
+                } while (1);
+
+                password[index] = '\0';
+                puts(password);
+
+                if (!strcmp(password, User->password)) {
+                    system("cls");
+                    mainMenu();
+                    break;
+                }
+                else
+                    printf("\nWrong password!! Please try agin.\n");
+            }
+        }
+        else if (!User->next->next) {
+            printf("Username you entered wasn't found.\n");
+            printf("Do you want to sign in (Y/N)?\n");
+
+            if (toupper(getche()) == 'Y') {
+                system("cls");
+                signIn();
+            }
+            else {
+                system("cls");
+                printf("Username: ");
+                gets(username);
+                User = start_user;
+            }
+        }
+
+        User = User->next;
+    }
         /*User = start_user;
         while (User->next) {
             puts(User->name);
@@ -322,112 +379,86 @@ void logIn()
 void readProfiles()
 {
     FILE *profiles;
-    char admin_pass[16];
-    profiles = fopen("profiles.txt", "r");
-    fgets(admin_pass, 16, profiles);
-    fgets(admin_pass, 16, profiles);
 
+    profiles = fopen("profiles.hex", "rb");
     if (profiles) {
         while (!feof(profiles)) {
             User = malloc(sizeof(user));
+            if (User) {
 
-            if (start_user == NULL) {
-                start_user = User;
-                end_user = User;
-                start_user->next = NULL;
+                if (start_user == NULL) {
+                    start_user = User;
+                    end_user = User;
+                    start_user->next = NULL;
 
-                fgets(start_user->name, 20, profiles);
-                fgets(start_user->family, 20, profiles);
-                fgets(start_user->id, 12, profiles);
-                fgets(start_user->phone_no, 13, profiles);
-                fgets(start_user->email, 50, profiles);
-                fgets(start_user->username, 20, profiles);
-                fgets(start_user->password, 16, profiles);
-                fgets(start_user->enter, 9, profiles);
-                fgetc(profiles);
-                fgets(start_user->estates, 3, profiles);     
+                    fread(start_user, sizeof(user), 1, profiles);   
+                }
+                else {
+                    end_user->next = User;
+                    end_user = User;
+                    end_user->next = NULL;
+
+                    fread(end_user, sizeof(user), 1, profiles);
+                }
             }
-            else {
-                end_user->next = User;
-                end_user = User;
-                end_user->next = NULL;
-
-                fgets(end_user->name, 20, profiles);
-                fgets(end_user->family, 20, profiles);
-                fgets(end_user->id, 12, profiles);
-                fgets(end_user->phone_no, 13, profiles);
-                fgets(end_user->email, 50, profiles);
-                fgets(end_user->username, 20, profiles);
-                fgets(end_user->password, 16, profiles);
-                fgets(end_user->enter, 9, profiles);
-                fgetc(profiles);
-                fgets(end_user->estates, 3, profiles);
-            }
-        }
-        User = start_user;
-        while (User->next) {
-            puts(User->name);
-            puts(User->name);
-            puts(User->name);
-            puts(User->name);
-            puts(User->name);
-            puts(User->name);
-            puts(User->name);
-            puts(User->name);
-            puts(User->name);
+            else
+                printf("Your computer is low on memory.");
         }
     }
     else
         printf("Could not access profiles. Please try again later.");
 }
 
-void mainMenu()
+void mainMenu() // TODO: add parameter user
 {
     int choice;
 
-    printf("What do you want to do?\n\n");
+    while (1) {
+        printf("Welcome back %s %s\n", User->name, User->family);
+        printf("What do you want to do?\n\n");
 
-    printf("1. Register New Estate\n");
-    printf("2. Delete Estate\n");
-    printf("3. Reports\n");
-    printf("4. Account Settings\n");
-    printf("5. Log Out\n");
-    printf("6. Exit App\n\n");
+        printf("1. Register New Estate\n");
+        printf("2. Delete Estate\n");
+        printf("3. Reports\n");
+        printf("4. Account Settings\n");
+        printf("5. Log Out\n");
+        printf("6. Exit App\n\n");
 
-    printf("Choose an action from above menu: ");
-    scanf("%d", &choice);
-    getchar();
+        printf("Choose an action from above menu: ");
+        scanf("%d", &choice);
+        getchar();
 
-    switch (choice)
-    {
-    case 1:
-        Register();
-        break;
-    
-    case 2:
-        Delete();
-        break;
-    
-    case 3:
-        report();
-        break;
-    
-    case 4:
-        settings();
-        break;
-    
-    case 5:
-        system("cls");
-        return;
-        break;
-    
-    case 6:
-        exit(0);
-        break;
-    
-    default:
-        printf("Invalid input.\n");
-        break;
+        switch (choice)
+        {
+        case 1:
+            Register();
+            break;
+        
+        case 2:
+            Delete();
+            break;
+        
+        case 3:
+            report();
+            break;
+        
+        case 4:
+            settings();
+            break;
+        
+        case 5: // FIXME: fix
+            system("cls");
+            return;
+            break;
+        
+        case 6:
+            exit(0);
+            break;
+        
+        default:
+            printf("Invalid input.\n");
+            break;
+        }
     }
 }
 
