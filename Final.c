@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
+// Defining some structures 
 typedef struct u {
     char name[20];
     char family[20];
@@ -132,12 +133,12 @@ typedef struct rent_land { // TODO: complete it
     struct rent_land *next;    
 } rent_land;
  
-user *start_user = NULL, *end_user, *User;
+user *start_user = NULL, *end_user, *User, *admin;
 
 void firstMenu();
 void signIn();
 void logIn();
-void mainMenu();
+void mainMenu(user *a);
 void Register();
 void Delete();
 void report();
@@ -146,25 +147,24 @@ void readProfiles();
 
 void main()
 {
-    int choice;
+    char choice;
 
     while (1) {
         firstMenu();
-        scanf("%d", &choice);
-        getchar(); // To avoid extra \n (enter) in the buffer
+        choice = getchar();
         system("cls"); // Clear screen for better ui
 
         switch (choice)
         {
-        case 1:
+        case '1':
             signIn();
             break;
 
-        case 2:
+        case '2':
             logIn();
             break;
 
-        case 3:
+        case '3':
             exit(0);
             break;
         
@@ -193,7 +193,7 @@ void firstMenu()
 void signIn() // TODO: check validation
 {
     time_t t;
-    struct tm *local;
+    struct tm *local; // pointer to structure of tm
     char temp_pass1[16], temp_pass2[16], ch;
     FILE *profiles;
     int index = 0;
@@ -245,10 +245,9 @@ void signIn() // TODO: check validation
                 } while (1); 
 
                 temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
-                printf("\n");
                 index = 0;
 
-                printf("Confirm Your Password: ");
+                printf("\nConfirm Your Password: ");
                 // Loop until user press enter
                 do {
                     ch = getch();
@@ -269,7 +268,7 @@ void signIn() // TODO: check validation
                 temp_pass2[index] = '\0'; // Initialize the last character to \0 manually
                 printf("\n");
 
-                // If two passwords are same saves it and breaks
+                // If two passwords are same, save it and break
                 if (strcmp(temp_pass1, temp_pass2) == 0) {
                     strcpy(User->password, temp_pass1);
                     break;
@@ -278,11 +277,12 @@ void signIn() // TODO: check validation
                 printf("\nPasswords don't match.\n");
             }
             
+            // Save the sign up date
             t = time(NULL);
             local = localtime(&t);
             sprintf(User->enter, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
-            strcpy(User->estates, "0");
-            fwrite(User, sizeof(user), 1, profiles);
+            strcpy(User->estates, "0"); // At first user haven't register any estates
+            fwrite(User, sizeof(user), 1, profiles); // Write the information in file
 
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
@@ -302,18 +302,54 @@ void logIn()
 {
     char username[20], password[16], ch;
     int index;
+
+    admin = malloc(sizeof(user));
+    strcpy(admin->username, "admin");
+    strcpy(admin->password, "admin");
+    strcpy(admin->name, "admin");
+    strcpy(admin->family, "");
     
-    readProfiles();
+    readProfiles(); // Read information from file
     printf("Username: ");
     gets(username);
 
+    // Loop throw users to match username and password
     User = start_user;
     while (User->next) {
-        if (!strcmp(username, User->username)) {
+        index = 0;
+        // Checks if user is admin
+        if (!strcmp(username, admin->username)) {
+            printf("Admin password: ");
+            
+            // Loop until user press enter
+            do {
+                ch = getch();
+
+                if (ch == 13)
+                    break;
+                else if (ch == 8) {
+                    printf("\b \b");
+                    index--;
+                    continue;
+                }
+
+                putchar('*'); // display * instead of password for better security
+                password[index] = ch;
+                index++;
+            } while (1);
+            password[index] = '\0'; // Initialize the last character to \0 manually
+
+            if (!strcmp(password, admin->password)) {
+                system("cls");
+                mainMenu(admin);
+                break;
+            }
+        }
+        else if (!strcmp(username, User->username)) {
             while (1) {
                 printf("Password: ");
-                index = 0;
 
+                // Loop until user press enter
                 do {
                     ch = getch();
 
@@ -325,17 +361,15 @@ void logIn()
                         continue;
                     }
 
-                    putchar('*');
+                    putchar('*'); // display * instead of password for better security
                     password[index] = ch;
                     index++;
                 } while (1);
-
-                password[index] = '\0';
-                puts(password);
+                password[index] = '\0'; // Initialize the last character to \0 manually
 
                 if (!strcmp(password, User->password)) {
                     system("cls");
-                    mainMenu();
+                    mainMenu(User);
                     break;
                 }
                 else
@@ -360,20 +394,6 @@ void logIn()
 
         User = User->next;
     }
-        /*User = start_user;
-        while (User->next) {
-            puts(User->name);
-            puts(User->family);
-            puts(User->id);
-            puts(User->phone_no);
-            puts(User->email);
-            puts(User->username);
-            puts(User->password);
-            puts(User->enter);
-            puts(User->estates);
-                
-            User = User->next;
-        }*/
 }
 
 void readProfiles()
@@ -409,12 +429,12 @@ void readProfiles()
         printf("Could not access profiles. Please try again later.");
 }
 
-void mainMenu() // TODO: add parameter user
+void mainMenu(user *a) // TODO: better name
 {
-    int choice;
+    char choice;
 
     while (1) {
-        printf("Welcome back %s %s\n", User->name, User->family);
+        printf("Welcome back %s %s\n", a->name, a->family);
         printf("What do you want to do?\n\n");
 
         printf("1. Register New Estate\n");
@@ -425,33 +445,32 @@ void mainMenu() // TODO: add parameter user
         printf("6. Exit App\n\n");
 
         printf("Choose an action from above menu: ");
-        scanf("%d", &choice);
-        getchar();
+        choice = getchar();
+        system("cls");
 
         switch (choice)
         {
-        case 1:
+        case '1':
             Register();
             break;
         
-        case 2:
+        case '2':
             Delete();
             break;
         
-        case 3:
+        case '3':
             report();
             break;
         
-        case 4:
+        case '4':
             settings();
             break;
         
-        case 5: // FIXME: fix
-            system("cls");
+        case '5': // FIXME: fix
             return;
             break;
         
-        case 6:
+        case '6':
             exit(0);
             break;
         
