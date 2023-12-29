@@ -4,34 +4,118 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct date {
-    char year[5];
-    char month[3];
-    char day[3];
-    char hour[3];
-    char min[3];
-    char sec[3];
-} Date;
-
-typedef struct u { // TODO: add date
-    char username[20];
-    char password[16];
+typedef struct u {
     char name[20];
     char family[20];
     char id[12];
     char phone_no[13];
     char email[50];
     int estates;
-    Date enter;
+    char username[20];
+    char password[16];
+    struct tm enter;
     struct u *next;
 } user;
 
-typedef struct sale_house {
+typedef struct sale_house { // TODO: complete it
+    char registrar[20];
     char area[3];
     char address[300];
-    
+    char type[10];
+    char age[3];
+    char infrastructure[5];
+    char floor[3];
+    char land[5];
+    char owner_phone_no[13];
+    char rooms[3];
+    char price[9];
+    char parking;
+    char warehouse;
+    char elevator;
+    char telephone;
+    struct tm enter;
+    struct sale_house *next;    
 } sale_house;
 
+typedef struct sale_office { // TODO: complete it
+    char registrar[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char age[3];
+    char infrastructure[5];
+    char floor[3];
+    char land[5];
+    char owner_phone_no[13];
+    char rooms[3];
+    char price[9];
+    struct tm enter;
+    struct sale_office *next;    
+} sale_office;
+ 
+typedef struct sale_land { // TODO: complete it
+    char registrar[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char land[5];
+    char owner_phone_no[13];
+    char price[9];
+    struct tm enter;
+    struct sale_land *next;    
+} sale_land;
+ 
+typedef struct rent_house { // TODO: complete it
+    char registrar[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char age[3];
+    char infrastructure[5];
+    char floor[3];
+    char land[5];
+    char owner_phone_no[13];
+    char rooms[3];
+    char rent[9];
+    char mortgage[9];
+    char parking;
+    char warehouse;
+    char elevator;
+    char telephone;
+    struct tm enter;
+    struct rent_house *next;    
+} rent_house;
+
+typedef struct rent_office { // TODO: complete it
+    char registrar[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char age[3];
+    char infrastructure[5];
+    char floor[3];
+    char land[5];
+    char owner_phone_no[13];
+    char rooms[3];
+    char rent[9];
+    char mortgage[9];
+    struct tm enter;
+    struct rent_office *next;    
+} rent_office;
+ 
+typedef struct rent_land { // TODO: complete it
+    char registrar[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char land[5];
+    char owner_phone_no[13];
+    char rent[9];
+    char mortgage[9];
+    struct tm enter;
+    struct rent_land *next;    
+} rent_land;
+ 
 user *start = NULL, *end, *node;
 
 void firstMenu();
