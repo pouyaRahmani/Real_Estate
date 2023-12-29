@@ -364,6 +364,18 @@ void readProfiles()
                 fgets(end_user->estates, 3, profiles);
             }
         }
+        User = start_user;
+        while (User->next) {
+            puts(User->name);
+            puts(User->name);
+            puts(User->name);
+            puts(User->name);
+            puts(User->name);
+            puts(User->name);
+            puts(User->name);
+            puts(User->name);
+            puts(User->name);
+        }
     }
     else
         printf("Could not access profiles. Please try again later.");
