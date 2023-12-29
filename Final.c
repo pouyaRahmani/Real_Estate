@@ -203,27 +203,21 @@ void signIn() // TODO: check validation
         if (User) {
             printf("Surname: ");
             fgets(User->name, 20, stdin);
-            fputs(User->name, profiles);
             
             printf("Last Name: ");
             fgets(User->family, 20, stdin);
-            fputs(User->family, profiles);
             
             printf("ID: ");
             fgets(User->id, 12, stdin);
-            fputs(User->id, profiles);
             
             printf("Phone Number: ");
             fgets(User->phone_no, 13, stdin);
-            fputs(User->phone_no, profiles);
             
             printf("Email: ");
             fgets(User->email, 50, stdin);
-            fputs(User->email, profiles);
             
             printf("Username: "); // TODO: the word before username
             fgets(User->username, 20, stdin);
-            fputs(User->username, profiles);
             
             // Get the password twice to avoid typing mistakes
             while (1) {
@@ -236,7 +230,7 @@ void signIn() // TODO: check validation
                     index++;
                 } while (ch != 13); 
 
-                temp_pass1[index] = '\0'; // initialize the last character ro \0 manually
+                temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
                 printf("\n");
                 index = 0;
 
@@ -249,24 +243,31 @@ void signIn() // TODO: check validation
                     index++;
                 } while (ch != 13);
 
-                temp_pass2[index] = '\0'; // initialize the last character ro \0 manually
+                temp_pass2[index] = '\0'; // Initialize the last character to \0 manually
                 printf("\n");
 
                 // If two passwords are same saves it and breaks
                 if (strcmp(temp_pass1, temp_pass2) == 0) {
                     strcpy(User->password, temp_pass1);
-                    fputs(User->password, profiles);
                     break;
                 }
 
-                printf("Passwords don't match.");
+                printf("\nPasswords don't match.\n");
             }
+
+            fputs(User->name, profiles);
+            fputs(User->family, profiles);
+            fputs(User->id, profiles);
+            fputs(User->phone_no, profiles);
+            fputs(User->email, profiles);
+            fputs(User->username, profiles);
+            fputs(User->password, profiles);
             
             t = time(NULL);
             local = localtime(&t);
             fprintf(profiles, "%0d/%0d/%0d\n", local->tm_year-100, local->tm_mon+1, local->tm_mday);
 
-            printf("You have been signed up successfully. Enter a key to go back to log-in menu...");
+            printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
             system("cls");
             free(User);
