@@ -608,6 +608,8 @@ void saleEstate(user *a, char *type)
     double price_temp, tot_temp;
     int counter = 0;
     char unit;
+    time_t t;
+    struct tm *local; // pointer to structure of tm
 
     if (!strcmp(type, "house")) {
         FILE *house;
@@ -703,18 +705,24 @@ void saleEstate(user *a, char *type)
 
                 sprintf(Sale_house->tot_price, "%.3lf %c", tot_temp, unit);
                 
-                printf("Municipality area: ");
-                gets(Sale_house->area);
+                printf("Does it have parking? (Y/N)");
+                Sale_house->parking = toupper(getche());
+                   
+                printf("Does it have warehouse? (Y/N)");
+                Sale_house->warehouse = toupper(getche());
+                   
+                printf("Does it have elevator? (Y/N)");
+                Sale_house->elevator = toupper(getche());
+                   
+                printf("Does it have telephone? (Y/N)");
+                Sale_house->telephone = toupper(getche());
                 
-                printf("Municipality area: ");
-                gets(Sale_house->area);
-                
-                printf("Municipality area: ");
-                gets(Sale_house->area);
-                
-                printf("Municipality area: ");
-                gets(Sale_house->area);
-                
+                // Save the register date
+                t = time(NULL);
+                local = localtime(&t);
+                sprintf(Sale_house->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+                strcpy(Sale_house->isDelete, "0");
+                fwrite(Sale_house, sizeof(sale_house), 1, house); // Write the information in file
             }
             else
                 printf("ERROR: Your computer is low on memory."); 
