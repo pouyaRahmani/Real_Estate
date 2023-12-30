@@ -558,7 +558,7 @@ void report(user *a)
 
 void sale(user *a)
 {
-    char choice;
+    int choice;
 
     printf("What type of estate do you want to register?\n\n");
 
@@ -568,25 +568,25 @@ void sale(user *a)
     printf("4. Return back\n\n");
 
     printf("Enter your choice: ");
-    choice = getchar();
+    scanf("%d", &choice);
     getchar(); // Avoid exta enter
     system("cls"); // Clear screen for better ui
 
     switch (choice)
     {
-    case '1':
+    case 1:
         saleEstate(a, "house");
         break;
         
-    case '2':
+    case 2:
         saleEstate(a, "office");
         break;
         
-    case '3':
+    case 3:
         saleEstate(a, "land");
         break;
 
-    case '4':
+    case 4:
         return;
         break;
         
