@@ -611,13 +611,16 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
     local = malloc(sizeof(struct tm));
 
+    // Check the type of estate to be registered (house, office, land)
     if (!strcmp(type, "house")) {
         FILE *house;
 
+        // Open the file for storing information about houses for sale
         house = fopen("houses_sale.hex", "ab+");
         if (house) {
             printf("Enter the information of estate, below:\n\n");
-
+            
+            // Get details of the house from the user
             Sale_house = malloc(sizeof(sale_house));
             if (Sale_house) {
                 printf("Municipality area: ");
@@ -650,14 +653,16 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 printf("Price per meter: ");
                 scanf("%lf", &price_temp);
                 getchar(); // Avoid extra enter
-                tot_temp = price_temp * atoi(Sale_house->infrastructure);
+                tot_temp = price_temp * atoi(Sale_house->infrastructure); // Calculate the total price based on the area and price per meter
 
+                // Format and store the prices with appropriate units
                 price_temp = unitPicker(price_temp);
                 sprintf(Sale_house->price, "%.3lf %c", price_temp, unit);
 
                 tot_temp = unitPicker(tot_temp);
                 sprintf(Sale_house->tot_price, "%.3lf %c", tot_temp, unit);
                 
+                // Prompt the user for additional features (parking, warehouse, elevator, telephone)
                 printf("Does it have parking? (Y/N): ");
                 Sale_house->parking = toupper(getche());
                    
@@ -695,12 +700,14 @@ void saleEstate(user *a, char *type) // TODO: update user estates
     else if (!strcmp(type, "office")) {
         FILE *office;
 
+        // Open the file for storing information about offices for sale
         office = fopen("offices_sale.hex", "ab+");
         if (office) {
             printf("Enter the information of estate, below:\n\n");
 
             Sale_office = malloc(sizeof(sale_house));
             if (Sale_office) {
+                // Get details of the house from the user
                 printf("Municipality area: ");
                 gets(Sale_office->area);
                 
@@ -731,8 +738,9 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 printf("Price per meter: ");
                 scanf("%lf", &price_temp);
                 getchar(); // Avoid extra enter
-                tot_temp = price_temp * atoi(Sale_office->infrastructure);
+                tot_temp = price_temp * atoi(Sale_office->infrastructure); // Calculate the total price based on the area and price per meter
 
+                // Format and store the prices with appropriate units
                 price_temp = unitPicker(price_temp);
                 sprintf(Sale_office->price, "%.3lf %c", price_temp, unit);
 
@@ -764,12 +772,14 @@ void saleEstate(user *a, char *type) // TODO: update user estates
     else {
         FILE *land;
 
+        // Open the file for storing information about lands for sale
         land = fopen("lands_sale.hex", "ab+");
         if (land) {
             printf("Enter the information of estate, below:\n\n");
 
             Sale_land = malloc(sizeof(sale_house));
             if (Sale_land) {
+                // Get details of the house from the user
                 printf("Municipality area: ");
                 gets(Sale_land->area);
                 
@@ -788,8 +798,9 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 printf("Price per meter: ");
                 scanf("%lf", &price_temp);
                 getchar(); // Avoid extra enter
-                tot_temp = price_temp * atoi(Sale_land->land);
+                tot_temp = price_temp * atoi(Sale_land->land); // Calculate the total price based on the area and price per meter
 
+                // Format and store the prices with appropriate units
                 price_temp = unitPicker(price_temp);
                 sprintf(Sale_land->price, "%.3lf %c", price_temp, unit);
 
@@ -829,29 +840,32 @@ double unitPicker(double price)
 {
     int counter;
 
-    while (price > 1000) {
+    // Loop to determine the appropriate unit and reduce the price
+    while (price > 1000)
+    {
         price = price / 1000;
         counter++;
     }
 
+    // Set the unit based on the counter value
     switch (counter)
     {
     case 0:
         unit = ' ';
         break;
-                
+
     case 1:
         unit = 'K';
         break;
-                
+
     case 2:
         unit = 'M';
         break;
-        
+
     default:
         unit = 'B';
-       break;
+        break;
     }
 
-    return price;
+    return price; // Return the converted price
 }
