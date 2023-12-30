@@ -134,6 +134,7 @@ typedef struct rent_land { // TODO: complete it
 } rent_land;
  
 user *start_user = NULL, *end_user, *User, *admin;
+sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house;
 
 void firstMenu();
 void signIn();
@@ -146,6 +147,8 @@ void settings(user *a);
 void readProfiles();
 void sale(user *a);
 void rent(user *a);
+void saleEstate(user *a, char *type);
+void rentEstate(user *a, char *type);
 
 void main()
 {
@@ -293,12 +296,12 @@ void signIn() // TODO: check validation
             system("cls");
         }
         else
-            printf("Your computer is low on memory.");
+            printf("ERROR: Your computer is low on memory.");
 
         fclose(profiles);
     }
     else
-        printf("Could not access profiles. Please try again later.");
+        printf("ERROR: Could not access profiles. Please try again later.");
 }
 
 void logIn() // TODO: 2-step verification
@@ -307,10 +310,14 @@ void logIn() // TODO: 2-step verification
     int index;
 
     admin = malloc(sizeof(user));
-    strcpy(admin->username, "admin");
-    strcpy(admin->password, "admin");
-    strcpy(admin->name, "admin");
-    strcpy(admin->family, "");
+    if (admin) {
+        strcpy(admin->username, "admin");
+        strcpy(admin->password, "admin");
+        strcpy(admin->name, "admin");
+        strcpy(admin->family, "");
+    }
+    else
+        printf("ERROR: Your computer is low on memory.");
     
     readProfiles(); // Read information from file
     printf("Username: ");
@@ -322,30 +329,34 @@ void logIn() // TODO: 2-step verification
         index = 0;
         // Checks if user is admin
         if (!strcmp(username, admin->username)) {
-            printf("Admin password: ");
-            
-            // Loop until user press enter
-            do {
-                ch = getch();
+            while (1) {
+                printf("Admin password: ");
+                
+                // Loop until user press enter
+                do {
+                    ch = getch();
 
-                if (ch == 13)
+                    if (ch == 13)
+                        break;
+                    else if (ch == 8) {
+                        printf("\b \b");
+                        index--;
+                        continue;
+                    }
+
+                    putchar('*'); // display * instead of password for better security
+                    password[index] = ch;
+                    index++;
+                } while (1);
+                password[index] = '\0'; // Initialize the last character to \0 manually
+
+                if (!strcmp(password, admin->password)) {
+                    system("cls");
+                    mainMenu(admin);
                     break;
-                else if (ch == 8) {
-                    printf("\b \b");
-                    index--;
-                    continue;
                 }
-
-                putchar('*'); // display * instead of password for better security
-                password[index] = ch;
-                index++;
-            } while (1);
-            password[index] = '\0'; // Initialize the last character to \0 manually
-
-            if (!strcmp(password, admin->password)) {
-                system("cls");
-                mainMenu(admin);
-                break;
+                else
+                    printf("\nERROR: Wrong password!! Please try agin.\n");
             }
         }
         else if (!strcmp(username, User->username)) {
@@ -376,13 +387,14 @@ void logIn() // TODO: 2-step verification
                     break;
                 }
                 else
-                    printf("\nWrong password!! Please try agin.\n"); // TODO: add comments
+                    printf("\nERROR: Wrong password!! Please try agin.\n"); // TODO: add comments
             }
         }
         else if (!User->next->next) {
             printf("Username you entered wasn't found.\n");
-            printf("Do you want to sign in (Y/N)?\n");
+            printf("Do you want to sign up (Y/N)?\n");
 
+            // Checks if user wants to sign up or not
             if (toupper(getche()) == 'Y') {
                 system("cls");
                 signIn();
@@ -394,12 +406,9 @@ void logIn() // TODO: 2-step verification
                 User = start_user;
             }
         }
-
-        User = User->next;
+        else
+            User = User->next;
     }
-
-    free(start_user);
-    free(end_user);
 }
 
 void readProfiles() // TODO: add comments
@@ -428,18 +437,27 @@ void readProfiles() // TODO: add comments
                 }
             }
             else
-                printf("Your computer is low on memory.");
+                printf("ERROR: Your computer is low on memory.");
         }
 
         fclose(profiles);
     }
     else
-        printf("Could not access profiles. Please try again later.");
+        printf("ERROR: Could not access profiles. Please try again later.");
 }
 
 void mainMenu(user *a) // TODO: better name
 {
     char choice;
+
+    User = start_user;
+    while (User->next) {
+        free (User);
+        User = User->next;
+    }
+
+    free(start_user);
+    free(admin);
 
     while (1) {
         printf("Welcome back %s %s\n", a->name, a->family);
@@ -484,7 +502,7 @@ void mainMenu(user *a) // TODO: better name
             break;
         
         default:
-            printf("Invalid input.\n");
+            printf("ERROR: Invalid input.\n");
             break;
         }
     }
@@ -559,15 +577,15 @@ void sale(user *a)
     switch (choice)
     {
     case '1':
-        sale(a);
+        saleEstate(a, "house");
         break;
         
     case '2':
-        rent(a);
+        saleEstate(a, "office");
         break;
         
     case '3':
-        return;
+        saleEstate(a, "land");
         break;
 
     case '4':
@@ -581,6 +599,29 @@ void sale(user *a)
 }
 
 void rent(user *a)
+{
+
+}
+
+void saleEstate(user *a, char *type)
+{
+    FILE *house, *office, *land;
+    
+    if (!strcmp(type, "house")) {
+        Sale_house = malloc(sizeof(sale_house));
+
+
+
+    }
+    else if (!strcmp(type, "office")) {
+
+    }
+    else {
+
+    }
+}
+
+void rentEstate(user *a, char *type)
 {
 
 }

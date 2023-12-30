@@ -1,0 +1,22 @@
+typedef struct sale_house { // TODO: complete it
+    char registrar[20];
+    char deleter[20];
+    char area[3];
+    char address[300];
+    char type[10];
+    char age[3];
+    char infrastructure[5];
+    char floor[3];
+    char land[5];
+    char owner_phone_no[13];
+    char rooms[3];
+    char price[9];
+    char tot_price[9];
+    char parking;
+    char warehouse;
+    char elevator;
+    char telephone;
+    char date[9];
+    char isDelete;
+    struct sale_house *next;    
+} sale_house;
