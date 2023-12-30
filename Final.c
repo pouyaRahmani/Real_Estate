@@ -137,7 +137,7 @@ user *start_user = NULL, *end_user, *User, *admin;
 sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house;
 
 void firstMenu();
-void signIn();
+void signUn();
 void logIn();
 void mainMenu(user *a);
 void Register(user *a);
@@ -163,7 +163,7 @@ void main()
         switch (choice)
         {
         case '1':
-            signIn();
+            signUn();
             break;
 
         case '2':
@@ -196,7 +196,7 @@ void firstMenu()
 }
 
 // Function to do the sign in proccess
-void signIn() // TODO: check validation
+void signUn() // TODO: check validation
 {
     time_t t;
     struct tm *local; // pointer to structure of tm
@@ -543,7 +543,7 @@ void Register(user *a)
         break;
         
     default:
-        printf("Invalid input.\n");
+        printf("ERROR: Invalid input.\n");
         break;
     }
 }
@@ -593,7 +593,7 @@ void sale(user *a)
         break;
         
     default:
-        printf("Invalid input.\n");
+        printf("ERROR: Invalid input.\n");
         break;
     }
 }
@@ -605,13 +605,122 @@ void rent(user *a)
 
 void saleEstate(user *a, char *type)
 {
-    FILE *house, *office, *land;
-    
+    double price_temp, tot_temp;
+    int counter = 0;
+    char unit;
+
     if (!strcmp(type, "house")) {
-        Sale_house = malloc(sizeof(sale_house));
+        FILE *house;
 
+        house = fopen("houses.hex", "ab+");
+        if (house) {
+            printf("Enter the information of estate, below:\n\n");
 
+            Sale_house = malloc(sizeof(sale_house));
+            if (Sale_house) {
+                printf("Municipality area: ");
+                gets(Sale_house->area);
+                
+                printf("Full address: ");
+                gets(Sale_house->address);
+                
+                printf("Type (Apartment/Villa): ");
+                gets(Sale_house->type);
+                
+                printf("Age: ");
+                gets(Sale_house->age);
+                
+                printf("Infrastructure (House Area): ");
+                gets(Sale_house->infrastructure);
+                
+                printf("On which floor: ");
+                gets(Sale_house->floor);
+                
+                printf("Base area: ");
+                gets(Sale_house->land);
+                
+                printf("Owner phone number: ");
+                gets(Sale_house->owner_phone_no);
+                
+                printf("The amount of rooms: ");
+                gets(Sale_house->rooms);
+                
+                printf("Price per meter: ");
+                scanf("%lf", price_temp);
+                getchar(); // Avoid extra enter
 
+                tot_temp = price_temp * atoi(Sale_house->infrastructure);
+                while (price_temp > 1000) {
+                    price_temp = price_temp / 1000;
+                    counter++;
+                }
+
+                switch (counter)
+                {
+                case 0:
+                    unit = ' ';
+                    break;
+                
+                case 1:
+                    unit = 'K';
+                    break;
+                
+                case 2:
+                    unit = 'M';
+                    break;
+        
+                default:
+                    unit = 'B';
+                    break;
+                }
+
+                sprintf(Sale_house->price, "%.3lf %c", price_temp, unit);
+
+                counter = 0;
+                while (tot_temp > 1000) {
+                    tot_temp = tot_temp / 1000;
+                    counter++;
+                }
+
+                switch (counter)
+                {
+                case 0:
+                    unit = ' ';
+                    break;
+                
+                case 1:
+                    unit = 'K';
+                    break;
+                
+                case 2:
+                    unit = 'M';
+                    break;
+        
+                default:
+                    unit = 'B';
+                    break;
+                }
+
+                sprintf(Sale_house->tot_price, "%.3lf %c", tot_temp, unit);
+                
+                printf("Municipality area: ");
+                gets(Sale_house->area);
+                
+                printf("Municipality area: ");
+                gets(Sale_house->area);
+                
+                printf("Municipality area: ");
+                gets(Sale_house->area);
+                
+                printf("Municipality area: ");
+                gets(Sale_house->area);
+                
+            }
+            else
+                printf("ERROR: Your computer is low on memory."); 
+        }
+        else
+            printf("ERROR: Could not access Estates. Please try again later.");
     }
     else if (!strcmp(type, "office")) {
 
