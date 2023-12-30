@@ -6,7 +6,7 @@
 #include <ctype.h>
 
 // Defining some structures 
-typedef struct u {
+typedef struct u { // Structure to represent an user
     char name[20];
     char family[20];
     char id[11];
@@ -18,8 +18,8 @@ typedef struct u {
     char estates[3];
     struct u *next;
 } user;
-
-typedef struct sale_house { // TODO: complete it
+// TODO: complete structures
+typedef struct sale_house { // Structure to represent a house for sale
     char registrar[20];
     char deleter[20];
     char area[3];
@@ -41,7 +41,7 @@ typedef struct sale_house { // TODO: complete it
     struct sale_house *next;    
 } sale_house;
 
-typedef struct sale_office { // TODO: complete it
+typedef struct sale_office { // Structure to represent an office for sale
     char registrar[20];
     char deleter[20];
     char area[3];
@@ -59,7 +59,7 @@ typedef struct sale_office { // TODO: complete it
     struct sale_office *next;    
 } sale_office;
  
-typedef struct sale_land { // TODO: complete it
+typedef struct sale_land { // Structure to represent a land for sale
     char registrar[20];
     char deleter[20];
     char area[3];
@@ -73,7 +73,7 @@ typedef struct sale_land { // TODO: complete it
     struct sale_land *next;    
 } sale_land;
  
-typedef struct rent_house { // TODO: complete it
+typedef struct rent_house { // Structure to represent a house for rent
     char registrar[20];
     char deleter[20];
     char area[3];
@@ -95,7 +95,7 @@ typedef struct rent_house { // TODO: complete it
     struct rent_house *next;    
 } rent_house;
 
-typedef struct rent_office { // TODO: complete it
+typedef struct rent_office { // Structure to represent an office for rent
     char registrar[20];
     char deleter[20];
     char area[3];
@@ -113,7 +113,7 @@ typedef struct rent_office { // TODO: complete it
     struct rent_office *next;    
 } rent_office;
  
-typedef struct rent_land { // TODO: complete it
+typedef struct rent_land { // Structure to represent a land for rent
     char registrar[20];
     char deleter[20];
     char area[3];
@@ -126,12 +126,14 @@ typedef struct rent_land { // TODO: complete it
     char date[9];
     struct rent_land *next;    
 } rent_land;
- 
+
+// Some pointers for every structure to make linked list
 user *start_user = NULL, *end_user, *User, *admin;
 sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house;
 sale_office *start_sale_office = NULL, *end_sale_office, *Sale_office;
 sale_land *start_sale_land = NULL, *end_sale_land, *Sale_land;
 
+// Prototypes of functions
 void firstMenu();
 void signUn();
 void logIn();
@@ -195,7 +197,7 @@ void firstMenu()
 // Function to do the sign in proccess
 void signUp() // TODO: check validation
 {
-    time_t t;
+    time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
     char temp_pass1[16], temp_pass2[16], ch;
     FILE *profiles;
@@ -206,9 +208,10 @@ void signUp() // TODO: check validation
     if (profiles) {
         printf("Please enter your information below:\n\n");
 
-        // Allocate a structure, get information from user and save it to "profiles.txt" file
+        // Allocate a structure, get information from user and save it to "profiles.hex" file
         User = malloc(sizeof(user));
         if (User) {
+            // Promote user to enter specific information
             printf("Surname: ");
             gets(User->name);
             
@@ -236,6 +239,7 @@ void signUp() // TODO: check validation
 
                     if (ch == 13)
                         break;
+                    // If user press backspace key, remove last character
                     else if (ch == 8) {
                         printf("\b \b");
                         index--;
@@ -257,6 +261,7 @@ void signUp() // TODO: check validation
 
                     if (ch == 13)
                         break;
+                    // If user press backspace key, remove last character
                     else if (ch == 8) {
                         printf("\b \b");
                         index--;
@@ -290,7 +295,7 @@ void signUp() // TODO: check validation
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
             free(User);
-            system("cls");
+            system("cls"); // Clear screen for better ui
         }
         else
             printf("ERROR: Your computer is low on memory.");
@@ -306,12 +311,14 @@ void logIn() // TODO: 2-step verification
     char username[20], password[16], ch;
     int index;
 
+    // Create admin user dynamically
     admin = malloc(sizeof(user));
     if (admin) {
         strcpy(admin->username, "admin");
         strcpy(admin->password, "admin");
         strcpy(admin->name, "admin");
         strcpy(admin->family, "");
+        strcpy(admin->estates, "0");
     }
     else
         printf("ERROR: Your computer is low on memory.");
@@ -335,6 +342,7 @@ void logIn() // TODO: 2-step verification
 
                     if (ch == 13)
                         break;
+                    // If user press backspace key, remove last character
                     else if (ch == 8) {
                         printf("\b \b");
                         index--;
@@ -348,7 +356,7 @@ void logIn() // TODO: 2-step verification
                 password[index] = '\0'; // Initialize the last character to \0 manually
 
                 if (!strcmp(password, admin->password)) {
-                    system("cls");
+                    system("cls"); // Clear screen for better ui
                     mainMenu(admin);
                     break;
                 }
@@ -366,6 +374,7 @@ void logIn() // TODO: 2-step verification
 
                     if (ch == 13)
                         break;
+                    // If user press backspace key, remove last character
                     else if (ch == 8) {
                         printf("\b \b");
                         index--;
@@ -379,7 +388,7 @@ void logIn() // TODO: 2-step verification
                 password[index] = '\0'; // Initialize the last character to \0 manually
 
                 if (!strcmp(password, User->password)) {
-                    system("cls");
+                    system("cls"); // Clear screen for better ui
                     mainMenu(User);
                     break;
                 }
@@ -393,11 +402,11 @@ void logIn() // TODO: 2-step verification
 
             // Checks if user wants to sign up or not
             if (toupper(getche()) == 'Y') {
-                system("cls");
+                system("cls"); // Clear screen for better ui
                 signUp();
             }
             else {
-                system("cls");
+                system("cls"); // Clear screen for better ui
                 printf("Username: ");
                 gets(username);
                 User = start_user;
@@ -408,28 +417,30 @@ void logIn() // TODO: 2-step verification
     }
 }
 
-void readProfiles() // TODO: add comments
+void readProfiles()
 {
     FILE *profiles;
 
     profiles = fopen("profiles.hex", "rb");
     if (profiles) {
+        // Seek throw file to extract information
         while (!feof(profiles)) {
             User = malloc(sizeof(user));
             if (User) {
-                if (start_user == NULL) {
+                // Checks if linked list is empty
+                if (start_user == NULL) { 
                     start_user = User;
                     end_user = User;
                     start_user->next = NULL;
 
-                    fread(start_user, sizeof(user), 1, profiles);   
+                    fread(start_user, sizeof(user), 1, profiles); // Read information and store in structure
                 }
                 else {
                     end_user->next = User;
                     end_user = User;
                     end_user->next = NULL;
 
-                    fread(end_user, sizeof(user), 1, profiles);
+                    fread(end_user, sizeof(user), 1, profiles); // Read information and store in structure
                 }
             }
             else
@@ -442,18 +453,9 @@ void readProfiles() // TODO: add comments
         printf("ERROR: Could not access profiles. Please try again later.");
 }
 
-void mainMenu(user *a) // TODO: better name
+void mainMenu(user *a)
 {
-    char choice;
-
-    User = start_user;
-    while (User->next) {
-        free (User);
-        User = User->next;
-    }
-
-    free(start_user);
-    free(admin);
+    int choice;
 
     while (1) {
         printf("Welcome back %s %s\n", a->name, a->family);
@@ -467,33 +469,33 @@ void mainMenu(user *a) // TODO: better name
         printf("6. Exit App\n\n");
 
         printf("Choose an action from above menu: ");
-        choice = getchar();
+        scanf("%d", &choice);
         getchar(); // Avoid exta enter
-        system("cls");
+        system("cls"); // Clear screen for better ui
 
         switch (choice)
         {
-        case '1':
+        case 1:
             Register(a);
             break;
         
-        case '2':
+        case 2:
             Delete(a);
             break;
         
-        case '3':
+        case 3:
             report(a);
             break;
         
-        case '4':
+        case 4:
             settings(a);
             break;
         
-        case '5': // FIXME: fix
+        case 5: // FIXME: fix
             return;
             break;
         
-        case '6':
+        case 6:
             exit(0);
             break;
         
@@ -522,7 +524,7 @@ void Register(user *a)
     printf("Enter your choice: ");
     choice = getchar();
     getchar(); // Avoid exta enter
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     switch (choice)
     {
@@ -568,7 +570,7 @@ void sale(user *a)
     printf("Enter your choice: ");
     choice = getchar();
     getchar(); // Avoid exta enter
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     switch (choice)
     {
@@ -679,7 +681,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 fwrite(Sale_house, sizeof(sale_house), 1, house); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
                 getch();
-                system("cls");
+                system("cls"); // Clear screen for better ui
 
                 fclose(house);
                 return;
@@ -748,7 +750,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 fwrite(Sale_office, sizeof(sale_office), 1, office); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
                 getch();
-                system("cls");
+                system("cls"); // Clear screen for better ui
 
                 fclose(office);
                 return;
@@ -805,7 +807,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 fwrite(Sale_land, sizeof(sale_land), 1, land); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
                 getch();
-                system("cls");
+                system("cls"); // Clear screen for better ui
 
                 fclose(land);
                 return;
