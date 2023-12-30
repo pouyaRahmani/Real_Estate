@@ -149,6 +149,7 @@ void sale(user *a);
 void rent(user *a);
 void saleEstate(user *a, char *type);
 void rentEstate(user *a, char *type);
+double unitPicker(double a);
 
 void main()
 {
@@ -163,7 +164,7 @@ void main()
         switch (choice)
         {
         case '1':
-            signUn();
+            signUp();
             break;
 
         case '2':
@@ -196,7 +197,7 @@ void firstMenu()
 }
 
 // Function to do the sign in proccess
-void signUn() // TODO: check validation
+void signUp() // TODO: check validation
 {
     time_t t;
     struct tm *local; // pointer to structure of tm
@@ -397,7 +398,7 @@ void logIn() // TODO: 2-step verification
             // Checks if user wants to sign up or not
             if (toupper(getche()) == 'Y') {
                 system("cls");
-                signIn();
+                signUp();
             }
             else {
                 system("cls");
@@ -420,7 +421,6 @@ void readProfiles() // TODO: add comments
         while (!feof(profiles)) {
             User = malloc(sizeof(user));
             if (User) {
-
                 if (start_user == NULL) {
                     start_user = User;
                     end_user = User;
@@ -603,13 +603,15 @@ void rent(user *a)
 
 }
 
+static char unit;
+
 void saleEstate(user *a, char *type)
 {
-    double price_temp, tot_temp;
-    int counter = 0;
-    char unit;
+    /*double price_temp, tot_temp;
     time_t t;
     struct tm *local; // pointer to structure of tm
+
+    local = malloc(sizeof(struct tm));
 
     if (!strcmp(type, "house")) {
         FILE *house;
@@ -650,79 +652,42 @@ void saleEstate(user *a, char *type)
                 printf("Price per meter: ");
                 scanf("%lf", price_temp);
                 getchar(); // Avoid extra enter
-
                 tot_temp = price_temp * atoi(Sale_house->infrastructure);
-                while (price_temp > 1000) {
-                    price_temp = price_temp / 1000;
-                    counter++;
-                }
 
-                switch (counter)
-                {
-                case 0:
-                    unit = ' ';
-                    break;
-                
-                case 1:
-                    unit = 'K';
-                    break;
-                
-                case 2:
-                    unit = 'M';
-                    break;
-        
-                default:
-                    unit = 'B';
-                    break;
-                }
-
+                price_temp = unitPicker(price_temp);
                 sprintf(Sale_house->price, "%.3lf %c", price_temp, unit);
 
-                counter = 0;
-                while (tot_temp > 1000) {
-                    tot_temp = tot_temp / 1000;
-                    counter++;
-                }
-
-                switch (counter)
-                {
-                case 0:
-                    unit = ' ';
-                    break;
-                
-                case 1:
-                    unit = 'K';
-                    break;
-                
-                case 2:
-                    unit = 'M';
-                    break;
-        
-                default:
-                    unit = 'B';
-                    break;
-                }
-
+                tot_temp = unitPicker(tot_temp);
                 sprintf(Sale_house->tot_price, "%.3lf %c", tot_temp, unit);
                 
-                printf("Does it have parking? (Y/N)");
+                printf("Does it have parking? (Y/N): ");
                 Sale_house->parking = toupper(getche());
                    
-                printf("Does it have warehouse? (Y/N)");
+                printf("\nDoes it have warehouse? (Y/N): ");
                 Sale_house->warehouse = toupper(getche());
                    
-                printf("Does it have elevator? (Y/N)");
+                printf("\nDoes it have elevator? (Y/N): ");
                 Sale_house->elevator = toupper(getche());
                    
-                printf("Does it have telephone? (Y/N)");
+                printf("\nDoes it have telephone? (Y/N): ");
                 Sale_house->telephone = toupper(getche());
                 
                 // Save the register date
                 t = time(NULL);
                 local = localtime(&t);
                 sprintf(Sale_house->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
-                strcpy(Sale_house->isDelete, "0");
+
+                Sale_house->isDelete = '0';
+                strcpy(Sale_house->registrar, a->username);
+                strcpy(Sale_house->deleter, "0");
+
                 fwrite(Sale_house, sizeof(sale_house), 1, house); // Write the information in file
+                printf("\nRegister was successful. Press any key to go back to main menu...");
+                getch();
+                system("cls");
+
+                fclose(house);
+                return;
             }
             else
                 printf("ERROR: Your computer is low on memory."); 
@@ -735,10 +700,72 @@ void saleEstate(user *a, char *type)
     }
     else {
 
-    }
+    }*/
+
+    FILE *house;
+
+    house = fopen("houses.hex", "ab+");
+
+    
+    Sale_house = malloc(sizeof(sale_house));
+    Sale_house->next = NULL;
+        
+
+    fread(Sale_house, sizeof(sale_house), 1, house);
+
+    puts(Sale_house->registrar);
+    puts(Sale_house->deleter);
+    puts(Sale_house->area);
+    puts(Sale_house->address);
+    puts(Sale_house->type);
+    puts(Sale_house->age);
+    puts(Sale_house->infrastructure);
+    puts(Sale_house->floor);
+    puts(Sale_house->land);
+    puts(Sale_house->owner_phone_no);
+    puts(Sale_house->rooms);
+    puts(Sale_house->price);
+    puts(Sale_house->tot_price);
+    putchar(Sale_house->parking);
+    putchar(Sale_house->warehouse);
+    putchar(Sale_house->elevator);
+    putchar(Sale_house->telephone);
+    puts(Sale_house->date);
+    putchar(Sale_house->isDelete);
 }
 
 void rentEstate(user *a, char *type)
 {
 
+}
+
+double unitPicker(double a)
+{
+    int counter;
+
+    while (a > 1000) {
+        a = a / 1000;
+        counter++;
+    }
+
+    switch (counter)
+    {
+    case 0:
+        unit = ' ';
+        break;
+                
+    case 1:
+        unit = 'K';
+        break;
+                
+    case 2:
+        unit = 'M';
+        break;
+        
+    default:
+        unit = 'B';
+       break;
+    }
+
+    return a;
 }
