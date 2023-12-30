@@ -23,7 +23,7 @@ typedef struct sale_house { // TODO: complete it
     char registrar[20];
     char deleter[20];
     char area[3];
-    char address[300];
+    char address[500];
     char type[10];
     char age[3];
     char infrastructure[5];
@@ -38,7 +38,6 @@ typedef struct sale_house { // TODO: complete it
     char elevator;
     char telephone;
     char date[9];
-    char isDelete;
     struct sale_house *next;    
 } sale_house;
 
@@ -46,8 +45,8 @@ typedef struct sale_office { // TODO: complete it
     char registrar[20];
     char deleter[20];
     char area[3];
-    char address[300];
-    char type[10];
+    char address[500];
+    char type[20];
     char age[3];
     char infrastructure[5];
     char floor[3];
@@ -57,7 +56,6 @@ typedef struct sale_office { // TODO: complete it
     char price[9];
     char tot_price[9];
     char date[9];
-    char isDelete;
     struct sale_office *next;    
 } sale_office;
  
@@ -65,14 +63,13 @@ typedef struct sale_land { // TODO: complete it
     char registrar[20];
     char deleter[20];
     char area[3];
-    char address[300];
+    char address[500];
     char type[10];
-    char land[5];
+    char land[6];
     char owner_phone_no[13];
     char price[9];
     char tot_price[9];
     char date[9];
-    char isDelete;
     struct sale_land *next;    
 } sale_land;
  
@@ -80,7 +77,7 @@ typedef struct rent_house { // TODO: complete it
     char registrar[20];
     char deleter[20];
     char area[3];
-    char address[300];
+    char address[500];
     char type[10];
     char age[3];
     char infrastructure[5];
@@ -95,7 +92,6 @@ typedef struct rent_house { // TODO: complete it
     char elevator;
     char telephone;
     char date[9];
-    char isDelete;
     struct rent_house *next;    
 } rent_house;
 
@@ -103,8 +99,8 @@ typedef struct rent_office { // TODO: complete it
     char registrar[20];
     char deleter[20];
     char area[3];
-    char address[300];
-    char type[10];
+    char address[500];
+    char type[20];
     char age[3];
     char infrastructure[5];
     char floor[3];
@@ -114,7 +110,6 @@ typedef struct rent_office { // TODO: complete it
     char rent[9];
     char mortgage[9];
     char date[9];
-    char isDelete;
     struct rent_office *next;    
 } rent_office;
  
@@ -122,19 +117,20 @@ typedef struct rent_land { // TODO: complete it
     char registrar[20];
     char deleter[20];
     char area[3];
-    char address[300];
+    char address[500];
     char type[10];
-    char land[5];
+    char land[6];
     char owner_phone_no[13];
     char rent[9];
     char mortgage[9];
     char date[9];
-    char isDelete;
     struct rent_land *next;    
 } rent_land;
  
 user *start_user = NULL, *end_user, *User, *admin;
 sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house;
+sale_office *start_sale_office = NULL, *end_sale_office, *Sale_office;
+sale_land *start_sale_land = NULL, *end_sale_land, *Sale_land;
 
 void firstMenu();
 void signUn();
@@ -605,9 +601,9 @@ void rent(user *a)
 
 static char unit;
 
-void saleEstate(user *a, char *type)
+void saleEstate(user *a, char *type) // TODO: update user estates
 {
-    /*double price_temp, tot_temp;
+    double price_temp, tot_temp;
     time_t t;
     struct tm *local; // pointer to structure of tm
 
@@ -616,7 +612,7 @@ void saleEstate(user *a, char *type)
     if (!strcmp(type, "house")) {
         FILE *house;
 
-        house = fopen("houses.hex", "ab+");
+        house = fopen("houses_sale.hex", "ab+");
         if (house) {
             printf("Enter the information of estate, below:\n\n");
 
@@ -650,7 +646,7 @@ void saleEstate(user *a, char *type)
                 gets(Sale_house->rooms);
                 
                 printf("Price per meter: ");
-                scanf("%lf", price_temp);
+                scanf("%lf", &price_temp);
                 getchar(); // Avoid extra enter
                 tot_temp = price_temp * atoi(Sale_house->infrastructure);
 
@@ -677,7 +673,6 @@ void saleEstate(user *a, char *type)
                 local = localtime(&t);
                 sprintf(Sale_house->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
 
-                Sale_house->isDelete = '0';
                 strcpy(Sale_house->registrar, a->username);
                 strcpy(Sale_house->deleter, "0");
 
@@ -696,42 +691,131 @@ void saleEstate(user *a, char *type)
             printf("ERROR: Could not access Estates. Please try again later.");
     }
     else if (!strcmp(type, "office")) {
+        FILE *office;
 
+        office = fopen("offices_sale.hex", "ab+");
+        if (office) {
+            printf("Enter the information of estate, below:\n\n");
+
+            Sale_office = malloc(sizeof(sale_house));
+            if (Sale_office) {
+                printf("Municipality area: ");
+                gets(Sale_office->area);
+                
+                printf("Full address: ");
+                gets(Sale_office->address);
+                
+                printf("Type (Official document/Position): ");
+                gets(Sale_office->type);
+
+                printf("Age: ");
+                gets(Sale_office->age);
+                
+                printf("Infrastructure (Office Area): ");
+                gets(Sale_office->infrastructure);
+                
+                printf("On which floor: ");
+                gets(Sale_office->floor);
+                
+                printf("Base area: ");
+                gets(Sale_office->land);
+                
+                printf("Owner phone number: ");
+                gets(Sale_office->owner_phone_no);
+                
+                printf("The amount of rooms: ");
+                gets(Sale_office->rooms);
+                
+                printf("Price per meter: ");
+                scanf("%lf", &price_temp);
+                getchar(); // Avoid extra enter
+                tot_temp = price_temp * atoi(Sale_office->infrastructure);
+
+                price_temp = unitPicker(price_temp);
+                sprintf(Sale_office->price, "%.3lf %c", price_temp, unit);
+
+                tot_temp = unitPicker(tot_temp);
+                sprintf(Sale_office->tot_price, "%.3lf %c", tot_temp, unit);
+                
+                // Save the register date
+                t = time(NULL);
+                local = localtime(&t);
+                sprintf(Sale_office->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+
+                strcpy(Sale_office->registrar, a->username);
+                strcpy(Sale_office->deleter, "0");
+
+                fwrite(Sale_office, sizeof(sale_office), 1, office); // Write the information in file
+                printf("\nRegister was successful. Press any key to go back to main menu...");
+                getch();
+                system("cls");
+
+                fclose(office);
+                return;
+            }
+            else
+                printf("ERROR: Your computer is low on memory."); 
+        }
+        else
+            printf("ERROR: Could not access Estates. Please try again later.");
     }
     else {
+        FILE *land;
 
-    }*/
+        land = fopen("lands_sale.hex", "ab+");
+        if (land) {
+            printf("Enter the information of estate, below:\n\n");
 
-    FILE *house;
+            Sale_land = malloc(sizeof(sale_house));
+            if (Sale_land) {
+                printf("Municipality area: ");
+                gets(Sale_land->area);
+                
+                printf("Full address: ");
+                gets(Sale_land->address);
+                
+                printf("Type (Farming/City): ");
+                gets(Sale_land->type);
+                
+                printf("Base area: ");
+                gets(Sale_land->land);
+                
+                printf("Owner phone number: ");
+                gets(Sale_land->owner_phone_no);
+                
+                printf("Price per meter: ");
+                scanf("%lf", &price_temp);
+                getchar(); // Avoid extra enter
+                tot_temp = price_temp * atoi(Sale_land->land);
 
-    house = fopen("houses.hex", "ab+");
+                price_temp = unitPicker(price_temp);
+                sprintf(Sale_land->price, "%.3lf %c", price_temp, unit);
 
-    
-    Sale_house = malloc(sizeof(sale_house));
-    Sale_house->next = NULL;
-        
+                tot_temp = unitPicker(tot_temp);
+                sprintf(Sale_land->tot_price, "%.3lf %c", tot_temp, unit);
+                
+                // Save the register date
+                t = time(NULL);
+                local = localtime(&t);
+                sprintf(Sale_land->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
 
-    fread(Sale_house, sizeof(sale_house), 1, house);
+                strcpy(Sale_land->registrar, a->username);
+                strcpy(Sale_land->deleter, "0");
 
-    puts(Sale_house->registrar);
-    puts(Sale_house->deleter);
-    puts(Sale_house->area);
-    puts(Sale_house->address);
-    puts(Sale_house->type);
-    puts(Sale_house->age);
-    puts(Sale_house->infrastructure);
-    puts(Sale_house->floor);
-    puts(Sale_house->land);
-    puts(Sale_house->owner_phone_no);
-    puts(Sale_house->rooms);
-    puts(Sale_house->price);
-    puts(Sale_house->tot_price);
-    putchar(Sale_house->parking);
-    putchar(Sale_house->warehouse);
-    putchar(Sale_house->elevator);
-    putchar(Sale_house->telephone);
-    puts(Sale_house->date);
-    putchar(Sale_house->isDelete);
+                fwrite(Sale_land, sizeof(sale_land), 1, land); // Write the information in file
+                printf("\nRegister was successful. Press any key to go back to main menu...");
+                getch();
+                system("cls");
+
+                fclose(land);
+                return;
+            }
+            else
+                printf("ERROR: Your computer is low on memory."); 
+        }
+        else
+            printf("ERROR: Could not access Estates. Please try again later.");
+    }
 }
 
 void rentEstate(user *a, char *type)
@@ -739,12 +823,12 @@ void rentEstate(user *a, char *type)
 
 }
 
-double unitPicker(double a)
+double unitPicker(double price)
 {
     int counter;
 
-    while (a > 1000) {
-        a = a / 1000;
+    while (price > 1000) {
+        price = price / 1000;
         counter++;
     }
 
@@ -767,5 +851,5 @@ double unitPicker(double a)
        break;
     }
 
-    return a;
+    return price;
 }
