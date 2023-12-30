@@ -393,7 +393,7 @@ void logIn() // TODO: 2-step verification
                     break;
                 }
                 else
-                    printf("\nERROR: Wrong password!! Please try agin.\n"); // TODO: add comments
+                    printf("\nERROR: Wrong password!! Please try agin.\n");
             }
         }
         else if (!User->next->next) {
