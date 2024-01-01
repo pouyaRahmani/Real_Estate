@@ -639,6 +639,14 @@ void mainMenu(user *a)
 {
     int choice;
 
+    User = start_user;
+    while (User->next) {
+        if (strcmp(a->username, User->username))
+            free(User);
+        
+        User = User->next;
+    }
+
     while (1) {
         printf("Welcome back %s %s\n", a->name, a->family);
         printf("What do you want to do?\n\n");
@@ -697,34 +705,36 @@ void Register(user *a)
 {
     char choice;
 
-    printf("What do you want to register?\n\n");
+    while (1) {
+        printf("What do you want to register?\n\n");
 
-    printf("1. Sales registration\n");
-    printf("2. Rent registration\n");
-    printf("3. Return back\n\n");
+        printf("1. Sales registration\n");
+        printf("2. Rent registration\n");
+        printf("3. Return back\n\n");
 
-    printf("Enter your choice: ");
-    choice = getchar();
-    getchar(); // Avoid exta enter
-    system("cls"); // Clear screen for better ui
+        printf("Enter your choice: ");
+        choice = getchar();
+        getchar(); // Avoid exta enter
+        system("cls"); // Clear screen for better ui
 
-    switch (choice)
-    {
-    case '1':
-        sale(a);
-        break;
-        
-    case '2':
-        rent(a);
-        break;
-        
-    case '3':
-        return;
-        break;
-        
-    default:
-        printf("ERROR: Invalid input.\n");
-        break;
+        switch (choice)
+        {
+        case '1':
+            sale(a);
+            break;
+            
+        case '2':
+            rent(a);
+            break;
+            
+        case '3':
+            return;
+            break;
+            
+        default:
+            printf("ERROR: Invalid input.\n");
+            break;
+        }
     }
 }
 
