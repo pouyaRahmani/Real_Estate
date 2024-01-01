@@ -681,7 +681,7 @@ void mainMenu(user *a)
             settings(a);
             break;
         
-        case 5: // FIXME: fix
+        case 5:
             return;
             break;
         
@@ -790,7 +790,42 @@ void sale(user *a)
 
 void rent(user *a)
 {
+    int choice;
 
+    printf("What type of estate do you want to register?\n\n");
+
+    printf("1. Residential property (for live)\n");
+    printf("2. Office property (for work)\n");
+    printf("3. Land property\n");
+    printf("4. Return back\n\n");
+
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+    getchar(); // Avoid exta enter
+    system("cls"); // Clear screen for better ui
+
+    switch (choice)
+    {
+    case 1:
+        rentEstate(a, "house");
+        break;
+        
+    case 2:
+        rentEstate(a, "office");
+        break;
+        
+    case 3:
+        rentEstate(a, "land");
+        break;
+
+    case 4:
+        return;
+        break;
+        
+    default:
+        printf("ERROR: Invalid input.\n");
+        break;
+    }
 }
 
 static char unit;
@@ -897,7 +932,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
         if (office) {
             printf("Enter the information of estate, below:\n\n");
 
-            Sale_office = malloc(sizeof(sale_house));
+            Sale_office = malloc(sizeof(sale_office));
             if (Sale_office) {
                 // Get details of the house from the user
                 printf("Municipality area: ");
@@ -969,7 +1004,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
         if (land) {
             printf("Enter the information of estate, below:\n\n");
 
-            Sale_land = malloc(sizeof(sale_house));
+            Sale_land = malloc(sizeof(sale_land));
             if (Sale_land) {
                 // Get details of the house from the user
                 printf("Municipality area: ");
@@ -1023,9 +1058,232 @@ void saleEstate(user *a, char *type) // TODO: update user estates
     }
 }
 
-void rentEstate(user *a, char *type)
+void rentEstate(user *a, char *type) // TODO: update user estates
 {
+    double rent_temp, mor_temp;
+    time_t t;
+    struct tm *local; // pointer to structure of tm
 
+    local = malloc(sizeof(struct tm));
+
+    // Check the type of estate to be registered (house, office, land)
+    if (!strcmp(type, "house")) {
+        FILE *house;
+
+        // Open the file for storing information about houses for sale
+        house = fopen("houses_rent.hex", "ab+");
+        if (house) {
+            printf("Enter the information of estate, below:\n\n");
+            
+            // Get details of the house from the user
+            Rent_house = malloc(sizeof(rent_house));
+            if (Rent_house) {
+                printf("Municipality area: ");
+                gets(Rent_house->area);
+                
+                printf("Full address: ");
+                gets(Rent_house->address);
+                
+                printf("Type (Apartment/Villa): ");
+                gets(Rent_house->type);
+                
+                printf("Age: ");
+                gets(Rent_house->age);
+                
+                printf("Infrastructure (House Area): ");
+                gets(Rent_house->infrastructure);
+                
+                printf("On which floor: ");
+                gets(Rent_house->floor);
+                
+                printf("Base area: ");
+                gets(Rent_house->land);
+                
+                printf("Owner phone number: ");
+                gets(Rent_house->owner_phone_no);
+                
+                printf("The amount of rooms: ");
+                gets(Rent_house->rooms);
+                
+                printf("Mortgage: ");
+                scanf("%lf", &mor_temp);
+                getchar(); // Avoid extra enter
+                mor_temp = unitPicker(mor_temp); // Format and store the prices with appropriate units
+                sprintf(Rent_house->mortgage, "%.3lf %c", mor_temp, unit);
+
+                printf("Monthly rent: ");
+                scanf("%lf", &rent_temp);
+                getchar(); // Avoid extra enter
+                rent_temp = unitPicker(rent_temp); // Format and store the prices with appropriate units
+                sprintf(Rent_house->rent, "%.3lf %c", rent_temp, unit);
+                
+                // Prompt the user for additional features (parking, warehouse, elevator, telephone)
+                printf("Does it have parking? (Y/N): ");
+                Rent_house->parking = toupper(getche());
+                   
+                printf("\nDoes it have warehouse? (Y/N): ");
+                Rent_house->warehouse = toupper(getche());
+                   
+                printf("\nDoes it have elevator? (Y/N): ");
+                Rent_house->elevator = toupper(getche());
+                   
+                printf("\nDoes it have telephone? (Y/N): ");
+                Rent_house->telephone = toupper(getche());
+                
+                // Save the register date
+                t = time(NULL);
+                local = localtime(&t);
+                sprintf(Rent_house->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+
+                strcpy(Rent_house->registrar, a->username);
+                strcpy(Rent_house->deleter, "0");
+
+                fwrite(Rent_house, sizeof(rent_house), 1, house); // Write the information in file
+                printf("\nRegister was successful. Press any key to go back to main menu...");
+                getch(); // Wait for a key press before clearing screen
+                system("cls"); // Clear screen for better ui
+
+                fclose(house);
+                return;
+            }
+            else
+                printf("ERROR: Your computer is low on memory."); 
+        }
+        else
+            printf("ERROR: Could not access Estates. Please try again later.");
+    }
+    else if (!strcmp(type, "office")) {
+        FILE *office;
+
+        // Open the file for storing information about offices for sale
+        office = fopen("offices_rent.hex", "ab+");
+        if (office) {
+            printf("Enter the information of estate, below:\n\n");
+
+            Rent_office = malloc(sizeof(rent_office));
+            if (Rent_office) {
+                // Get details of the house from the user
+                printf("Municipality area: ");
+                gets(Rent_office->area);
+                
+                printf("Full address: ");
+                gets(Rent_office->address);
+                
+                printf("Type (Official document/Position): ");
+                gets(Rent_office->type);
+
+                printf("Age: ");
+                gets(Rent_office->age);
+                
+                printf("Infrastructure (Office Area): ");
+                gets(Rent_office->infrastructure);
+                
+                printf("On which floor: ");
+                gets(Rent_office->floor);
+                
+                printf("Base area: ");
+                gets(Rent_office->land);
+                
+                printf("Owner phone number: ");
+                gets(Rent_office->owner_phone_no);
+                
+                printf("The amount of rooms: ");
+                gets(Rent_office->rooms);
+                
+                printf("Mortgage: ");
+                scanf("%lf", &mor_temp);
+                getchar(); // Avoid extra enter
+                mor_temp = unitPicker(mor_temp); // Format and store the prices with appropriate units
+                sprintf(Rent_office->mortgage, "%.3lf %c", mor_temp, unit);
+
+                printf("Monthly rent: ");
+                scanf("%lf", &rent_temp);
+                getchar(); // Avoid extra enter
+                rent_temp = unitPicker(rent_temp); // Format and store the prices with appropriate units
+                sprintf(Rent_office->rent, "%.3lf %c", rent_temp, unit);
+                
+                // Save the register date
+                t = time(NULL);
+                local = localtime(&t);
+                sprintf(Rent_office->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+
+                strcpy(Rent_office->registrar, a->username);
+                strcpy(Rent_office->deleter, "0");
+
+                fwrite(Rent_office, sizeof(rent_office), 1, office); // Write the information in file
+                printf("\nRegister was successful. Press any key to go back to main menu...");
+                getch(); // Wait for a key press before clearing screen
+                system("cls"); // Clear screen for better ui
+
+                fclose(office);
+                return;
+            }
+            else
+                printf("ERROR: Your computer is low on memory."); 
+        }
+        else
+            printf("ERROR: Could not access Estates. Please try again later.");
+    }
+    else {
+        FILE *land;
+
+        // Open the file for storing information about lands for sale
+        land = fopen("lands_rent.hex", "ab+");
+        if (land) {
+            printf("Enter the information of estate, below:\n\n");
+
+            Rent_land = malloc(sizeof(rent_land));
+            if (Rent_land) {
+                // Get details of the house from the user
+                printf("Municipality area: ");
+                gets(Rent_land->area);
+                
+                printf("Full address: ");
+                gets(Rent_land->address);
+                
+                printf("Type (Farming/City): ");
+                gets(Rent_land->type);
+                
+                printf("Base area: ");
+                gets(Rent_land->land);
+                
+                printf("Owner phone number: ");
+                gets(Rent_land->owner_phone_no);
+                
+                printf("Mortgage: ");
+                scanf("%lf", &mor_temp);
+                getchar(); // Avoid extra enter
+                mor_temp = unitPicker(mor_temp); // Format and store the prices with appropriate units
+                sprintf(Rent_land->mortgage, "%.3lf %c", mor_temp, unit);
+
+                printf("Monthly rent: ");
+                scanf("%lf", &rent_temp);
+                getchar(); // Avoid extra enter
+                rent_temp = unitPicker(rent_temp); // Format and store the prices with appropriate units
+                sprintf(Rent_land->rent, "%.3lf %c", rent_temp, unit);
+                
+                // Save the register date
+                t = time(NULL);
+                local = localtime(&t);
+                sprintf(Rent_land->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+
+                strcpy(Rent_land->registrar, a->username);
+                strcpy(Rent_land->deleter, "0");
+
+                fwrite(Rent_land, sizeof(rent_land), 1, land); // Write the information in file
+                printf("\nRegister was successful. Press any key to go back to main menu...");
+                getch(); // Wait for a key press before clearing screen
+                system("cls"); // Clear screen for better ui
+
+                fclose(land);
+                return;
+            }
+            else
+                printf("ERROR: Your computer is low on memory."); 
+        }
+        else
+            printf("ERROR: Could not access Estates. Please try again later.");
+    }
 }
 
 double unitPicker(double price)
