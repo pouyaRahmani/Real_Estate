@@ -427,20 +427,18 @@ void readProfiles()
         while (!feof(profiles)) {
             User = malloc(sizeof(user));
             if (User) {
+                fread(User, sizeof(user), 1, profiles);
+                
                 // Checks if linked list is empty
-                if (start_user == NULL) { 
+                if (start_user == NULL) {
                     start_user = User;
                     end_user = User;
-                    start_user->next = NULL;
-
-                    fread(start_user, sizeof(user), 1, profiles); // Read information and store in structure
+                    end_user->next = NULL;
                 }
                 else {
                     end_user->next = User;
                     end_user = User;
                     end_user->next = NULL;
-
-                    fread(end_user, sizeof(user), 1, profiles); // Read information and store in structure
                 }
             }
             else
