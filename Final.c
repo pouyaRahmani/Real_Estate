@@ -134,15 +134,14 @@ sale_office *start_sale_office = NULL, *end_sale_office, *Sale_office;
 sale_land *start_sale_land = NULL, *end_sale_land, *Sale_land;
 
 // Prototypes of functions
-void firstMenu();
-void signUn();
+void signUp();
 void logIn();
 void mainMenu(user *a);
 void Register(user *a);
 void Delete(user *a);
 void report(user *a);
 void settings(user *a);
-void readProfiles();
+void readFile(char *structure, char *file);
 void sale(user *a);
 void rent(user *a);
 void saleEstate(user *a, char *type);
@@ -154,7 +153,13 @@ void main()
     char choice;
 
     while (1) {
-        firstMenu();
+        printf("\n\n");
+
+        printf("1. Sign Up\n");
+        printf("2. Log In\n");
+        printf("3. Exit\n\n");
+
+        printf("Choose an action from above menu: ");
         choice = getchar();
         getchar(); // Avoid exta enter
         system("cls"); // Clear screen for better ui
@@ -175,23 +180,9 @@ void main()
         
         default:
             printf("Invalid input.\n");
-            continue;
             break;
         }
     }
-}
-
-
-// Function to display first menu
-void firstMenu()
-{
-    printf("\n\n");
-
-    printf("1. Sign Up\n");
-    printf("2. Log In\n");
-    printf("3. Exit\n\n");
-
-    printf("Choose an action from above menu: ");
 }
 
 // Function to do the sign in proccess
@@ -247,8 +238,7 @@ void signUp() // TODO: check validation
                     }
 
                     putchar('*'); // display * instead of password for better security
-                    temp_pass1[index] = ch;
-                    index++;
+                    temp_pass1[index++] = ch;
                 } while (1); 
 
                 temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
@@ -269,8 +259,7 @@ void signUp() // TODO: check validation
                     }
                     
                     putchar('*'); // display * instead of password for better security
-                    temp_pass2[index] = ch;
-                    index++;
+                    temp_pass2[index++] = ch;
                 } while (1);
 
                 temp_pass2[index] = '\0'; // Initialize the last character to \0 manually
@@ -289,7 +278,7 @@ void signUp() // TODO: check validation
             t = time(NULL);
             local = localtime(&t);
             sprintf(User->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
-            strcpy(User->estates, "0"); // At first user haven't register any estates
+            strcpy(User->estates, "0"); // At first user haven't registered any estates
             fwrite(User, sizeof(user), 1, profiles); // Write the information in file
 
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
@@ -323,7 +312,7 @@ void logIn() // TODO: 2-step verification
     else
         printf("ERROR: Your computer is low on memory.");
     
-    readProfiles(); // Read information from file
+    readFile("user", "profiles.hex"); // Read information from file
     printf("Username: ");
     gets(username);
 
@@ -417,18 +406,20 @@ void logIn() // TODO: 2-step verification
     }
 }
 
-void readProfiles()
+void readFile(char *structure, char *file)
 {
-    FILE *profiles;
+    FILE *fp;
 
-    profiles = fopen("profiles.hex", "rb");
-    if (profiles) {
-        // Seek throw file to extract information
-        while (!feof(profiles)) {
+    if (!strcmp(structure, "user")) {
+        fp = fopen(file, "rb");
+        if (fp) {
+            // Seek throw file to extract information
+            while (!feof(fp)) {
             User = malloc(sizeof(user));
+
             if (User) {
-                fread(User, sizeof(user), 1, profiles);
-                
+                fread(User, sizeof(user), 1, fp);
+                    
                 // Checks if linked list is empty
                 if (start_user == NULL) {
                     start_user = User;
@@ -443,12 +434,39 @@ void readProfiles()
             }
             else
                 printf("ERROR: Your computer is low on memory.");
+            }
         }
-
-        fclose(profiles);
+        else {
+            printf("ERROR: Could not access profiles. Please try again later.");
+            return;
+        }
     }
-    else
-        printf("ERROR: Could not access profiles. Please try again later.");
+    else if (!strcmp(structure, "sale")) {
+        // Seek throw file to extract information
+        while (!feof(fp)) {
+        Sale_house = malloc(sizeof(sale_house));
+
+        if (Sale_house) {
+            fread(Sale_house, sizeof(sale_house), 1, fp);
+                
+            // Checks if linked list is empty
+            if (start_sale_house == NULL) {
+                start_sale_house = Sale_house;
+                end_sale_house = Sale_house;
+                end_sale_house->next = NULL;
+            }
+            else {
+                end_sale_house->next = Sale_house;
+                end_sale_house = Sale_house;
+                end_sale_house->next = NULL;
+            }
+        }
+        else
+            printf("ERROR: Your computer is low on memory.");
+        }
+    } 
+
+    fclose(fp);
 }
 
 void mainMenu(user *a)
@@ -683,7 +701,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
                 fwrite(Sale_house, sizeof(sale_house), 1, house); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
-                getch();
+                getch(); // Wait for a key press before clearing screen
                 system("cls"); // Clear screen for better ui
 
                 fclose(house);
@@ -755,7 +773,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
                 fwrite(Sale_office, sizeof(sale_office), 1, office); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
-                getch();
+                getch(); // Wait for a key press before clearing screen
                 system("cls"); // Clear screen for better ui
 
                 fclose(office);
@@ -815,7 +833,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
                 fwrite(Sale_land, sizeof(sale_land), 1, land); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
-                getch();
+                getch(); // Wait for a key press before clearing screen
                 system("cls"); // Clear screen for better ui
 
                 fclose(land);
