@@ -200,6 +200,7 @@ void signUp() // TODO: check validation
     FILE *profiles;
     int index = 0;
 
+    local = malloc(sizeof(struct tm));
     profiles = fopen("profiles.hex", "ab+");
 
     if (profiles) {
@@ -299,6 +300,8 @@ void signUp() // TODO: check validation
     }
     else
         printf("ERROR: Could not access profiles. Please try again later.");
+
+    free(local);
 }
 
 void logIn() // TODO: 2-step verification
@@ -915,6 +918,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 getch(); // Wait for a key press before clearing screen
                 system("cls"); // Clear screen for better ui
 
+                free(Sale_house);
                 fclose(house);
                 return;
             }
@@ -987,6 +991,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 getch(); // Wait for a key press before clearing screen
                 system("cls"); // Clear screen for better ui
 
+                free(Sale_office);
                 fclose(office);
                 return;
             }
@@ -1047,6 +1052,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 getch(); // Wait for a key press before clearing screen
                 system("cls"); // Clear screen for better ui
 
+                free(Sale_land);
                 fclose(land);
                 return;
             }
@@ -1056,6 +1062,8 @@ void saleEstate(user *a, char *type) // TODO: update user estates
         else
             printf("ERROR: Could not access Estates. Please try again later.");
     }
+
+    free(local);
 }
 
 void rentEstate(user *a, char *type) // TODO: update user estates
@@ -1143,6 +1151,7 @@ void rentEstate(user *a, char *type) // TODO: update user estates
                 getch(); // Wait for a key press before clearing screen
                 system("cls"); // Clear screen for better ui
 
+                free(Rent_house);
                 fclose(house);
                 return;
             }
@@ -1215,6 +1224,7 @@ void rentEstate(user *a, char *type) // TODO: update user estates
                 getch(); // Wait for a key press before clearing screen
                 system("cls"); // Clear screen for better ui
 
+                free(Rent_office);
                 fclose(office);
                 return;
             }
@@ -1275,6 +1285,7 @@ void rentEstate(user *a, char *type) // TODO: update user estates
                 getch(); // Wait for a key press before clearing screen
                 system("cls"); // Clear screen for better ui
 
+                free(Rent_land);
                 fclose(land);
                 return;
             }
@@ -1284,15 +1295,16 @@ void rentEstate(user *a, char *type) // TODO: update user estates
         else
             printf("ERROR: Could not access Estates. Please try again later.");
     }
+
+    free(local);
 }
 
 double unitPicker(double price)
 {
-    int counter;
+    int counter = 0;
 
     // Loop to determine the appropriate unit and reduce the price
-    while (price > 1000)
-    {
+    while (price >= 1000) {
         price = price / 1000;
         counter++;
     }
