@@ -154,7 +154,7 @@ void saleEstate(user *a, char *type);
 void rentEstate(user *a, char *type);
 double unitPicker(double a);
 
-void main()
+void main() // TODO: better first menu
 {
     system("color 0a");
     char choice;
@@ -761,7 +761,7 @@ void settings(user *a)
 
 void report(user *a)
 {
-    
+
 }
 
 void sale(user *a)
