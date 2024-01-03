@@ -474,17 +474,19 @@ int readFile(char *structure)
 
                 if (Sale_house) {
                     fread(Sale_house, sizeof(sale_house), 1, house);
-                        
-                    // Checks if linked list is empty
-                    if (start_sale_house == NULL) {
-                        start_sale_house = Sale_house;
-                        end_sale_house = Sale_house;
-                        end_sale_house->next = NULL;
-                    }
-                    else {
-                        end_sale_house->next = Sale_house;
-                        end_sale_house = Sale_house;
-                        end_sale_house->next = NULL;
+
+                    if (!strcmp(Sale_house->deleter, "0")) {
+                        // Checks if linked list is empty
+                        if (start_sale_house == NULL) {
+                            start_sale_house = Sale_house;
+                            end_sale_house = Sale_house;
+                            end_sale_house->next = NULL;
+                        }
+                        else {
+                            end_sale_house->next = Sale_house;
+                            end_sale_house = Sale_house;
+                            end_sale_house->next = NULL;
+                        }
                     }
                 }
                 else {
@@ -499,17 +501,19 @@ int readFile(char *structure)
 
                 if (Sale_office) {
                     fread(Sale_office, sizeof(sale_office), 1, office);
-                        
-                    // Checks if linked list is empty
-                    if (start_sale_office == NULL) {
-                        start_sale_office = Sale_office;
-                        end_sale_office = Sale_office;
-                        end_sale_office->next = NULL;
-                    }
-                    else {
-                        end_sale_office->next = Sale_office;
-                        end_sale_office = Sale_office;
-                        end_sale_office->next = NULL;
+
+                    if (!strcmp(Sale_office->deleter, "0")) {    
+                        // Checks if linked list is empty
+                        if (start_sale_office == NULL) {
+                            start_sale_office = Sale_office;
+                            end_sale_office = Sale_office;
+                            end_sale_office->next = NULL;
+                        }
+                        else {
+                            end_sale_office->next = Sale_office;
+                            end_sale_office = Sale_office;
+                            end_sale_office->next = NULL;
+                        }
                     }
                 }
                 else {
@@ -525,16 +529,18 @@ int readFile(char *structure)
                 if (Sale_land) {
                     fread(Sale_land, sizeof(sale_land), 1, land);
                         
-                    // Checks if linked list is empty
-                    if (start_sale_land == NULL) {
-                        start_sale_land = Sale_land;
-                        end_sale_land = Sale_land;
-                        end_sale_land->next = NULL;
-                    }
-                    else {
-                        end_sale_land->next = Sale_land;
-                        end_sale_land = Sale_land;
-                        end_sale_land->next = NULL;
+                    if (!strcmp(Sale_land->deleter, "0")) {
+                        // Checks if linked list is empty
+                        if (start_sale_land == NULL) {
+                            start_sale_land = Sale_land;
+                            end_sale_land = Sale_land;
+                            end_sale_land->next = NULL;
+                        }
+                        else {
+                            end_sale_land->next = Sale_land;
+                            end_sale_land = Sale_land;
+                            end_sale_land->next = NULL;
+                        }
                     }
                 }
                 else {
@@ -564,17 +570,19 @@ int readFile(char *structure)
 
                 if (Rent_house) {
                     fread(Rent_house, sizeof(rent_house), 1, house);
-                        
-                    // Checks if linked list is empty
-                    if (start_rent_house == NULL) {
-                        start_rent_house = Rent_house;
-                        end_rent_house = Rent_house;
-                        end_rent_house->next = NULL;
-                    }
-                    else {
-                        end_rent_house->next = Rent_house;
-                        end_rent_house = Rent_house;
-                        end_rent_house->next = NULL;
+
+                    if (!strcmp(Rent_house->deleter, "0")) {    
+                        // Checks if linked list is empty
+                        if (start_rent_house == NULL) {
+                            start_rent_house = Rent_house;
+                            end_rent_house = Rent_house;
+                            end_rent_house->next = NULL;
+                        }
+                        else {
+                            end_rent_house->next = Rent_house;
+                            end_rent_house = Rent_house;
+                            end_rent_house->next = NULL;
+                        }
                     }
                 }
                 else {
@@ -589,17 +597,19 @@ int readFile(char *structure)
 
                 if (Rent_office) {
                     fread(Rent_office, sizeof(rent_office), 1, office);
-                        
-                    // Checks if linked list is empty
-                    if (start_rent_office == NULL) {
-                        start_rent_office = Rent_office;
-                        end_rent_office = Rent_office;
-                        end_rent_office->next = NULL;
-                    }
-                    else {
-                        end_rent_office->next = Rent_office;
-                        end_rent_office = Rent_office;
-                        end_rent_office->next = NULL;
+
+                    if (!strcmp(Rent_office->deleter, "0")) {    
+                        // Checks if linked list is empty
+                        if (start_rent_office == NULL) {
+                            start_rent_office = Rent_office;
+                            end_rent_office = Rent_office;
+                            end_rent_office->next = NULL;
+                        }
+                        else {
+                            end_rent_office->next = Rent_office;
+                            end_rent_office = Rent_office;
+                            end_rent_office->next = NULL;
+                        }
                     }
                 }
                 else {
@@ -615,16 +625,18 @@ int readFile(char *structure)
                 if (Rent_land) {
                     fread(Rent_land, sizeof(rent_land), 1, land);
                         
-                    // Checks if linked list is empty
-                    if (start_rent_land == NULL) {
-                        start_rent_land = Rent_land;
-                        end_rent_land = Rent_land;
-                        end_rent_land->next = NULL;
-                    }
-                    else {
-                        end_rent_land->next = Rent_land;
-                        end_rent_land = Rent_land;
-                        end_rent_land->next = NULL;
+                    if (!strcmp(Rent_land->deleter, "0")) {
+                        // Checks if linked list is empty
+                        if (start_rent_land == NULL) {
+                            start_rent_land = Rent_land;
+                            end_rent_land = Rent_land;
+                            end_rent_land->next = NULL;
+                        }
+                        else {
+                            end_rent_land->next = Rent_land;
+                            end_rent_land = Rent_land;
+                            end_rent_land->next = NULL;
+                        }
                     }
                 }
                 else {
