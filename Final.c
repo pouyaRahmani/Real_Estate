@@ -156,6 +156,7 @@ double unitPicker(double a);
 
 void main()
 {
+    system("color 0a");
     char choice;
 
     while (1) {
@@ -970,7 +971,6 @@ void saleEstate(user *a, char *type) // TODO: update user estates
                 scanf("%lf", &price_temp);
                 getchar(); // Avoid extra enter
                 tot_temp = price_temp * atoi(Sale_office->infrastructure); // Calculate the total price based on the area and price per meter
-
                 // Format and store the prices with appropriate units
                 price_temp = unitPicker(price_temp);
                 sprintf(Sale_office->price, "%.3lf %c", price_temp, unit);
