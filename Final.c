@@ -761,7 +761,7 @@ void settings(user *a)
 
 void report(user *a)
 {
-
+    
 }
 
 void sale(user *a)
