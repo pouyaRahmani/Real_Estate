@@ -761,7 +761,117 @@ void settings(user *a)
 
 void report(user *a)
 {
+    int choice;
 
+    printf("What do you want to do %s %s?\n\n", a->name, a->family);
+
+    printf("1. Count of Estates in system\n");
+    printf("2. Estates in system by municipality area\n");
+    printf("3. Estates in system by age\n");
+    printf("4. Estates in system by infrastructure (house area)\n");
+    printf("5. Estates in system by specific total price\n");
+    printf("6. Estates in system by specific meter price\n");
+    printf("7.Houses in system by rooms\n"); // TODO: better sentence
+    printf("8. Estates in system by mortgage and rent\n");
+    printf("9. Apartments in system by floor\n");
+
+    if (!strcmp(a->username, admin->username)) {
+        printf("10. Total value of Estates\n");
+        printf("11. All users in sort of estate registration\n");
+        printf("12. Estates in system by registration date\n");
+        printf("13. Deleted estates by period of time\n");
+        printf("14. All users and their last activity\n");
+    }
+
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+    getchar(); // Avoid exta enter
+
+    if (strcmp(a->username, admin->username)) {
+        switch (choice)
+        {
+        case 1:
+            break;
+        
+        case 2:
+            break;
+        
+        case 3:
+            break;
+        
+        case 4:
+            break;
+        
+        case 5:
+            break;
+        
+        case 6:
+            break;
+        
+        case 7:
+            break;
+        
+        case 8:
+            break;
+        
+        case 9:
+            break;
+        
+        default:
+            printf("Wrong");
+            break;
+        }
+    }
+    else {
+        switch (choice)
+        {
+        case 1:
+            break;
+        
+        case 2:
+            break;
+        
+        case 3:
+            break;
+        
+        case 4:
+            break;
+        
+        case 5:
+            break;
+        
+        case 6:
+            break;
+        
+        case 7:
+            break;
+        
+        case 8:
+            break;
+        
+        case 9:
+            break;
+        
+        case 10:
+            break;
+        
+        case 11:
+            break;
+        
+        case 12:
+            break;
+        
+        case 13:
+            break;
+        
+        case 14:
+            break;
+        
+        default:
+            printf("Wrong");
+            break;
+        }
+    }
 }
 
 void sale(user *a)
