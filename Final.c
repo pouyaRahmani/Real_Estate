@@ -147,18 +147,21 @@ void Register(user *a);
 void Delete(user *a);
 void report(user *a);
 void settings(user *a);
-int readFile(char *structure);
+int readProfiles();
 void sale(user *a);
 void rent(user *a);
 void saleEstate(user *a, char *type);
 void rentEstate(user *a, char *type);
 double unitPicker(double a);
+void countReport();
+int readRents();
+int readSales();
 
 void main() // TODO: better first menu
 {
     int choice;
 
-    system("color 02");
+    system("color 0b");
     while (1) {
         printf("%38s---=== Welcome to Real-Estate software ===---\n\n", " ");
 
@@ -326,7 +329,7 @@ void logIn() // TODO: 2-step verification
         printf("ERROR: Your computer is low on memory.");
     
     // Read information from file
-    if (readFile("user"))
+    if (readProfiles())
         return;
     
     printf("Username: ");
@@ -422,236 +425,47 @@ void logIn() // TODO: 2-step verification
     }
 }
 
-int readFile(char *structure)
+int readProfiles()
 {
-    if (!strcmp(structure, "user")) {
-        FILE *fp;
+    FILE *fp;
 
-        fp = fopen("profiles.hex", "rb");
-        if (fp) {
-            // Seek throw file to extract information
-            while (!feof(fp)) {
-                User = malloc(sizeof(user));
+    fp = fopen("profiles.hex", "rb");
+    if (fp) {
+        // Seek throw file to extract information
+        while (!feof(fp)) {
+            User = malloc(sizeof(user));
 
-                if (User) {
-                    fread(User, sizeof(user), 1, fp);
+            if (User) {
+                fread(User, sizeof(user), 1, fp);
                         
-                    // Checks if linked list is empty
-                    if (start_user == NULL) {
-                        start_user = User;
-                        end_user = User;
-                        end_user->next = NULL;
-                    }
-                    else {
-                        end_user->next = User;
-                        end_user = User;
-                        end_user->next = NULL;
-                    }
+                // Checks if linked list is empty
+                if (start_user == NULL) {
+                    start_user = User;
+                    end_user = User;
+                    end_user->next = NULL;
                 }
                 else {
-                    printf("ERROR: Your computer is low on memory.");
-                    getch(); // Wait for a key press before clearing screen
-                    return 1;
+                    end_user->next = User;
+                    end_user = User;
+                    end_user->next = NULL;
                 }
             }
-
-            fclose(fp);
-        }
-        else {
-            printf("ERROR: Could not access profiles. Please try again later.");
-            getch(); // Wait for a key press before clearing screen
-            return 1;
-        }
-    }
-    else if (!strcmp(structure, "sale")) {
-        FILE *house, *office, *land;
-
-        house = fopen("houses_sale.hex", "ab");
-        office = fopen("offices_sale.hex", "ab");
-        land = fopen("lands_sale.hex", "ab");
-
-        if (house && office && land) {
-            // Seek throw file to extract information
-            while (!feof(house)) {
-                Sale_house = malloc(sizeof(sale_house));
-
-                if (Sale_house) {
-                    fread(Sale_house, sizeof(sale_house), 1, house);
-
-                    if (!strcmp(Sale_house->deleter, "0")) {
-                        // Checks if linked list is empty
-                        if (start_sale_house == NULL) {
-                            start_sale_house = Sale_house;
-                            end_sale_house = Sale_house;
-                            end_sale_house->next = NULL;
-                        }
-                        else {
-                            end_sale_house->next = Sale_house;
-                            end_sale_house = Sale_house;
-                            end_sale_house->next = NULL;
-                        }
-                    }
-                }
-                else {
-                    printf("ERROR: Your computer is low on memory.");
-                    getch(); // Wait for a key press before clearing screen
-                    return 1;
-                }
-            }
-
-            while (!feof(office)) {
-                Sale_office = malloc(sizeof(sale_office));
-
-                if (Sale_office) {
-                    fread(Sale_office, sizeof(sale_office), 1, office);
-
-                    if (!strcmp(Sale_office->deleter, "0")) {    
-                        // Checks if linked list is empty
-                        if (start_sale_office == NULL) {
-                            start_sale_office = Sale_office;
-                            end_sale_office = Sale_office;
-                            end_sale_office->next = NULL;
-                        }
-                        else {
-                            end_sale_office->next = Sale_office;
-                            end_sale_office = Sale_office;
-                            end_sale_office->next = NULL;
-                        }
-                    }
-                }
-                else {
-                    printf("ERROR: Your computer is low on memory.");
-                    getch(); // Wait for a key press before clearing screen
-                    return 1;
-                }
-            }
-
-            while (!feof(land)) {
-                Sale_land = malloc(sizeof(sale_land));
-
-                if (Sale_land) {
-                    fread(Sale_land, sizeof(sale_land), 1, land);
-                        
-                    if (!strcmp(Sale_land->deleter, "0")) {
-                        // Checks if linked list is empty
-                        if (start_sale_land == NULL) {
-                            start_sale_land = Sale_land;
-                            end_sale_land = Sale_land;
-                            end_sale_land->next = NULL;
-                        }
-                        else {
-                            end_sale_land->next = Sale_land;
-                            end_sale_land = Sale_land;
-                            end_sale_land->next = NULL;
-                        }
-                    }
-                }
-                else {
-                    printf("ERROR: Your computer is low on memory.");
-                    getch(); // Wait for a key press before clearing screen
-                    return 1;
-                }
+            else {
+                printf("ERROR: Your computer is low on memory.");
+                getch(); // Wait for a key press before clearing screen
+                return 1;
             }
         }
-        else {
-            printf("ERROR: Could not access Database. Please try again later.");
-            getch(); // Wait for a key press before clearing screen
-            return 1;
-        }
+
+        fclose(fp);
+        return 0;
     }
     else {
-        FILE *house, *office, *land;
-
-        house = fopen("houses_rent.hex", "ab");
-        office = fopen("offices_rent.hex", "ab");
-        land = fopen("lands_rent.hex", "ab");
-
-        if (house && office && land) {
-            // Seek throw file to extract information
-            while (!feof(house)) {
-                Rent_house = malloc(sizeof(rent_house));
-
-                if (Rent_house) {
-                    fread(Rent_house, sizeof(rent_house), 1, house);
-
-                    if (!strcmp(Rent_house->deleter, "0")) {    
-                        // Checks if linked list is empty
-                        if (start_rent_house == NULL) {
-                            start_rent_house = Rent_house;
-                            end_rent_house = Rent_house;
-                            end_rent_house->next = NULL;
-                        }
-                        else {
-                            end_rent_house->next = Rent_house;
-                            end_rent_house = Rent_house;
-                            end_rent_house->next = NULL;
-                        }
-                    }
-                }
-                else {
-                    printf("ERROR: Your computer is low on memory.");
-                    getch(); // Wait for a key press before clearing screen
-                    return 1;
-                }
-            }
-
-            while (!feof(office)) {
-                Rent_office = malloc(sizeof(rent_office));
-
-                if (Rent_office) {
-                    fread(Rent_office, sizeof(rent_office), 1, office);
-
-                    if (!strcmp(Rent_office->deleter, "0")) {    
-                        // Checks if linked list is empty
-                        if (start_rent_office == NULL) {
-                            start_rent_office = Rent_office;
-                            end_rent_office = Rent_office;
-                            end_rent_office->next = NULL;
-                        }
-                        else {
-                            end_rent_office->next = Rent_office;
-                            end_rent_office = Rent_office;
-                            end_rent_office->next = NULL;
-                        }
-                    }
-                }
-                else {
-                    printf("ERROR: Your computer is low on memory.");
-                    getch(); // Wait for a key press before clearing screen
-                    return 1;
-                }
-            }
-
-            while (!feof(land)) {
-                Rent_land = malloc(sizeof(rent_land));
-
-                if (Rent_land) {
-                    fread(Rent_land, sizeof(rent_land), 1, land);
-                        
-                    if (!strcmp(Rent_land->deleter, "0")) {
-                        // Checks if linked list is empty
-                        if (start_rent_land == NULL) {
-                            start_rent_land = Rent_land;
-                            end_rent_land = Rent_land;
-                            end_rent_land->next = NULL;
-                        }
-                        else {
-                            end_rent_land->next = Rent_land;
-                            end_rent_land = Rent_land;
-                            end_rent_land->next = NULL;
-                        }
-                    }
-                }
-                else {
-                    printf("ERROR: Your computer is low on memory.");
-                    getch(); // Wait for a key press before clearing screen
-                    return 1;
-                }
-            }
-        }
+        printf("ERROR: Could not access profiles. Please try again later.");
+        getch(); // Wait for a key press before clearing screen
+        return 1;
     }
-
-    return 0;
+    
 }
 
 void mainMenu(user *a)
@@ -768,8 +582,11 @@ void report(user *a)
 {
     int choice;
 
+    printf("%50s--== Reports ==--\n", " ");
+
     printf("What do you want to do %s %s?\n\n", a->name, a->family);
 
+    printf("0. return back\n");
     printf("1. Count of Estates in system\n");
     printf("2. Estates in system by municipality area\n");
     printf("3. Estates in system by age\n");
@@ -788,14 +605,20 @@ void report(user *a)
         printf("14. All users and their last activity\n");
     }
 
-    printf("Enter your choice: ");
+    printf("\nEnter your choice: ");
     scanf("%d", &choice);
     getchar(); // Avoid exta enter
+    system("cls");
 
     if (strcmp(a->username, admin->username)) {
         switch (choice)
         {
+        case 0:
+            return;
+            break;
+
         case 1:
+            countReport();
             break;
         
         case 2:
@@ -830,7 +653,12 @@ void report(user *a)
     else {
         switch (choice)
         {
+        case 0:
+            return;
+            break;
+
         case 1:
+            countReport();
             break;
         
         case 2:
@@ -877,6 +705,290 @@ void report(user *a)
             break;
         }
     }
+}
+
+void countReport()
+{
+    readRents();
+    readSales();
+
+    int sale_house = 0, sale_office = 0, sale_land = 0, rent_house = 0, rent_office = 0, rent_land = 0;
+
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        sale_house++;
+        free(Sale_house);
+        Sale_house = Sale_house->next;
+    }
+            
+    Sale_office = start_sale_office;
+    while (Sale_office) {
+        sale_office++;
+        free(Sale_office);
+        Sale_office = Sale_office->next;
+    }
+
+    Sale_land = start_sale_land;
+    while (Sale_land) {
+        sale_land++;
+        free(Sale_land);
+        Sale_land = Sale_land->next;
+    }
+
+    Rent_house = start_rent_house;
+    while (Rent_house) {
+        rent_house++;
+        free(Rent_house);
+        Rent_house = Rent_house->next;
+    }
+
+    Rent_office = start_rent_office;
+    while (Rent_office) {
+        rent_office++;
+        free(Rent_office);
+        Rent_office = Rent_office->next;
+    }
+
+    Rent_land = start_rent_land;
+    while (Rent_land) {
+        rent_land++;
+        free(Rent_land);
+        Rent_land = Rent_land->next;
+    }
+
+    printf("%43s--== Count of Estates ==--\n\n", " ");
+
+    printf("| %s | %s | %s | %s | %s | %s |\n", "Houses for sale", "Offices for sale", "Lands for sale",
+                                                "Houses for rent", "Offices for rent", "Lands for rent");
+    printf("|-----------------|------------------|----------------|-----------------|------------------|----------------|\n");
+    printf("| %8d%7s | %8d%8s | %7d%7s | %8d%7s | %8d%8s | %7d%7s |\n", sale_house, " ", sale_office, " ", sale_land-1, " ",
+                                                                      rent_house, " ", rent_office, " ", rent_land, " ");
+    getch();
+    system("cls");
+}
+
+int readSales()
+{
+    FILE *estate;
+
+    estate = fopen("houses_sale.hex", "rb");
+
+    if (estate) {
+        while (!feof(estate)) {
+            Sale_house = malloc(sizeof(sale_house));
+
+            if (Sale_house) {
+                fread(Sale_house, sizeof(sale_house), 1, estate);
+
+                if (strlen(Sale_house->deleter) == 1) {
+                    if (start_sale_house == NULL) {
+                        start_sale_house =Sale_house;
+                        end_sale_house = Sale_house;
+                        Sale_house->next = NULL;
+                    }
+                    else {
+                        end_sale_house->next = Sale_house;
+                        end_sale_house = Sale_house;
+                        Sale_house->next = NULL;
+                    }
+                }
+            }
+            else {
+                printf("ERROR: Your computer is low on memory.");
+                getch();
+                return 1;
+            }
+        }
+    }
+    else {
+        printf("ERROR: Could not access profiles. Please try again later.");
+        getch();
+        return 1;
+    }
+
+    estate = fopen("offices_sale.hex", "rb");
+
+    if (estate) {
+        while (!feof(estate)) {
+            Sale_office = malloc(sizeof(sale_office));
+
+            if (Sale_office) {
+                fread(Sale_office, sizeof(sale_office), 1, estate);
+
+                if (strlen(Sale_office->deleter) == 1) {
+                    if (start_sale_office == NULL) {
+                        start_sale_office = Sale_office;
+                        end_sale_office = start_sale_office;
+                        start_sale_office->next = NULL;
+                    }
+                    else {
+                        end_sale_office->next = Sale_office;
+                        end_sale_office = Sale_office;
+                        Sale_office->next = NULL;
+                    }
+                }
+            }
+            else {
+                printf("ERROR: Your computer is low on memory.");
+                getch();
+                return 1;
+            }
+        }
+    }
+    else {
+        printf("ERROR: Could not access profiles. Please try again later.");
+        getch();
+        return 1;
+    }
+    
+    estate = fopen("lands_sale.hex", "rb");
+
+    if (estate) {
+        while (!feof(estate)) {
+            Sale_land = malloc(sizeof(sale_land));
+
+            if (Sale_house) {
+                fread(Sale_land, sizeof(sale_land), 1, estate);
+
+                if (strlen(Sale_land->deleter) == 1) {
+                    if (start_sale_land == NULL) {
+                        start_sale_land = Sale_land;
+                        end_sale_land = start_sale_land;
+                        start_sale_land->next = NULL;
+                    }
+                    else {
+                        end_sale_land->next = Sale_land;
+                        end_sale_land = Sale_land;
+                        end_sale_land->next = NULL;
+                    }
+                }
+            }
+            else {
+                printf("ERROR: Your computer is low on memory.");
+                getch();
+                return 1;
+            }
+        }
+    }
+    else {
+        printf("ERROR: Could not access profiles. Please try again later.");
+        getch();
+        return 1;
+    }
+
+    return 0;
+}
+
+int readRents()
+{
+    FILE *estate;
+
+    estate = fopen("houses_rent.hex", "rb");
+
+    if (estate) {
+        while (!feof(estate)) {
+            Rent_house = malloc(sizeof(rent_house));
+
+            if (Rent_house) {
+                fread(Rent_house, sizeof(rent_house), 1, estate);
+
+                if (strlen(Rent_house->deleter) == 1) {
+                    if (start_rent_house == NULL) {
+                        start_rent_house = Rent_house;
+                        end_rent_house = Rent_house;
+                        Rent_house->next = NULL;
+                    }
+                    else {
+                        end_rent_house->next = Rent_house;
+                        end_rent_house = Rent_house;
+                        Rent_house->next = NULL;
+                    }
+                }
+            }
+            else {
+                printf("ERROR: Your computer is low on memory.");
+                getch();
+                return 1;
+            }
+        }
+    }
+    else {
+        printf("ERROR: Could not access profiles. Please try again later.");
+        getch();
+        return 1;
+    }
+
+    estate = fopen("offices_sale.hex", "rb");
+
+    if (estate) {
+        while (!feof(estate)) {
+            Rent_office = malloc(sizeof(rent_office));
+
+            if (Rent_office) {
+                fread(Rent_office, sizeof(rent_office), 1, estate);
+
+                if (strlen(Rent_office->deleter) == 1) {
+                    if (start_rent_office == NULL) {
+                        start_rent_office = Rent_office;
+                        end_rent_office = start_rent_office;
+                        start_rent_office->next = NULL;
+                    }
+                    else {
+                        end_rent_office->next = Rent_office;
+                        end_rent_office = Rent_office;
+                        end_rent_office->next = NULL;
+                    }
+                }
+            }
+            else {
+                printf("ERROR: Your computer is low on memory.");
+                getch();
+                return 1;
+            }
+        }
+    }
+    else {
+        printf("ERROR: Could not access profiles. Please try again later.");
+        getch();
+        return 1;
+    }
+    
+    estate = fopen("lands_rent.hex", "rb");
+
+    if (estate) {
+        while (!feof(estate)) {
+            Rent_land = malloc(sizeof(rent_land));
+
+            if (Rent_land) {
+                fread(Rent_land, sizeof(rent_land), 1, estate);
+
+                if (strlen(Rent_land->deleter) == 1) {
+                    if (start_rent_land == NULL) {
+                        start_rent_land = Rent_land;
+                        end_rent_land = start_rent_land;
+                        start_rent_land->next = NULL;
+                    }
+                    else {
+                        end_rent_land->next = Rent_land;
+                        end_rent_land = Rent_land;
+                        end_rent_land->next = NULL;
+                    }
+                }
+            }
+            else { 
+                printf("ERROR: Your computer is low on memory.");
+                getch();
+                return 1;
+            }
+        }
+    }
+    else {
+        printf("ERROR: Could not access profiles. Please try again later.");
+        getch();
+        return 1;
+    }
+
+    return 0;
 }
 
 void sale(user *a)
