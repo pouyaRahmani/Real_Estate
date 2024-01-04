@@ -156,32 +156,32 @@ double unitPicker(double a);
 
 void main() // TODO: better first menu
 {
-    system("color 0a");
-    char choice;
+    int choice;
 
+    system("color 02");
     while (1) {
-        printf("\n\n");
+        printf("%38s---=== Welcome to Real-Estate software ===---\n\n", " ");
 
         printf("1. Sign Up\n");
         printf("2. Log In\n");
         printf("3. Exit\n\n");
 
         printf("Choose an action from above menu: ");
-        choice = getchar();
+        scanf("%d", &choice);
         getchar(); // Avoid exta enter
         system("cls"); // Clear screen for better ui
 
         switch (choice)
         {
-        case '1':
+        case 1:
             signUp();
             break;
 
-        case '2':
+        case 2:
             logIn();
             break;
 
-        case '3':
+        case 3:
             exit(0);
             break;
         
@@ -204,6 +204,7 @@ void signUp() // TODO: check validation
     local = malloc(sizeof(struct tm));
     profiles = fopen("profiles.hex", "ab+");
 
+    printf("%50s--== Sign Up ==--\n", " ");
     if (profiles) {
         printf("Please enter your information below:\n\n");
 
@@ -309,6 +310,8 @@ void logIn() // TODO: 2-step verification
 {
     char username[20], password[16], ch;
     int index;
+
+    printf("%50s--== Log In ==--\n\n", " ");
 
     // Create admin user dynamically
     admin = malloc(sizeof(user));
@@ -664,7 +667,7 @@ void mainMenu(user *a)
     }
 
     while (1) {
-        printf("Welcome back %s %s\n", a->name, a->family);
+        printf("%40s--== Welcome back %s %s ==--\n\n", " ", a->name, a->family);
         printf("What do you want to do?\n\n");
 
         printf("1. Register New Estate\n");
@@ -722,6 +725,8 @@ void Register(user *a)
     char choice;
 
     while (1) {
+        printf("%50s--== Registration ==--\n\n", " ");
+
         printf("What do you want to register?\n\n");
 
         printf("1. Sales registration\n");
@@ -768,6 +773,8 @@ void sale(user *a)
 {
     int choice;
 
+    printf("%45s--== Sale Registration ==--\n\n", " ");
+
     printf("What type of estate do you want to register?\n\n");
 
     printf("1. Residential property (for live)\n");
@@ -807,6 +814,8 @@ void sale(user *a)
 void rent(user *a)
 {
     int choice;
+
+    printf("%45s--== Rent Registration ==--\n\n", " ");
 
     printf("What type of estate do you want to register?\n\n");
 
