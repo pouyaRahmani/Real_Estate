@@ -156,6 +156,7 @@ double unitPicker(double a);
 void countReport();
 int readRents();
 int readSales();
+void municipalityArea();
 
 void main() // TODO: better first menu
 {
@@ -623,6 +624,7 @@ void report(user *a)
                 break;
             
             case 2:
+                municipalityArea();
                 break;
             
             case 3:
@@ -767,6 +769,59 @@ void countReport()
                                                                       rent_house, " ", rent_office, " ", rent_land, " ");
     getch();
     system("cls");
+}
+
+void municipalityArea()
+{
+    readRents();
+    readSales();
+
+    char area[3];
+
+    printf("Enter dedicated municipality area: ");
+    gets(area);
+
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        if (strcmp(area, Sale_house->area)) {
+        }
+        Sale_house = Sale_house->next;
+    }
+            
+    Sale_office = start_sale_office;
+    while (Sale_office) {
+        sale_office++;
+        free(Sale_office);
+        Sale_office = Sale_office->next;
+    }
+
+    Sale_land = start_sale_land;
+    while (Sale_land) {
+        sale_land++;
+        free(Sale_land);
+        Sale_land = Sale_land->next;
+    }
+
+    Rent_house = start_rent_house;
+    while (Rent_house) {
+        rent_house++;
+        free(Rent_house);
+        Rent_house = Rent_house->next;
+    }
+
+    Rent_office = start_rent_office;
+    while (Rent_office) {
+        rent_office++;
+        free(Rent_office);
+        Rent_office = Rent_office->next;
+    }
+
+    Rent_land = start_rent_land;
+    while (Rent_land) {
+        rent_land++;
+        free(Rent_land);
+        Rent_land = Rent_land->next;
+    }
 }
 
 int readSales()
