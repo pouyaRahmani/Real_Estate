@@ -672,7 +672,7 @@ void report(user *a)
                 break;
             
             default:
-                printf("Wrong");
+                printf("ERROR: Invalid input.\n");
                 break;
             }
         }
@@ -741,7 +741,7 @@ void report(user *a)
                 break;
             
             default:
-                printf("Wrong");
+                printf("ERROR: Invalid input.\n");
                 break;
             }
         }
