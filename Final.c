@@ -158,6 +158,7 @@ void countReport();
 void saleEstate(user *a, char *type);
 void infrastructureEstate();
 void rentEstate(user *a, char *type);
+void totalPriceEstate();
 double unitPicker(double a);
 
 void main()
@@ -638,6 +639,7 @@ void report(user *a)
                 break;
             
             case 5:
+                totalPriceEstate();
                 break;
             
             case 6:
@@ -681,6 +683,7 @@ void report(user *a)
                 break;
             
             case 5:
+                totalPriceEstate();
                 break;
             
             case 6:
@@ -1185,6 +1188,93 @@ void infrastructureEstate()
                                                                                         Rent_office->rent, Rent_office->mortgage);
         free(Rent_office);
         Rent_office = Rent_office->next;
+    }
+
+    printf("\nPress any key to go back to reports menu...");
+    getch();
+    system("cls");
+}
+
+void totalPriceEstate()
+{
+    readRents();
+    readSales();
+
+    char parking[4], warehouse[4], elevator[4], telephone[4];
+    int from_price, to_price;
+
+    printf("Enter dedicated age rang (n-m): ");
+    scanf("%d%*c%d", &from_price, &to_price);
+    system("cls");
+
+    printf("%38sHouses for sale in total price rang from %d to %d\n\n", " ", from_price, to_price);
+
+    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|---------|-----------|----------|-----------|\n");
+
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        if (atoi(Sale_house->tot_price) <= to_price && atoi(Sale_house->tot_price) >= from_price) {
+            if (Sale_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Sale_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Sale_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Sale_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s | %-7s | %-9s | %-8s | %-9s |\n", Sale_house->type, Sale_house->age, Sale_house->infrastructure,
+                                                                                        Sale_house->floor, Sale_house->land, Sale_house->owner_phone_no, Sale_house->rooms,
+                                                                                        Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
+        }
+
+        free(Sale_house);
+        Sale_house = Sale_house->next;
+    }
+
+    printf("\n%38sOffices for sale in total price rang from %d to %d\n\n", " ", from_price, to_price);
+
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|\n");
+            
+    Sale_office = start_sale_office;
+    while (Sale_office) {
+        if (atoi(Sale_office->tot_price) <= to_price && atoi(Sale_office->tot_price) >= from_price)
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
+                                                                                        Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
+                                                                                        Sale_office->price, Sale_office->tot_price);
+        free(Sale_office);
+        Sale_office = Sale_office->next;
+    }
+
+    printf("\n%40sLands for sale in total price rang from %d to %d\n\n", " ", from_price, to_price);
+
+    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Price per meter", "Total price");
+    printf("%10s |---------|-----------|--------------------|-----------------|-------------|\n", " ");
+
+    Sale_land = start_sale_land;
+    while (Sale_land) {
+        if (atoi(Sale_land->tot_price) <= to_price && atoi(Sale_land->tot_price) >= from_price)
+            printf("%10s | %-7s | %-9s | %-18s | %-15s | %-11s |\n", " ", Sale_land->type, Sale_land->land, Sale_land->owner_phone_no, Sale_land->price, Sale_land->tot_price);
+
+        free(Sale_land);
+        Sale_land = Sale_land->next;
     }
 
     printf("\nPress any key to go back to reports menu...");
