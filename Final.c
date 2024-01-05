@@ -780,6 +780,9 @@ void municipalityArea()
 
     printf("Enter dedicated municipality area: ");
     gets(area);
+    system("cls");
+
+    printf("Houses for sale in municipality area %s", area);
 
     Sale_house = start_sale_house;
     while (Sale_house) {
