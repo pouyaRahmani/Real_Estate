@@ -665,6 +665,7 @@ void report(user *a)
                 break;
             
             case 2:
+                municipalityArea();
                 break;
             
             case 3:
@@ -776,22 +777,58 @@ void municipalityArea()
     readRents();
     readSales();
 
-    char area[3];
+    char area[3], parking[4], warehouse[4], elevator[4], telephone[4];
 
     printf("Enter dedicated municipality area: ");
     gets(area);
     system("cls");
 
-    printf("Houses for sale in municipality area %s", area);
+    printf("%38sHouses for sale in municipality area %s\n\n", " ", area);
+
+    printf("| %2s   | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|----------|-----|--------------|-------|-----------|---------------------|-----------------|----------------|-------------|---------|-----------|----------|-----------|\n");
 
     Sale_house = start_sale_house;
     while (Sale_house) {
-        if (strcmp(area, Sale_house->area)) {
+        if (!strcmp(area, Sale_house->area)) {
+            if (Sale_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Sale_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Sale_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Sale_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %s | %-3s | %-15s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s | %-7s | %-9s | %-8s | %-9s |\n", Sale_house->type, Sale_house->age, Sale_house->infrastructure,
+                                                                                        Sale_house->floor, Sale_house->land, Sale_house->owner_phone_no, Sale_house->rooms,
+                                                                                        Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
         }
+
         Sale_house = Sale_house->next;
     }
+
+    printf("%38sOffices for sale in municipality area %s\n\n", " ", area);
+
+    printf("| %2s   | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor",
+                                                                    "Base area", "Owner phone number", "Amount of rooms",
+                                                                    "Price per meter", "Total price");
+    printf("|----------|-----|--------------|-------|-----------|---------------------|-----------------|----------------|-------------|\n");
             
-    Sale_office = start_sale_office;
+    /*Sale_office = start_sale_office;
     while (Sale_office) {
         sale_office++;
         free(Sale_office);
@@ -824,7 +861,7 @@ void municipalityArea()
         rent_land++;
         free(Rent_land);
         Rent_land = Rent_land->next;
-    }
+    }*/
 }
 
 int readSales()
