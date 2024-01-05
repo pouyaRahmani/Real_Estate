@@ -156,6 +156,7 @@ void sale(user *a);
 int readRents();
 void rent(user *a);
 void countReport();
+void roomsEstate();
 void saleEstate(user *a, char *type);
 void infrastructureEstate();
 void rentEstate(user *a, char *type);
@@ -661,6 +662,7 @@ void report(user *a)
                 break;
             
             case 10:
+                roomsEstate();
                 break;
             
             case 11:
@@ -714,6 +716,7 @@ void report(user *a)
                 break;
             
             case 10:
+                roomsEstate();
                 break;
             
             case 11:
@@ -742,6 +745,8 @@ void report(user *a)
                 break;
             }
         }
+
+        i = 1;
     }
 }
 
@@ -969,7 +974,7 @@ void ageEstate()
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int from_age, to_age, temp;
 
-    printf("Enter dedicated age rang (n-m): ");
+    printf("Enter dedicated age range (n-m): ");
     scanf("%d%*c%d", &from_age, &to_age);
 
     if (to_age < from_age) {
@@ -1105,7 +1110,7 @@ void infrastructureEstate()
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int from_infrastructure, to_infrastructure, temp;
 
-    printf("Enter dedicated infrastructure rang (n-m): ");
+    printf("Enter dedicated infrastructure range (n-m): ");
     scanf("%d%*c%d", &from_infrastructure, &to_infrastructure);
 
     if (to_infrastructure < from_infrastructure) {
@@ -1241,7 +1246,7 @@ void totalPriceEstate()
     char parking[4], warehouse[4], elevator[4], telephone[4];
     long long int from_price, to_price, temp;
 
-    printf("Enter dedicated total price rang (n-m): ");
+    printf("Enter dedicated total price range (n-m): ");
     scanf("%lld%*c%lld", &from_price, &to_price);
 
     if (to_price < from_price) {
@@ -1335,7 +1340,7 @@ void meterPriceEstate()
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int from_price, to_price, temp;
 
-    printf("Enter dedicated price per meter rang (n-m): ");
+    printf("Enter dedicated price per meter range (n-m): ");
     scanf("%d%*c%d", &from_price, &to_price);
 
     if (to_price < from_price) {
@@ -1429,7 +1434,7 @@ void monthRentEstate()
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int from_price, to_price, temp;
 
-    printf("Enter dedicated price per meter rang (n-m): ");
+    printf("Enter dedicated monthly rent range (n-m): ");
     scanf("%d%*c%d", &from_price, &to_price);
 
     if (to_price < from_price) {
@@ -1523,7 +1528,7 @@ void mortgageEstate()
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int from_price, to_price, temp;
 
-    printf("Enter dedicated price per meter rang (n-m): ");
+    printf("Enter dedicated mortgage range (n-m): ");
     scanf("%d%*c%d", &from_price, &to_price);
 
     if (to_price < from_price) {
@@ -1534,7 +1539,7 @@ void mortgageEstate()
 
     system("cls");
     
-    printf("\n%38sHouses for Rent in monthly rent range from %d to %d\n\n", " ", from_price, to_price);
+    printf("\n%38sHouses for Rent in mortgage range from %d to %d\n\n", " ", from_price, to_price);
 
     printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
@@ -1573,7 +1578,7 @@ void mortgageEstate()
         Rent_house = Rent_house->next;
     }
 
-    printf("\n%38sOffices for rent in in monthly rent range from %d to %d\n\n", " ", from_price, to_price);
+    printf("\n%38sOffices for rent in mortgage range from %d to %d\n\n", " ", from_price, to_price);
 
     printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
@@ -1590,7 +1595,7 @@ void mortgageEstate()
         Rent_office = Rent_office->next;
     }
 
-    printf("\n%40sLands for rent in in monthly rent range from %d to %d\n\n", " ", from_price, to_price);
+    printf("\n%40sLands for rent in mortgage range from %d to %d\n\n", " ", from_price, to_price);
 
     printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Rent per month", " Mortgage");
     printf("%10s |---------|-----------|--------------------|----------------|-----------|\n", " ");
@@ -1602,6 +1607,101 @@ void mortgageEstate()
 
         free(Rent_land);
         Rent_land = Rent_land->next;
+    }
+
+    printf("\nPress any key to go back to reports menu...");
+    getch();
+    system("cls");
+}
+
+void roomsEstate()
+{
+    if (readRents() || readSales())
+        return;
+
+    char parking[4], warehouse[4], elevator[4], telephone[4];
+    int rooms;
+
+    printf("Enter dedicated rooms number: ");
+    scanf("%d", &rooms);
+    system("cls");
+
+    printf("%73sHouses for sale with %d rooms\n\n", " ", rooms);
+
+    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|---------|-----------|----------|-----------|\n");
+
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        if (atoi(Sale_house->rooms) == rooms) {
+            if (Sale_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Sale_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Sale_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Sale_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s | %-7s | %-9s | %-8s | %-9s |\n", Sale_house->type, Sale_house->age, Sale_house->infrastructure,
+                                                                                        Sale_house->floor, Sale_house->land, Sale_house->owner_phone_no, Sale_house->rooms,
+                                                                                        Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
+        }
+
+        free(Sale_house);
+        Sale_house = Sale_house->next;
+    }
+
+    printf("\n%73sHouses for Rent with %d rooms\n\n", " ", rooms);
+
+    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
+                                                                                    "Mortgage", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|---------|-----------|----------|-----------|\n");
+
+    Rent_house = start_rent_house;
+    while (Rent_house) {
+        if (atoi(Rent_house->rooms) == rooms) {
+            if (Rent_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Rent_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Rent_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Rent_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14.9s | %-9.9s | %-7s | %-9s | %-8s | %-9s |\n", Rent_house->type, Rent_house->age, Rent_house->infrastructure,
+                                                                                        Rent_house->floor, Rent_house->land, Rent_house->owner_phone_no, Rent_house->rooms,
+                                                                                        Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
+        }
+
+        free(Rent_house);
+        Rent_house = Rent_house->next;
     }
 
     printf("\nPress any key to go back to reports menu...");
