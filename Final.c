@@ -156,6 +156,7 @@ int readRents();
 void rent(user *a);
 void countReport();
 void saleEstate(user *a, char *type);
+void infrastructureEstate();
 void rentEstate(user *a, char *type);
 double unitPicker(double a);
 
@@ -633,6 +634,7 @@ void report(user *a)
                 break;
             
             case 4:
+                infrastructureEstate();
                 break;
             
             case 5:
@@ -675,6 +677,7 @@ void report(user *a)
                 break;
             
             case 4:
+                infrastructureEstate();
                 break;
             
             case 5:
@@ -1048,6 +1051,135 @@ void ageEstate()
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (atoi(Rent_office->age) <= to_age && atoi(Rent_office->age) >= from_age)
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+                                                                                        Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
+                                                                                        Rent_office->rent, Rent_office->mortgage);
+        free(Rent_office);
+        Rent_office = Rent_office->next;
+    }
+
+    printf("\nPress any key to go back to reports menu...");
+    getch();
+    system("cls");
+}
+
+void infrastructureEstate()
+{
+    readRents();
+    readSales();
+
+    char parking[4], warehouse[4], elevator[4], telephone[4];
+    int from_infrastructure, to_infrastructure;
+
+    printf("Enter dedicated infrastructure rang (n-m): ");
+    scanf("%d%*c%d", &from_infrastructure, &to_infrastructure);
+    system("cls");
+
+    printf("%38sHouses for sale in infrastructure rang from %d to %d\n\n", " ", from_infrastructure, to_infrastructure);
+
+    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|---------|-----------|----------|-----------|\n");
+
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        if (atoi(Sale_house->infrastructure) <= to_infrastructure && atoi(Sale_house->infrastructure) >= from_infrastructure) {
+            if (Sale_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Sale_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Sale_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Sale_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s | %-7s | %-9s | %-8s | %-9s |\n", Sale_house->type, Sale_house->age, Sale_house->infrastructure,
+                                                                                        Sale_house->floor, Sale_house->land, Sale_house->owner_phone_no, Sale_house->rooms,
+                                                                                        Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
+        }
+
+        free(Sale_house);
+        Sale_house = Sale_house->next;
+    }
+
+    printf("\n%38sOffices for sale in infrastructure rang from %d to %d\n\n", " ", from_infrastructure, to_infrastructure);
+
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|\n");
+            
+    Sale_office = start_sale_office;
+    while (Sale_office) {
+        if (atoi(Sale_office->infrastructure) <= to_infrastructure && atoi(Sale_office->infrastructure) >= from_infrastructure)
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
+                                                                                        Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
+                                                                                        Sale_office->price, Sale_office->tot_price);
+        free(Sale_office);
+        Sale_office = Sale_office->next;
+    }
+
+    printf("\n%38sHouses for Rent in infrastructure rang from %d to %d\n\n", " ", from_infrastructure, to_infrastructure);
+
+    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
+                                                                                    "Mortgage", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|---------|-----------|----------|-----------|\n");
+
+    Rent_house = start_rent_house;
+    while (Rent_house) {
+        if (atoi(Rent_house->infrastructure) <= to_infrastructure && atoi(Rent_house->infrastructure) >= from_infrastructure) {
+            if (Rent_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Rent_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Rent_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Rent_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14.9s | %-9.9s | %-7s | %-9s | %-8s | %-9s |\n", Rent_house->type, Rent_house->age, Rent_house->infrastructure,
+                                                                                        Rent_house->floor, Rent_house->land, Rent_house->owner_phone_no, Rent_house->rooms,
+                                                                                        Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
+        }
+
+        free(Rent_house);
+        Rent_house = Rent_house->next;
+    }
+
+    printf("\n%38sOffices for rent in infrastructure rang from %d to %d\n\n", " ", from_infrastructure, to_infrastructure);
+
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
+                                                                                    "Mortgage");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+
+    Rent_office = start_rent_office;
+    while (Rent_office) {
+        if (atoi(Rent_office->infrastructure) <= to_infrastructure && atoi(Rent_office->infrastructure) >= from_infrastructure)
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
