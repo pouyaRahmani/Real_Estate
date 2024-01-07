@@ -165,6 +165,8 @@ double unitPicker(double a);
 void meterPriceEstate();
 double unitConverter(char *price);
 void mortgageEstate();
+void RentEstate();
+void floorEstate();
 
 void main()
 {
@@ -603,8 +605,6 @@ void report(user *a)
         printf("%2d. Estates in system by infrastructure (house area)\n", i++);
         printf("%2d. Estates in system by specific total price\n", i++);
         printf("%2d. Estates in system by specific meter price\n", i++);
-        printf("%2d. Estates in system by specific monthly rent\n", i++);
-        printf("%2d. Estates in system by specific mortgage\n", i++);
         printf("%2d. Houses in system by number of rooms\n", i++);
         printf("%2d. Estates in system by mortgage and rent\n", i++);
         printf("%2d. Apartments in system by floor\n", i++);
@@ -654,21 +654,15 @@ void report(user *a)
                 break;
             
             case 8:
-                monthRentEstate();
-                break;
-            
-            case 9:
-                mortgageEstate();
-                break;
-            
-            case 10:
                 roomsEstate();
                 break;
             
-            case 11:
+            case 9:
+                RentEstate();
                 break;
             
-            case 12:
+            case 10:
+                floorEstate();
                 break;
             
             default:
@@ -712,11 +706,11 @@ void report(user *a)
                 break;
             
             case 9:
-                mortgageEstate();
+                RentEstate();
                 break;
             
             case 10:
-                roomsEstate();
+                floorEstate();
                 break;
             
             case 11:
@@ -727,17 +721,11 @@ void report(user *a)
             
             case 13:
                 break;
-            
+
             case 14:
                 break;
-            
+
             case 15:
-                break;
-
-            case 16:
-                break;
-
-            case 17:
                 break;
             
             default:
@@ -976,6 +964,7 @@ void ageEstate()
 
     printf("Enter dedicated age range (n-m): ");
     scanf("%d%*c%d", &from_age, &to_age);
+    getchar();
 
     if (to_age < from_age) {
         temp = to_age;
@@ -1097,12 +1086,24 @@ void ageEstate()
         Rent_office = Rent_office->next;
     }
 
+    Sale_land = start_sale_land;
+    while (Sale_land) {
+        free(Sale_land);
+        Sale_land = Sale_land->next;
+    }
+    
+    Rent_land = start_rent_land;
+    while (Rent_land) {
+        free(Rent_land);
+        Rent_land = Rent_land->next;
+    }
+
     printf("\nPress any key to go back to reports menu...");
     getch();
     system("cls");
 }
 
-void infrastructureEstate()
+void infrastructureEstate() // TODO: free extra reads to floorEstate
 {
     if (readRents() || readSales())
         return;
@@ -1112,6 +1113,7 @@ void infrastructureEstate()
 
     printf("Enter dedicated infrastructure range (n-m): ");
     scanf("%d%*c%d", &from_infrastructure, &to_infrastructure);
+    getchar();
 
     if (to_infrastructure < from_infrastructure) {
         temp = to_infrastructure;
@@ -1248,6 +1250,7 @@ void totalPriceEstate()
 
     printf("Enter dedicated total price range (n-m): ");
     scanf("%lld%*c%lld", &from_price, &to_price);
+    getchar();
 
     if (to_price < from_price) {
         temp = to_price;
@@ -1342,6 +1345,7 @@ void meterPriceEstate()
 
     printf("Enter dedicated price per meter range (n-m): ");
     scanf("%d%*c%d", &from_price, &to_price);
+    getchar();
 
     if (to_price < from_price) {
         temp = to_price;
@@ -1426,26 +1430,35 @@ void meterPriceEstate()
     system("cls");
 }
 
-void monthRentEstate()
+void RentEstate()
 {
     if (readRents())
         return;
 
     char parking[4], warehouse[4], elevator[4], telephone[4];
-    int from_price, to_price, temp;
+    int from_mortgage, to_mortgage, from_rent, to_rent, temp;
 
+    printf("Enter dedicated mortgage range (n-m): ");
+    scanf("%d%*c%d", &from_mortgage, &to_mortgage);
     printf("Enter dedicated monthly rent range (n-m): ");
-    scanf("%d%*c%d", &from_price, &to_price);
+    scanf("%d%*c%d", &from_rent, &to_rent);
+    getchar();
 
-    if (to_price < from_price) {
-        temp = to_price;
-        to_price = from_price;
-        from_price = temp;
+    if (from_mortgage < to_mortgage) {
+        temp = to_mortgage;
+        to_mortgage = from_mortgage;
+        from_mortgage = temp;
+    }
+
+    if (from_rent < to_rent) {
+        temp = to_rent;
+        to_rent = from_rent;
+        from_rent = temp;
     }
 
     system("cls");
     
-    printf("\n%38sHouses for Rent in monthly rent range from %d to %d\n\n", " ", from_price, to_price);
+    printf("\n%38sHouses for Rent in mortgage range from %d to %d and monthly rent range from %d to %d\n\n", " ", from_mortgage, to_mortgage, from_rent, to_rent);
 
     printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
@@ -1454,7 +1467,8 @@ void monthRentEstate()
 
     Rent_house = start_rent_house;
     while (Rent_house) {
-        if (unitConverter(Rent_house->rent) <= to_price && unitConverter(Rent_house->rent) >= from_price) {
+        if (unitConverter(Rent_house->mortgage) <= to_mortgage && unitConverter(Rent_house->mortgage) >= from_mortgage &&
+            unitConverter(Rent_house->rent) <= to_rent && unitConverter(Rent_house->rent) >= from_rent) {
             if (Rent_house->parking == 'Y')
                 strcpy(parking, "Yes");
             else
@@ -1484,7 +1498,7 @@ void monthRentEstate()
         Rent_house = Rent_house->next;
     }
 
-    printf("\n%38sOffices for rent in in monthly rent range from %d to %d\n\n", " ", from_price, to_price);
+    printf("\n%38sOffices for rent in mortgage range from %d to %d and monthly rent range from %d to %d\n\n", " ", from_mortgage, to_mortgage, from_rent, to_rent);
 
     printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
@@ -1493,7 +1507,8 @@ void monthRentEstate()
 
     Rent_office = start_rent_office;
     while (Rent_office) {
-        if (unitConverter(Rent_office->rent) <= to_price && unitConverter(Rent_office->rent) >= from_price)
+        if (unitConverter(Rent_office->mortgage) <= to_mortgage && unitConverter(Rent_office->mortgage) >= from_mortgage &&
+            unitConverter(Rent_office->rent) <= to_rent && unitConverter(Rent_office->rent) >= from_rent)
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
@@ -1501,14 +1516,15 @@ void monthRentEstate()
         Rent_office = Rent_office->next;
     }
 
-    printf("\n%40sLands for rent in in monthly rent range from %d to %d\n\n", " ", from_price, to_price);
+    printf("\n%40sLands for rent in mortgage range from %d to %d and monthly rent range from %d to %d\n\n", " ", from_mortgage, to_mortgage, from_rent, to_rent);
 
     printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Rent per month", " Mortgage");
     printf("%10s |---------|-----------|--------------------|----------------|-----------|\n", " ");
 
     Rent_land = start_rent_land;
     while (Rent_land) {
-        if (unitConverter(Rent_land->rent) <= to_price && unitConverter(Rent_land->rent) >= from_price)
+        if (unitConverter(Rent_land->mortgage) <= to_mortgage && unitConverter(Rent_land->mortgage) >= from_mortgage &&
+            unitConverter(Rent_land->rent) <= to_rent && unitConverter(Rent_land->rent) >= from_rent)
             printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
 
         free(Rent_land);
@@ -1520,35 +1536,69 @@ void monthRentEstate()
     system("cls");
 }
 
-void mortgageEstate()
+void floorEstate()
 {
-    if (readRents())
+    if (readRents() || readSales())
         return;
 
     char parking[4], warehouse[4], elevator[4], telephone[4];
-    int from_price, to_price, temp;
+    int floor;
 
-    printf("Enter dedicated mortgage range (n-m): ");
-    scanf("%d%*c%d", &from_price, &to_price);
-
-    if (to_price < from_price) {
-        temp = to_price;
-        to_price = from_price;
-        from_price = temp;
-    }
+    printf("Enter dedicated floor: ");
+    scanf("%d", &floor);
+    getchar();
 
     system("cls");
-    
-    printf("\n%38sHouses for Rent in mortgage range from %d to %d\n\n", " ", from_price, to_price);
 
-    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("%38sHouses for sale on %d floor\n\n", " ", floor);
+
+    printf("| %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|---------|-----------|----------|-----------|\n");
+
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        if (!strcmp(strlwr(Sale_house->type), "apartment")) {
+            if (Sale_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Sale_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Sale_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Sale_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s | %-7s | %-9s | %-8s | %-9s |\n", Sale_house->age, Sale_house->infrastructure,
+                                                                                        Sale_house->floor, Sale_house->land, Sale_house->owner_phone_no, Sale_house->rooms,
+                                                                                        Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
+        }
+
+        free(Sale_house);
+        Sale_house = Sale_house->next;
+    }
+
+    printf("\n%38sHouses for Rent on %d floor\n\n", " ", floor);
+
+    printf("| %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage", "Parking", "Warehouse", "Elevator", "Telephone");
     printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|---------|-----------|----------|-----------|\n");
 
     Rent_house = start_rent_house;
     while (Rent_house) {
-        if (unitConverter(Rent_house->mortgage) <= to_price && unitConverter(Rent_house->mortgage) >= from_price) {
+        if (!strcmp(strlwr(Rent_house->type), "apartment")) {
             if (Rent_house->parking == 'Y')
                 strcpy(parking, "Yes");
             else
@@ -1569,7 +1619,7 @@ void mortgageEstate()
             else
                 strcpy(telephone, "No");
 
-            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14.9s | %-9.9s | %-7s | %-9s | %-8s | %-9s |\n", Rent_house->type, Rent_house->age, Rent_house->infrastructure,
+            printf("| %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14.9s | %-9.9s | %-7s | %-9s | %-8s | %-9s |\n", Rent_house->age, Rent_house->infrastructure,
                                                                                         Rent_house->floor, Rent_house->land, Rent_house->owner_phone_no, Rent_house->rooms,
                                                                                         Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
         }
@@ -1577,41 +1627,6 @@ void mortgageEstate()
         free(Rent_house);
         Rent_house = Rent_house->next;
     }
-
-    printf("\n%38sOffices for rent in mortgage range from %d to %d\n\n", " ", from_price, to_price);
-
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
-                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
-                                                                                    "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
-
-    Rent_office = start_rent_office;
-    while (Rent_office) {
-        if (unitConverter(Rent_office->mortgage) <= to_price && unitConverter(Rent_office->mortgage) >= from_price)
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
-                                                                                        Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
-                                                                                        Rent_office->rent, Rent_office->mortgage);
-        free(Rent_office);
-        Rent_office = Rent_office->next;
-    }
-
-    printf("\n%40sLands for rent in mortgage range from %d to %d\n\n", " ", from_price, to_price);
-
-    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Rent per month", " Mortgage");
-    printf("%10s |---------|-----------|--------------------|----------------|-----------|\n", " ");
-
-    Rent_land = start_rent_land;
-    while (Rent_land) {
-        if (unitConverter(Rent_land->mortgage) <= to_price && unitConverter(Rent_land->mortgage) >= from_price)
-            printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
-
-        free(Rent_land);
-        Rent_land = Rent_land->next;
-    }
-
-    printf("\nPress any key to go back to reports menu...");
-    getch();
-    system("cls");
 }
 
 void roomsEstate()
