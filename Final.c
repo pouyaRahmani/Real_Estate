@@ -143,6 +143,7 @@ rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land;
 void signUp();
 void mainMenu(user *a);
 void logIn();
+void valueEstate();
 void Register(user *a);
 void ageEstate();
 void Delete(user *a);
@@ -164,9 +165,11 @@ void totalPriceEstate();
 double unitPicker(double a);
 void meterPriceEstate();
 double unitConverter(char *price);
-void mortgageEstate();
-void RentEstate();
+void valueEstate();
 void floorEstate();
+int availableUser(char *user);
+void RentEstate();
+
 
 void main()
 {
@@ -208,6 +211,7 @@ void main()
 
 // Function to do the sign in proccess
 void signUp() // TODO: check validation
+
 {
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
@@ -241,8 +245,16 @@ void signUp() // TODO: check validation
             printf("Email: ");
             gets(User->email);
             
-            printf("Username: "); // TODO: the word before username
-            gets(User->username);
+            while (1) {
+                printf("Username: "); // TODO: the word before username
+                gets(User->username);
+
+                if (availableUser(User->username) == 0) {
+                    break;
+                }
+
+                printf("Username is taken!!!\n");
+            }
             
             // Get the password twice to avoid typing mistakes
             while (1) {
@@ -714,6 +726,7 @@ void report(user *a)
                 break;
             
             case 11:
+                valueEstate();
                 break;
             
             case 12:
@@ -2034,6 +2047,39 @@ void rent(user *a)
 
 static char unit;
 
+void valueEstate()
+{
+    if (readSales())
+        return;
+
+    long long int value = 0;
+
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        value += unitConverter(Sale_house->tot_price);
+        free(Sale_house);
+        Sale_house = Sale_house->next;
+    }
+
+    Sale_office = start_sale_office;
+    while (Sale_office) {
+        value += unitConverter(Sale_office->tot_price);
+        free(Sale_office);
+        Sale_office = Sale_office->next;
+    }
+
+    Sale_land = start_sale_land;
+    while (Sale_land) {
+        value += unitConverter(Sale_land->tot_price);
+        free(Sale_land);
+        Sale_land = Sale_land->next;
+    }
+
+    printf("Total value of all Estates for sale: %.0lf %c", unitPicker((double)value), unit);
+    getch();
+    system("cls");
+}
+
 void saleEstate(user *a, char *type) // TODO: update user estates
 {
     double price_temp, tot_temp;
@@ -2555,4 +2601,24 @@ double unitConverter(char *price)
         return result * 1000 * 1000 * 1000;
         break;
     }
+}
+
+int availableUser(char *user)
+{
+    FILE *fp;
+    struct u usr;
+
+    fp = fopen("profiles.hex", "r");
+
+    while (fread(&usr, sizeof(struct u), 1, fp))
+    {
+        if (!strcmp(usr.username, user))
+        {
+            fclose(fp);
+            return 1; // Username is already taken
+        }
+    }
+
+    fclose(fp);
+    return 0; // Username is not taken
 }
