@@ -1692,12 +1692,16 @@ void roomsEstate()
 
 void dateEstate()
 {
-    if (readRents() || readSales())
-        return;
+    int from_year, from_month, from_day;
+    int to_year, to_month, to_day;
 
-    char from_date[9], to_date[9];
+    printf("Enter the start date (YY/MM/DD): ");
+    scanf("%d%*c%d%*c%d", &from_year, &from_month, &from_day);
 
+    printf("Enter the finish date (YY/MM/DD): ");
+    scanf("%d%*c%d%*c%d", &to_year, &to_month, &to_day);
 
+    
 }
 
 int readSales()
