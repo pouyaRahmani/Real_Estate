@@ -604,6 +604,9 @@ void settings(user *a) // TODO: complete
 
 void report(user *a) // TODO: users in sort
 {
+    if (readRents() || readSales())
+        return;
+
     int choice, i = 1;
 
     while (1) {
@@ -755,9 +758,6 @@ void report(user *a) // TODO: users in sort
 
 void countReport()
 {
-    if (readRents() || readSales())
-        return;
-
     int sale_house = 0, sale_office = 0, sale_land = 0, rent_house = 0, rent_office = 0, rent_land = 0;
 
     Sale_house = start_sale_house;
@@ -765,7 +765,6 @@ void countReport()
         if (!strcmp(Sale_house->deleter, "0"))
             sale_house++;
 
-        free(Sale_house);
         Sale_house = Sale_house->next;
     }
             
@@ -774,7 +773,6 @@ void countReport()
         if (!strcmp(Sale_land->deleter, "0"))
             sale_office++;
 
-        free(Sale_office);
         Sale_office = Sale_office->next;
     }
 
@@ -783,7 +781,6 @@ void countReport()
         if (!strcmp(Sale_land->deleter, "0"))
             sale_land++;
 
-        free(Sale_land);
         Sale_land = Sale_land->next;
     }
 
@@ -792,7 +789,6 @@ void countReport()
         if (!strcmp(Rent_house->deleter, "0"))
             rent_house++;
 
-        free(Rent_house);
         Rent_house = Rent_house->next;
     }
 
@@ -801,7 +797,6 @@ void countReport()
         if (!strcmp(Rent_office->deleter, "0"))
             rent_office++;
 
-        free(Rent_office);
         Rent_office = Rent_office->next;
     }
 
@@ -810,7 +805,6 @@ void countReport()
         if (!strcmp(Rent_land->deleter, "0"))
             rent_land++;
 
-        free(Rent_land);
         Rent_land = Rent_land->next;
     }
 
@@ -827,9 +821,6 @@ void countReport()
 
 void municipalityArea()
 {
-    if (readRents() || readSales())
-        return;
-
     char area[3], parking[4], warehouse[4], elevator[4], telephone[4];
 
     printf("Enter dedicated municipality area: ");
@@ -878,7 +869,6 @@ void municipalityArea()
                                                                                         Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
         }
 
-        free(Sale_house);
         Sale_house = Sale_house->next;
     }
 
@@ -895,7 +885,6 @@ void municipalityArea()
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
                                                                                         Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
                                                                                         Sale_office->price, Sale_office->tot_price);
-        free(Sale_office);
         Sale_office = Sale_office->next;
     }
 
@@ -909,7 +898,6 @@ void municipalityArea()
         if (!strcmp(area, Sale_land->area) && !strcmp(Sale_land->deleter, "0"))
             printf("%10s | %-7s | %-9s | %-18s | %-15s | %-11s |\n", " ", Sale_land->type, Sale_land->land, Sale_land->owner_phone_no, Sale_land->price, Sale_land->tot_price);
 
-        free(Sale_land);
         Sale_land = Sale_land->next;
     }
 
@@ -948,7 +936,6 @@ void municipalityArea()
                                                                                         Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
         }
 
-        free(Rent_house);
         Rent_house = Rent_house->next;
     }
 
@@ -965,7 +952,6 @@ void municipalityArea()
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
-        free(Rent_office);
         Rent_office = Rent_office->next;
     }
 
@@ -979,7 +965,6 @@ void municipalityArea()
         if (!strcmp(area, Rent_land->area) && !strcmp(Rent_land->deleter, "0"))
             printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
 
-        free(Rent_land);
         Rent_land = Rent_land->next;
     }
 
@@ -990,9 +975,6 @@ void municipalityArea()
 
 void ageEstate()
 {
-    if (readRents() || readSales())
-        return;
-
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int from_age, to_age, temp;
 
@@ -1043,7 +1025,6 @@ void ageEstate()
                                                                                         Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
         }
 
-        free(Sale_house);
         Sale_house = Sale_house->next;
     }
 
@@ -1060,7 +1041,6 @@ void ageEstate()
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
                                                                                         Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
                                                                                         Sale_office->price, Sale_office->tot_price);
-        free(Sale_office);
         Sale_office = Sale_office->next;
     }
 
@@ -1099,7 +1079,6 @@ void ageEstate()
                                                                                         Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
         }
 
-        free(Rent_house);
         Rent_house = Rent_house->next;
     }
 
@@ -1116,20 +1095,7 @@ void ageEstate()
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
-        free(Rent_office);
         Rent_office = Rent_office->next;
-    }
-
-    Sale_land = start_sale_land;
-    while (Sale_land) {
-        free(Sale_land);
-        Sale_land = Sale_land->next;
-    }
-    
-    Rent_land = start_rent_land;
-    while (Rent_land) {
-        free(Rent_land);
-        Rent_land = Rent_land->next;
     }
 
     printf("\nPress any key to go back to reports menu...");
@@ -1137,11 +1103,8 @@ void ageEstate()
     system("cls");
 }
 
-void infrastructureEstate() // TODO: free extra reads to floorEstate
+void infrastructureEstate()
 {
-    if (readRents() || readSales())
-        return;
-
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int from_infrastructure, to_infrastructure, temp;
 
@@ -1192,7 +1155,6 @@ void infrastructureEstate() // TODO: free extra reads to floorEstate
                                                                                         Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
         }
 
-        free(Sale_house);
         Sale_house = Sale_house->next;
     }
 
@@ -1209,7 +1171,6 @@ void infrastructureEstate() // TODO: free extra reads to floorEstate
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
                                                                                         Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
                                                                                         Sale_office->price, Sale_office->tot_price);
-        free(Sale_office);
         Sale_office = Sale_office->next;
     }
 
@@ -1248,7 +1209,6 @@ void infrastructureEstate() // TODO: free extra reads to floorEstate
                                                                                         Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
         }
 
-        free(Rent_house);
         Rent_house = Rent_house->next;
     }
 
@@ -1265,7 +1225,6 @@ void infrastructureEstate() // TODO: free extra reads to floorEstate
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
-        free(Rent_office);
         Rent_office = Rent_office->next;
     }
 
@@ -1276,8 +1235,6 @@ void infrastructureEstate() // TODO: free extra reads to floorEstate
 
 void totalPriceEstate()
 {
-    if (readSales())
-        return;
 
     char parking[4], warehouse[4], elevator[4], telephone[4];
     long long int from_price, to_price, temp;
@@ -1329,7 +1286,6 @@ void totalPriceEstate()
                                                                                         Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
         }
 
-        free(Sale_house);
         Sale_house = Sale_house->next;
     }
 
@@ -1346,7 +1302,6 @@ void totalPriceEstate()
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
                                                                                         Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
                                                                                         Sale_office->price, Sale_office->tot_price);
-        free(Sale_office);
         Sale_office = Sale_office->next;
     }
 
@@ -1360,7 +1315,6 @@ void totalPriceEstate()
         if (unitConverter(Sale_land->tot_price) <= to_price && unitConverter(Sale_land->tot_price) >= from_price && !strcmp(Sale_land->deleter, "0"))
             printf("%10s | %-7s | %-9s | %-18s | %-15s | %-11s |\n", " ", Sale_land->type, Sale_land->land, Sale_land->owner_phone_no, Sale_land->price, Sale_land->tot_price);
 
-        free(Sale_land);
         Sale_land = Sale_land->next;
     }
 
@@ -1371,9 +1325,6 @@ void totalPriceEstate()
 
 void meterPriceEstate()
 {
-    if (readSales())
-        return;
-
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int from_price, to_price, temp;
 
@@ -1424,7 +1375,6 @@ void meterPriceEstate()
                                                                                         Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
         }
 
-        free(Sale_house);
         Sale_house = Sale_house->next;
     }
 
@@ -1441,7 +1391,6 @@ void meterPriceEstate()
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
                                                                                         Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
                                                                                         Sale_office->price, Sale_office->tot_price);
-        free(Sale_office);
         Sale_office = Sale_office->next;
     }
 
@@ -1455,7 +1404,6 @@ void meterPriceEstate()
         if (unitConverter(Sale_land->price) <= to_price && unitConverter(Sale_land->price) >= from_price && !strcmp(Sale_land->deleter, "0"))
             printf("%10s | %-7s | %-9s | %-18s | %-15s | %-11s |\n", " ", Sale_land->type, Sale_land->land, Sale_land->owner_phone_no, Sale_land->price, Sale_land->tot_price);
 
-        free(Sale_land);
         Sale_land = Sale_land->next;
     }
 
@@ -1466,9 +1414,6 @@ void meterPriceEstate()
 
 void RentEstate()
 {
-    if (readRents())
-        return;
-
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int from_mortgage, to_mortgage, from_rent, to_rent, temp;
 
@@ -1528,7 +1473,6 @@ void RentEstate()
                                                                                         Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
         }
 
-        free(Rent_house);
         Rent_house = Rent_house->next;
     }
 
@@ -1546,7 +1490,6 @@ void RentEstate()
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
-        free(Rent_office);
         Rent_office = Rent_office->next;
     }
 
@@ -1561,7 +1504,6 @@ void RentEstate()
             unitConverter(Rent_land->rent) <= to_rent && unitConverter(Rent_land->rent) >= from_rent && !strcmp(Rent_land->deleter, "0"))
             printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
 
-        free(Rent_land);
         Rent_land = Rent_land->next;
     }
 
@@ -1570,11 +1512,8 @@ void RentEstate()
     system("cls");
 }
 
-void floorEstate() // TODO: check deleter
+void floorEstate() 
 {
-    if (readRents() || readSales())
-        return;
-
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int floor;
 
@@ -1593,7 +1532,7 @@ void floorEstate() // TODO: check deleter
 
     Sale_house = start_sale_house;
     while (Sale_house) {
-        if (!strcmp(strlwr(Sale_house->type), "apartment")) {
+        if (!strcmp(strlwr(Sale_house->type), "apartment") && !strcmp(Rent_house->deleter, "0")) {
             if (Sale_house->parking == 'Y')
                 strcpy(parking, "Yes");
             else
@@ -1619,7 +1558,6 @@ void floorEstate() // TODO: check deleter
                                                                                         Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
         }
 
-        free(Sale_house);
         Sale_house = Sale_house->next;
     }
 
@@ -1632,7 +1570,7 @@ void floorEstate() // TODO: check deleter
 
     Rent_house = start_rent_house;
     while (Rent_house) {
-        if (!strcmp(strlwr(Rent_house->type), "apartment")) {
+        if (!strcmp(strlwr(Rent_house->type), "apartment") && !strcmp(Rent_house->deleter, "0")) {
             if (Rent_house->parking == 'Y')
                 strcpy(parking, "Yes");
             else
@@ -1658,16 +1596,12 @@ void floorEstate() // TODO: check deleter
                                                                                         Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
         }
 
-        free(Rent_house);
         Rent_house = Rent_house->next;
     }
 }
 
 void roomsEstate()
 {
-    if (readRents() || readSales())
-        return;
-
     char parking[4], warehouse[4], elevator[4], telephone[4];
     int rooms;
 
@@ -1684,7 +1618,7 @@ void roomsEstate()
 
     Sale_house = start_sale_house;
     while (Sale_house) {
-        if (atoi(Sale_house->rooms) == rooms) {
+        if (atoi(Sale_house->rooms) == rooms && !strcmp(Rent_house->deleter, "0")) {
             if (Sale_house->parking == 'Y')
                 strcpy(parking, "Yes");
             else
@@ -1710,7 +1644,6 @@ void roomsEstate()
                                                                                         Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
         }
 
-        free(Sale_house);
         Sale_house = Sale_house->next;
     }
 
@@ -1723,7 +1656,7 @@ void roomsEstate()
 
     Rent_house = start_rent_house;
     while (Rent_house) {
-        if (atoi(Rent_house->rooms) == rooms) {
+        if (atoi(Rent_house->rooms) == rooms && !strcmp(Rent_house->deleter, "0")) {
             if (Rent_house->parking == 'Y')
                 strcpy(parking, "Yes");
             else
@@ -1749,7 +1682,6 @@ void roomsEstate()
                                                                                         Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
         }
 
-        free(Rent_house);
         Rent_house = Rent_house->next;
     }
 
