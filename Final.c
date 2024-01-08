@@ -702,7 +702,7 @@ void report(user *a)
                 break;
             
             case 8:
-                monthRentEstate();
+                roomsEstate();
                 break;
             
             case 9:
