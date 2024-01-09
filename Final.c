@@ -336,7 +336,7 @@ void signUp() // TODO: check validation
 void logIn() // TODO: 2-step verification
 {
     char username[20], password[16], ch;
-    int index;
+    int index = 0;
 
     printf("%50s--== Log In ==--\n\n", " ");
 
@@ -359,93 +359,98 @@ void logIn() // TODO: 2-step verification
     printf("Username: ");
     gets(username);
 
-    // Loop throw users to match username and password
-    User = start_user;
-    while (User->next) {
-        index = 0;
-        // Checks if user is admin
-        if (!strcmp(username, admin->username)) {
-            while (1) {
-                printf("Admin password: ");
-                
-                // Loop until user press enter
-                do {
-                    ch = getch();
+    // Checks if user is admin
+    if (!strcmp(username, admin->username)) {
+        while (1) {
+            printf("Admin password: ");
+        
+            // Loop until user press enter
+            do {
+                ch = getch();
 
-                    if (ch == 13)
-                        break;
-                    // If user press backspace key, remove last character
-                    else if (ch == 8) {
-                        printf("\b \b");
-                        index--;
-                        continue;
-                    }
-
-                    putchar('*'); // display * instead of password for better security
-                    password[index] = ch;
-                    index++;
-                } while (1);
-                password[index] = '\0'; // Initialize the last character to \0 manually
-
-                if (!strcmp(password, admin->password)) {
-                    system("cls"); // Clear screen for better ui
-                    mainMenu(admin);
+                if (ch == 13)
                     break;
+                // If user press backspace key, remove last character
+                else if (ch == 8) {
+                    printf("\b \b");
+                    index--;
+                    continue;
                 }
-                else
-                    printf("\nERROR: Wrong password!! Please try agin.\n");
+
+                putchar('*'); // display * instead of password for better security
+                password[index] = ch;
+                index++;
+            } while (1);
+            password[index] = '\0'; // Initialize the last character to \0 manually
+
+            if (!strcmp(password, admin->password)) {
+                system("cls"); // Clear screen for better ui
+                mainMenu(admin);
+                break;
             }
+            else
+                printf("\nERROR: Wrong password!! Please try agin.\n");
+
+            index = 0;
         }
-        else if (!strcmp(username, User->username)) {
-            while (1) {
-                printf("Password: ");
+    }
+    else {
+        // Loop throw users to match username and password
+        User = start_user;
+        while (User->next) {
+            if (!strcmp(username, User->username)) {
+                while (1) {
+                    printf("Password: ");
 
-                // Loop until user press enter
-                do {
-                    ch = getch();
+                    // Loop until user press enter
+                    do {
+                        ch = getch();
 
-                    if (ch == 13)
+                        if (ch == 13)
+                            break;
+                        // If user press backspace key, remove last character
+                        else if (ch == 8) {
+                            printf("\b \b");
+                            index--;
+                            continue;
+                        }
+
+                        putchar('*'); // display * instead of password for better security
+                        password[index] = ch;
+                        index++;
+                    } while (1);
+                    password[index] = '\0'; // Initialize the last character to \0 manually
+
+                    if (!strcmp(password, User->password)) {
+                        system("cls"); // Clear screen for better ui
+                        mainMenu(User);
                         break;
-                    // If user press backspace key, remove last character
-                    else if (ch == 8) {
-                        printf("\b \b");
-                        index--;
-                        continue;
                     }
+                    else
+                        printf("\nERROR: Wrong password!! Please try agin.\n");
 
-                    putchar('*'); // display * instead of password for better security
-                    password[index] = ch;
-                    index++;
-                } while (1);
-                password[index] = '\0'; // Initialize the last character to \0 manually
-
-                if (!strcmp(password, User->password)) {
-                    system("cls"); // Clear screen for better ui
-                    mainMenu(User);
-                    break;
+                    index = 0;
                 }
-                else
-                    printf("\nERROR: Wrong password!! Please try agin.\n");
             }
-        }
-        else if (!User->next->next) {
-            printf("Username you entered wasn't found.\n");
-            printf("Do you want to sign up (Y/N)?\n");
+            else if (!User->next->next) {
+                printf("Username you entered wasn't found.\n");
+                printf("Do you want to sign up (Y/N)?\n");
 
-            // Checks if user wants to sign up or not
-            if (toupper(getche()) == 'Y') {
-                system("cls"); // Clear screen for better ui
-                signUp();
+                // Checks if user wants to sign up or not
+                if (toupper(getche()) == 'Y') {
+                    system("cls"); // Clear screen for better ui
+                    signUp();
+                }
+                else {
+                    system("cls"); // Clear screen for better ui
+                    printf("Username: ");
+                    gets(username);
+                    User = start_user;
+                }
             }
-            else {
-                system("cls"); // Clear screen for better ui
-                printf("Username: ");
-                gets(username);
-                User = start_user;
-            }
+            else
+                User = User->next;
         }
-        else
-            User = User->next;
     }
 }
 
@@ -770,7 +775,7 @@ void countReport()
             
     Sale_office = start_sale_office;
     while (Sale_office) {
-        if (!strcmp(Sale_land->deleter, "0"))
+        if (!strcmp(Sale_office->deleter, "0"))
             sale_office++;
 
         Sale_office = Sale_office->next;
@@ -826,13 +831,6 @@ void municipalityArea()
     printf("Enter dedicated municipality area: ");
     gets(area);
     system("cls");
-
-    puts(start_sale_house->area);
-    puts(start_sale_office->area);
-    puts(start_sale_land->area);
-    puts(start_rent_house->area);
-    puts(start_rent_office->area);
-    puts(start_rent_land->area);
 
     printf("%38sHouses for sale in municipality area %s\n\n", " ", area);
 
@@ -1855,7 +1853,7 @@ int readRents()
         return 1;
     }
 
-    estate = fopen("offices_sale.hex", "rb");
+    estate = fopen("offices_rent.hex", "rb");
 
     if (estate) {
         while (!feof(estate)) {
@@ -2134,7 +2132,6 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
                 free(Sale_house);
                 fclose(house);
-                return;
             }
             else
                 printf("ERROR: Your computer is low on memory."); 
@@ -2206,7 +2203,6 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
                 free(Sale_office);
                 fclose(office);
-                return;
             }
             else
                 printf("ERROR: Your computer is low on memory."); 
@@ -2267,7 +2263,6 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
                 free(Sale_land);
                 fclose(land);
-                return;
             }
             else
                 printf("ERROR: Your computer is low on memory."); 
