@@ -129,15 +129,15 @@ typedef struct rent_land { // Structure to represent a land for rent
 } rent_land;
 
 // Some pointers for every structure to make linked list
-user *start_user = NULL, *end_user, *User, *admin;
+user *start_user = NULL, *end_user, *User, *admin, *temp;
 
-sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house;
-sale_office *start_sale_office = NULL, *end_sale_office, *Sale_office;
-sale_land *start_sale_land = NULL, *end_sale_land, *Sale_land;
+sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house, *temp_sale_house;
+sale_office *start_sale_office = NULL, *end_sale_office, *Sale_office, *temp_sale_office;
+sale_land *start_sale_land = NULL, *end_sale_land, *Sale_land, *temp_sale_land;
 
-rent_house *start_rent_house = NULL, *end_rent_house, *Rent_house;
-rent_office *start_rent_office = NULL, *end_rent_office, *Rent_office;
-rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land;
+rent_house *start_rent_house = NULL, *end_rent_house, *Rent_house, *temp_rent_house;
+rent_office *start_rent_office = NULL, *end_rent_office, *Rent_office, *temp_rent_office;
+rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land, *temp_rent_land;
 
 
 // Prototypes of functions
@@ -164,6 +164,7 @@ void saleEstate(user *a, char *type);
 void infrastructureEstate();
 void rentEstate(user *a, char *type);
 void totalPriceEstate();
+void freeEstates();
 double unitPicker(double a);
 void meterPriceEstate();
 double unitConverter(char *price);
@@ -176,11 +177,30 @@ void DeleteEstate();
 
 void main()
 {
-    int choice;
+    int choice, a = 0;
 
     system("color 0b");
     while (1) {
         printf("%38s---=== Welcome to Real-Estate software ===---\n\n", " ");
+
+        if(readProfiles())
+            exit(0);
+
+        User = start_user;
+        while (User) {
+            if (!User->next) {
+                free(User);
+            }
+            else {
+                printf("username: ");
+                puts(User->username);
+                a++;
+            }
+            User = User->next;
+        }
+
+        printf("Number of users: %d\n", a);
+        a = 0;
 
         printf("1. Sign Up\n");
         printf("2. Log In\n");
@@ -251,7 +271,7 @@ void signUp() // TODO: check validation
                 printf("Username: "); // TODO: the word before username
                 gets(User->username);
 
-                if (availableUser(User->username) == 0) {
+                if (!availableUser(User->username)) {
                     break;
                 }
 
@@ -337,6 +357,7 @@ void signUp() // TODO: check validation
 
 void logIn() // TODO: 2-step verification
 {
+    FILE *profiles;
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
     char username[20], password[16], ch;
@@ -402,6 +423,10 @@ void logIn() // TODO: 2-step verification
         // Loop throw users to match username and password
         User = start_user;
         while (User->next) {
+            puts(User->username);
+            puts(User->date);
+            puts(User->last_activity);
+
             if (!strcmp(username, User->username)) {
                 while (1) {
                     printf("Password: ");
@@ -429,7 +454,27 @@ void logIn() // TODO: 2-step verification
                         system("cls"); // Clear screen for better ui
                         t = time(NULL);
                         local = localtime(&t);
-                        sprintf(User->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday); // TODO: Update file
+                        sprintf(User->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+
+                        profiles = fopen("profiles.hex", "rb+");
+
+                        if (profiles) {
+                            while (!feof(profiles)) {
+                                temp = malloc(sizeof(user));
+                                fread(temp, sizeof(user), 1, profiles);
+
+                                if (!strcmp(temp->username, User->username)) {
+                                    fseek(profiles, -sizeof(user), SEEK_CUR);
+                                    fwrite(User, sizeof(user), 1, profiles);
+                                    break;
+                                }
+                            }
+
+                            fclose(profiles);
+                        }
+                        else
+                            printf("ERROR: Could not access profiles. Please try again later.");
+
                         mainMenu(User);
                         break;
                     }
@@ -472,8 +517,9 @@ int readProfiles()
             User = malloc(sizeof(user));
 
             if (User) {
+                //printf("%d\n", fread(User, sizeof(user), 1, fp));
                 fread(User, sizeof(user), 1, fp);
-                        
+
                 // Checks if linked list is empty
                 if (start_user == NULL) {
                     start_user = User;
@@ -654,6 +700,7 @@ void report(user *a) // TODO: users in sort
             switch (choice)
             {
             case 1:
+                freeEstates();
                 return;
                 break;
 
@@ -702,6 +749,7 @@ void report(user *a) // TODO: users in sort
             switch (choice)
             {
             case 1:
+                freeEstates();
                 return;
                 break;
 
@@ -766,6 +814,46 @@ void report(user *a) // TODO: users in sort
         }
 
         i = 1;
+    }
+}
+
+void freeEstates()
+{
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        free(Sale_house);
+        Sale_house = Sale_house->next;
+
+    }
+            
+    Sale_office = start_sale_office;
+    while (Sale_office) {
+        free(Sale_office);
+        Sale_office = Sale_office->next;
+    }
+
+    Sale_land = start_sale_land;
+    while (Sale_land) {
+        free(Sale_land);
+        Sale_land = Sale_land->next;
+    }
+
+    Rent_house = start_rent_house;
+    while (Rent_house) {
+        free(Rent_house);
+        Rent_house = Rent_house->next;
+    }
+
+    Rent_office = start_rent_office;
+    while (Rent_office) {
+        free(Rent_office);
+        Rent_office = Rent_office->next;
+    }
+
+    Rent_land = start_rent_land;
+    while (Rent_land) {
+        free(Rent_land);
+        Rent_land = Rent_land->next;
     }
 }
 
