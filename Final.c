@@ -176,6 +176,8 @@ int datecmp(char *date);
 void DeleteEstate();
 void updateUserEstate(user *a);
 void userActivity();
+void changePass(user *a);
+void freeUsers();
 
 void main()
 {
@@ -408,16 +410,12 @@ void logIn() // TODO: 2-step verification
             index = 0;
         }
     }
-    else {
+    else { // FIXME: pass loop
         // Loop throw users to match username and password
         User = start_user;
         while (User) {
-            puts(User->username);
-            puts(User->date);
-            puts(User->last_activity);
-
             if (!strcmp(username, User->username)) {
-                while (1) {
+                for (int i = 0; i < 5; i++) {
                     printf("Password: ");
 
                     // Loop until user press enter
@@ -445,7 +443,7 @@ void logIn() // TODO: 2-step verification
                         local = localtime(&t);
                         sprintf(User->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
 
-                        /*profiles = fopen("profiles.hex", "rb+");
+                        profiles = fopen("profiles.hex", "rb+");
 
                         if (profiles) {
                             for (temp = start_user; temp; temp = temp->next)
@@ -454,7 +452,7 @@ void logIn() // TODO: 2-step verification
                             fclose(profiles);
                         }
                         else
-                            printf("ERROR: Could not access profiles. Please try again later.");*/
+                            printf("ERROR: Could not access profiles. Please try again later.");
 
                         mainMenu(User);
                         break;
@@ -580,6 +578,7 @@ void mainMenu(user *a)
             break;
         
         case 6:
+            freeUsers();
             exit(0);
             break;
         
@@ -587,6 +586,15 @@ void mainMenu(user *a)
             printf("ERROR: Invalid input.\n");
             break;
         }
+    }
+}
+
+void freeUsers()
+{
+    temp = start_user;
+    while (temp) {
+        free(temp);
+        temp = temp->next;
     }
 }
 
@@ -635,6 +643,39 @@ void Register(user *a)
 }
 
 void settings(user *a) // TODO: complete
+{
+    int choice;
+
+    printf("%46s--== Settings ==--\n\n", " ");
+
+    printf("1. Change password\n");
+    printf("2. Change email\n");
+    printf("3. Rerun back\n\n");
+
+    printf("Choose an action from above menu: ");
+    scanf("%d", &choice);
+    getchar();
+    system("cls");
+
+    switch (choice)
+    {
+    case 1:
+        changePass(a);
+        break;
+    
+    case 2:
+        break;
+    
+    case 3:
+        return;
+        break;
+    
+    default:
+        break;
+    }
+}
+
+void changePass(user *a)
 {
 
 }
