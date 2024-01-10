@@ -175,6 +175,7 @@ void RentEstate();
 int datecmp(char *date);
 void DeleteEstate();
 void updateUserEstate(user *a);
+void userActivity();
 
 void main()
 {
@@ -802,6 +803,7 @@ void report(user *a) // TODO: users in sort
                 break;
 
             case 15:
+                userActivity();
                 break;
             
             default:
@@ -915,6 +917,11 @@ void countReport()
                                                                       rent_house, " ", rent_office, " ", rent_land, " ");
     getch();
     system("cls");
+}
+
+void userActivity()
+{
+    
 }
 
 void updateUserEstate(user *a)
