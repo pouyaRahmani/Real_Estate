@@ -174,6 +174,7 @@ int availableUser(char *user);
 void RentEstate();
 int datecmp(char *date);
 void DeleteEstate();
+void updateUserEstate(user *a);
 
 void main()
 {
@@ -438,16 +439,8 @@ void logIn() // TODO: 2-step verification
                         profiles = fopen("profiles.hex", "rb+");
 
                         if (profiles) {
-                            while (!feof(profiles)) {
-                                temp = malloc(sizeof(user));
-                                fread(temp, sizeof(user), 1, profiles);
-
-                                if (!strcmp(temp->username, User->username)) {
-                                    fseek(profiles, -sizeof(user), SEEK_CUR);
-                                    fwrite(User, sizeof(user), 1, profiles);
-                                    break;
-                                }
-                            }
+                            for (temp = start_user; temp; temp = temp->next)
+                                fwrite (temp, sizeof(user), 1, profiles);
 
                             fclose(profiles);
                         }
@@ -897,6 +890,32 @@ void countReport()
                                                                       rent_house, " ", rent_office, " ", rent_land, " ");
     getch();
     system("cls");
+}
+
+void updateUserEstate(user *a)
+{
+    FILE *profiles;
+
+    profiles = fopen("profiles.hex", "rb+");
+
+    if (profiles) {
+        temp = malloc(sizeof(user));
+
+        if (temp) {
+            
+        }
+        else {
+            printf("ERROR: Your computer is low on memory.");
+            getch();
+            return;
+        }
+    }
+    else {
+        printf("ERROR: Could not access profiles. Please try again later.");
+        getch(); // Wait for a key press before clearing screen
+        return;
+    }
+
 }
 
 static char parking[4], warehouse[4], elevator[4], telephone[4];
@@ -2428,7 +2447,7 @@ void valueEstate()
     system("cls");
 }
 
-void saleEstate(user *a, char *type) // TODO: update user estates
+void saleEstate(user *a, char *type)
 {
     double price_temp, tot_temp;
     time_t t;
@@ -2507,6 +2526,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
                 strcpy(Sale_house->registrar, a->username);
                 strcpy(Sale_house->deleter, "0");
+                updateUserEstate(a);
 
                 fwrite(Sale_house, sizeof(sale_house), 1, house); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
@@ -2578,6 +2598,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
                 strcpy(Sale_office->registrar, a->username);
                 strcpy(Sale_office->deleter, "0");
+                updateUserEstate(a);
 
                 fwrite(Sale_office, sizeof(sale_office), 1, office); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
@@ -2638,6 +2659,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
 
                 strcpy(Sale_land->registrar, a->username);
                 strcpy(Sale_land->deleter, "0");
+                updateUserEstate(a);
 
                 fwrite(Sale_land, sizeof(sale_land), 1, land); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
@@ -2657,7 +2679,7 @@ void saleEstate(user *a, char *type) // TODO: update user estates
     free(local);
 }
 
-void rentEstate(user *a, char *type) // TODO: update user estates
+void rentEstate(user *a, char *type)
 {
     double rent_temp, mor_temp;
     time_t t;
@@ -2736,6 +2758,7 @@ void rentEstate(user *a, char *type) // TODO: update user estates
 
                 strcpy(Rent_house->registrar, a->username);
                 strcpy(Rent_house->deleter, "0");
+                updateUserEstate(a);
 
                 fwrite(Rent_house, sizeof(rent_house), 1, house); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
@@ -2809,6 +2832,7 @@ void rentEstate(user *a, char *type) // TODO: update user estates
 
                 strcpy(Rent_office->registrar, a->username);
                 strcpy(Rent_office->deleter, "0");
+                updateUserEstate(a);
 
                 fwrite(Rent_office, sizeof(rent_office), 1, office); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
@@ -2870,6 +2894,7 @@ void rentEstate(user *a, char *type) // TODO: update user estates
 
                 strcpy(Rent_land->registrar, a->username);
                 strcpy(Rent_land->deleter, "0");
+                updateUserEstate(a);
 
                 fwrite(Rent_land, sizeof(rent_land), 1, land); // Write the information in file
                 printf("\nRegister was successful. Press any key to go back to main menu...");
