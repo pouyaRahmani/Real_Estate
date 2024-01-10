@@ -178,7 +178,7 @@ void updateUserEstate(user *a);
 
 void main()
 {
-    int choice, a = 0;
+    int choice;
 
     // Create admin user dynamically
     admin = malloc(sizeof(user));
@@ -191,6 +191,17 @@ void main()
     }
     else
         printf("ERROR: Your computer is low on memory.");
+
+    readProfiles();
+
+    temp = start_user;
+    while (temp) {
+        puts(temp->name);
+        puts(temp->username);
+        puts(temp->estates);
+
+        temp = temp->next;
+    }
 
     system("color 0b");
     while (1) {
@@ -232,14 +243,15 @@ void signUp() // TODO: check validation
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
     char temp_pass1[16], temp_pass2[16], ch;
-    FILE *profiles;
-    int index = 0;
+    FILE *profiles, *number;
+    int index = 0, users;
 
     local = malloc(sizeof(struct tm));
     profiles = fopen("profiles.hex", "ab+");
+    number = fopen("number_of_users.txt", "r+");
 
     printf("%50s--== Sign Up ==--\n", " ");
-    if (profiles) {
+    if (profiles && number) {
         printf("Please enter your information below:\n\n");
 
         // Allocate a structure, get information from user and save it to "profiles.hex" file
@@ -333,6 +345,12 @@ void signUp() // TODO: check validation
             strcpy(temp->estates, "0"); // At first user haven't registered any estates
             fwrite(temp, sizeof(user), 1, profiles); // Write the information in file
 
+            fscanf(number, "%d", &users);
+            users++;
+            printf("%d", users);
+            rewind(number);
+            fprintf(number, "%d", users);
+
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
             free(temp);
@@ -342,6 +360,7 @@ void signUp() // TODO: check validation
             printf("ERROR: Your computer is low on memory.");
 
         fclose(profiles);
+        fclose(number);
     }
     else
         printf("ERROR: Could not access profiles. Please try again later.");
@@ -358,8 +377,8 @@ void logIn() // TODO: 2-step verification
     printf("%50s--== Log In ==--\n\n", " ");
     
     // Read information from file
-    if (readProfiles())
-        return;
+    /*if (readProfiles())
+        return;*/
     
     printf("Username: ");
     gets(username);
@@ -402,7 +421,7 @@ void logIn() // TODO: 2-step verification
     else {
         // Loop throw users to match username and password
         User = start_user;
-        while (User->next) {
+        while (User) {
             puts(User->username);
             puts(User->date);
             puts(User->last_activity);
@@ -436,7 +455,7 @@ void logIn() // TODO: 2-step verification
                         local = localtime(&t);
                         sprintf(User->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
 
-                        profiles = fopen("profiles.hex", "rb+");
+                        /*profiles = fopen("profiles.hex", "rb+");
 
                         if (profiles) {
                             for (temp = start_user; temp; temp = temp->next)
@@ -445,7 +464,7 @@ void logIn() // TODO: 2-step verification
                             fclose(profiles);
                         }
                         else
-                            printf("ERROR: Could not access profiles. Please try again later.");
+                            printf("ERROR: Could not access profiles. Please try again later.");*/
 
                         mainMenu(User);
                         break;
@@ -480,17 +499,21 @@ void logIn() // TODO: 2-step verification
 
 int readProfiles()
 {
-    FILE *fp;
+    FILE *profiles, *number;
+    int users;
 
-    fp = fopen("profiles.hex", "rb");
-    if (fp) {
+    profiles = fopen("profiles.hex", "rb");
+    number = fopen("number_of_users.txt", "r");
+
+    if (profiles && number) {
+        fscanf(number, "%d", &users);
+
         // Seek throw file to extract information
-        while (!feof(fp)) {
+        while (users) {
             User = malloc(sizeof(user));
 
             if (User) {
-                //printf("%d\n", fread(User, sizeof(user), 1, fp));
-                fread(User, sizeof(user), 1, fp);
+                fread(User, sizeof(user), 1, profiles);
 
                 // Checks if linked list is empty
                 if (start_user == NULL) {
@@ -503,6 +526,8 @@ int readProfiles()
                     end_user = User;
                     end_user->next = NULL;
                 }
+
+                users--;
             }
             else {
                 printf("ERROR: Your computer is low on memory.");
@@ -511,7 +536,7 @@ int readProfiles()
             }
         }
 
-        fclose(fp);
+        fclose(profiles);
         return 0;
     }
     else {
@@ -895,20 +920,38 @@ void countReport()
 void updateUserEstate(user *a)
 {
     FILE *profiles;
+    int estates;
 
     profiles = fopen("profiles.hex", "rb+");
 
     if (profiles) {
-        temp = malloc(sizeof(user));
+        while (!feof(profiles)) {
+            temp = malloc(sizeof(user));
 
-        if (temp) {
-            
+            if (temp) {
+                fread(temp, sizeof(user), 1, profiles);
+
+                if (!strcmp(temp->username, a->username)) {
+                    estates = atoi(temp->estates);
+                    estates++;
+                    sprintf(temp->estates, "%d", estates);
+
+                    fseek(profiles, -sizeof(user), SEEK_CUR);
+                    fwrite(temp, sizeof(user), 1, profiles);
+                    free(temp);
+                    break;
+                }
+
+                free(temp);
+            }
+            else {
+                printf("ERROR: Your computer is low on memory.");
+                getch();
+                return;
+            }
         }
-        else {
-            printf("ERROR: Your computer is low on memory.");
-            getch();
-            return;
-        }
+
+        fclose(profiles);
     }
     else {
         printf("ERROR: Could not access profiles. Please try again later.");
