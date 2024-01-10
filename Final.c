@@ -131,7 +131,7 @@ typedef struct rent_land { // Structure to represent a land for rent
 // Some pointers for every structure to make linked list
 user *start_user = NULL, *end_user, *User, *admin, *temp;
 
-sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house, *temp_sale_house;
+sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house, *temp_sale_house; // TODO: if not used delete
 sale_office *start_sale_office = NULL, *end_sale_office, *Sale_office, *temp_sale_office;
 sale_land *start_sale_land = NULL, *end_sale_land, *Sale_land, *temp_sale_land;
 
@@ -179,28 +179,21 @@ void main()
 {
     int choice, a = 0;
 
+    // Create admin user dynamically
+    admin = malloc(sizeof(user));
+    if (admin) {
+        strcpy(admin->username, "admin");
+        strcpy(admin->password, "admin");
+        strcpy(admin->name, "admin");
+        strcpy(admin->family, "");
+        strcpy(admin->estates, "0");
+    }
+    else
+        printf("ERROR: Your computer is low on memory.");
+
     system("color 0b");
     while (1) {
         printf("%38s---=== Welcome to Real-Estate software ===---\n\n", " ");
-
-        if(readProfiles())
-            exit(0);
-
-        User = start_user;
-        while (User) {
-            if (!User->next) {
-                free(User);
-            }
-            else {
-                printf("username: ");
-                puts(User->username);
-                a++;
-            }
-            User = User->next;
-        }
-
-        printf("Number of users: %d\n", a);
-        a = 0;
 
         printf("1. Sign Up\n");
         printf("2. Log In\n");
@@ -249,29 +242,29 @@ void signUp() // TODO: check validation
         printf("Please enter your information below:\n\n");
 
         // Allocate a structure, get information from user and save it to "profiles.hex" file
-        User = malloc(sizeof(user));
-        if (User) {
+        temp = malloc(sizeof(user));
+        if (temp) {
             // Promote user to enter specific information
             printf("Surname: ");
-            gets(User->name);
+            gets(temp->name);
             
             printf("Last Name: ");
-            gets(User->family);
+            gets(temp->family);
             
             printf("ID: ");
-            gets(User->id);
+            gets(temp->id);
             
             printf("Phone Number: ");
-            gets(User->phone_no);
+            gets(temp->phone_no);
             
             printf("Email: ");
-            gets(User->email);
+            gets(temp->email);
             
             while (1) {
                 printf("Username: "); // TODO: the word before username
-                gets(User->username);
+                gets(temp->username);
 
-                if (!availableUser(User->username)) {
+                if (!availableUser(temp->username)) {
                     break;
                 }
 
@@ -323,8 +316,8 @@ void signUp() // TODO: check validation
                 printf("\n");
 
                 // If two passwords are same, save it and break
-                if (strcmp(temp_pass1, temp_pass2) == 0) {
-                    strcpy(User->password, temp_pass1);
+                if (!strcmp(temp_pass1, temp_pass2)) {
+                    strcpy(temp->password, temp_pass1);
                     break;
                 }
 
@@ -334,14 +327,14 @@ void signUp() // TODO: check validation
             // Save the sign up date
             t = time(NULL);
             local = localtime(&t);
-            sprintf(User->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
-            sprintf(User->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
-            strcpy(User->estates, "0"); // At first user haven't registered any estates
-            fwrite(User, sizeof(user), 1, profiles); // Write the information in file
+            sprintf(temp->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+            sprintf(temp->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+            strcpy(temp->estates, "0"); // At first user haven't registered any estates
+            fwrite(temp, sizeof(user), 1, profiles); // Write the information in file
 
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
-            free(User);
+            free(temp);
             system("cls"); // Clear screen for better ui
         }
         else
@@ -351,8 +344,6 @@ void signUp() // TODO: check validation
     }
     else
         printf("ERROR: Could not access profiles. Please try again later.");
-
-    free(local);
 }
 
 void logIn() // TODO: 2-step verification
@@ -364,18 +355,6 @@ void logIn() // TODO: 2-step verification
     int index = 0;
 
     printf("%50s--== Log In ==--\n\n", " ");
-
-    // Create admin user dynamically
-    admin = malloc(sizeof(user));
-    if (admin) {
-        strcpy(admin->username, "admin");
-        strcpy(admin->password, "admin");
-        strcpy(admin->name, "admin");
-        strcpy(admin->family, "");
-        strcpy(admin->estates, "0");
-    }
-    else
-        printf("ERROR: Your computer is low on memory.");
     
     // Read information from file
     if (readProfiles())
@@ -2086,23 +2065,18 @@ void rent(user *a)
     }
 }
 
-int availableUser(char *user)
+int availableUser(char *username)
 {
-    FILE *fp;
-    struct u usr;
+    if (!strcmp(admin->username, username))
+        return 1; // Username is taken
 
-    fp = fopen("profiles.hex", "r");
+    if (readProfiles())
+        return 1; // Could not access profiles
 
-    while (fread(&usr, sizeof(struct u), 1, fp))
-    {
-        if (!strcmp(usr.username, user) || !strcmp(admin->username, user))
-        {
-            fclose(fp);
-            return 1; // Username is already taken
-        }
-    }
+    for (User = start_user; User; User = User->next)
+        if (!strcmp(User->username, username))
+            return 1; // Username is taken
 
-    fclose(fp);
     return 0; // Username is not taken
 }
 
