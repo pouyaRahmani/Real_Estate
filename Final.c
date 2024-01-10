@@ -193,17 +193,6 @@ void main()
     else
         printf("ERROR: Your computer is low on memory.");
 
-    readProfiles();
-
-    temp = start_user;
-    while (temp) {
-        puts(temp->name);
-        puts(temp->username);
-        puts(temp->estates);
-
-        temp = temp->next;
-    }
-
     system("color 0b");
     while (1) {
         printf("%38s---=== Welcome to Real-Estate software ===---\n\n", " ");
@@ -378,8 +367,8 @@ void logIn() // TODO: 2-step verification
     printf("%50s--== Log In ==--\n\n", " ");
     
     // Read information from file
-    /*if (readProfiles())
-        return;*/
+    if (readProfiles())
+        return;
     
     printf("Username: ");
     gets(username);
@@ -551,14 +540,6 @@ int readProfiles()
 void mainMenu(user *a)
 {
     int choice;
-
-    User = start_user;
-    while (User->next) {
-        if (strcmp(a->username, User->username))
-            free(User);
-        
-        User = User->next;
-    }
 
     while (1) {
         printf("%40s--== Welcome back %s %s ==--\n\n", " ", a->name, a->family);
@@ -921,7 +902,21 @@ void countReport()
 
 void userActivity()
 {
-    
+    printf("%70sUsers and their last activity\n\n", " ");
+
+    printf("| %25s%16s | %6s     |%s | %27s%22s | %14s       | %s |\n", "Full Name", " ", "ID", "Phone number", "email", " ", "username", "Last activity");
+    printf("|-------------------------------------------|------------|-------------|---------------------------------------------------|----------------------|---------------|\n");
+
+    temp = start_user;
+    while (temp) {
+        printf("| %s %-*s | %s | %s | %-49s | %-20s |  %9s    |\n", temp->name, 40-strlen(temp->name), temp->family, temp->id, temp->phone_no, temp->email, temp->username, temp->last_activity);
+
+        temp = temp->next;
+    }
+
+    printf("\nPress any key to go back to reports menu...");
+    getch();
+    system("cls");
 }
 
 void updateUserEstate(user *a)
@@ -2160,7 +2155,7 @@ void dateEstate()
     printf("Enter the finish date (YY/MM/DD): ");
     scanf("%d%*c%d%*c%d", &to_year, &to_month, &to_day);
 
-    printf("%73sHouses for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+    printf("%63sHouses for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
 
     printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Price per meter",
@@ -2198,17 +2193,17 @@ void dateEstate()
         Sale_house = Sale_house->next;
     }
 
-    printf("\n%38sOffices for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+    printf("\n%60sOffices for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("%18s| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", " ", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Price per meter",
                                                                                     "Total price");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|\n");
+    printf("%18s|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|\n", " ");
             
     Sale_office = start_sale_office;
     while (Sale_office) {
         if (datecmp(Sale_office->date) && !strcmp(Sale_office->deleter, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
+            printf("%18s| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", " ", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
                                                                                         Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
                                                                                         Sale_office->price, Sale_office->tot_price);
         Sale_office = Sale_office->next;
