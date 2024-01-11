@@ -154,7 +154,6 @@ void report(user *a);
 int readSales();
 void settings(user *a);
 int readProfiles();
-void dateEstate();
 void sale(user *a);
 int readRents();
 void rent(user *a);
@@ -184,6 +183,8 @@ void userSortRegister();
 int bubbleSort(user **head, int count);
 void monthRentEstate();
 int validID(char *id);
+void dateEstate();
+int validPhone(char *phone);
 
 void main()
 {
@@ -262,11 +263,26 @@ void signUp() // TODO: check validation
             printf("Last Name: ");
             gets(temp->family);
             
-            printf("ID: ");
-            gets(temp->id);
-            
-            printf("Phone Number: ");
-            gets(temp->phone_no);
+            while (1) {
+                printf("ID: ");
+                gets(temp->id);
+
+                if (validID(temp->id))
+                    break;
+
+                printf("This ID is taken by another user or it's not valid!!!\n\n");
+            }
+
+            while (1) {
+                printf("Phone Number: ");
+                //gets(temp->phone_no);
+                strcpy(temp->phone_no, "091226263778");
+                
+                if (validPhone(temp->phone_no))
+                    break;
+
+                printf("This phone number is taken by another user or it's not valid!!!\n\n");
+            }
             
             printf("Email: ");
             gets(temp->email);
@@ -275,11 +291,10 @@ void signUp() // TODO: check validation
                 printf("Username: "); // TODO: the word before username
                 gets(temp->username);
 
-                if (!availableUser(temp->username)) {
+                if (availableUser(temp->username))
                     break;
-                }
 
-                printf("Username is taken!!!\n");
+                printf("Username is taken!!!\n\n");
             }
             
             // Get the password twice to avoid typing mistakes
@@ -2407,21 +2422,66 @@ void rent(user *a)
 int availableUser(char *username)
 {
     if (!strcmp(admin->username, username))
-        return 1; // Username is taken
+        return 0; // Username is taken
 
-    if (readProfiles())
-        return 1; // Could not access profiles
+    if (readProfiles()) 
+        return 0; // Could not access profiles
 
-    for (User = start_user; User; User = User->next)
-        if (!strcmp(User->username, username))
-            return 1; // Username is taken
+    for (User = start_user; User; User = User->next) {
+        if (!strcmp(User->username, username)) {
+            freeUsers();
+            return 0; // Username is taken
+        }
+    }
 
-    return 0; // Username is not taken
+    freeUsers();
+    return 1; // Username is not taken
 }
 
 int validID(char *id)
 {
-    
+    if (strlen(id) != 10)
+        return 0;
+
+    for (int digit = 0; digit < 10; digit++)
+        if (!isdigit(id[digit]))
+            return 0;
+
+    if (readProfiles())
+        return 0;
+
+    for (temp = start_user; temp; temp = temp->next) {
+        if (!strcmp(temp->id, id)) {
+            freeUsers();
+            return 0;
+        }
+    }
+
+    freeUsers();
+    return 1;
+}
+
+int validPhone(char *phone)
+{
+    if (strlen(phone) != 11 || phone[0] != '0' || phone[1] != '9')
+        return 0;
+
+    for (int digit = 2; digit < 11; digit++)
+        if (!isdigit(phone[digit]))
+            return 0;
+
+    if (readProfiles())
+        return 0;
+
+    for (temp = start_user; temp; temp = temp->next) {
+        if (!strcmp(temp->phone_no, phone)) {
+            freeUsers();
+            return 0;
+        }
+    }
+
+    freeUsers();
+    return 1;
 }
 
 static int from_year, from_month, from_day;
