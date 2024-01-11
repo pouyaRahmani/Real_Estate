@@ -197,6 +197,14 @@ void main()
     else
         printf("ERROR: Your computer is low on memory.");
 
+    readProfiles();
+
+    for (temp = start_user; temp; temp = temp->next) {
+        puts(temp->username);
+        puts(temp->email);
+        puts(temp->password);
+    }    
+
     system("color 0b");
     while (1) {
         printf("%38s---=== Welcome to Real-Estate software ===---\n\n", " ");
@@ -602,7 +610,12 @@ void freeUsers()
 
 void Delete(user *a) // TODO: complete
 {
+    if (readRents() || readSales())
+        return;
 
+    printf("");
+    
+    freeEstates();
 }
 
 void Register(user *a)
@@ -756,6 +769,10 @@ void changePass(user *a)
         for (temp = start_user; temp; temp = temp->next)
             fwrite (temp, sizeof(user), 1, profiles);
 
+        printf("\nYour password have been changed successfully...");
+        getch();
+        system("cls");
+
         fclose(profiles);
     }
     else
@@ -785,6 +802,10 @@ void changeEmail(user *a) // TODO: check availability of email
         for (temp = start_user; temp; temp = temp->next)
             fwrite (temp, sizeof(user), 1, profiles);
 
+        printf("\nYour email have been changed successfully...");
+        getch();
+        system("cls");
+
         fclose(profiles);
     }
     else
@@ -813,6 +834,10 @@ void changePhone(user *a) // TODO: check availability of phone number
     if (profiles) {
         for (temp = start_user; temp; temp = temp->next)
             fwrite (temp, sizeof(user), 1, profiles);
+
+        printf("\nYour phone number have been changed successfully...");
+        getch();
+        system("cls");
 
         fclose(profiles);
     }
