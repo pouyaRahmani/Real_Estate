@@ -169,7 +169,6 @@ double unitPicker(double a);
 void meterPriceEstate();
 double unitConverter(char *price);
 void valueEstate();
-void floorEstate();
 int availableUser(char *user);
 void RentEstate();
 int datecmp(char *date);
@@ -178,6 +177,9 @@ void updateUserEstate(user *a);
 void userActivity();
 void changePass(user *a);
 void freeUsers();
+void changeEmail(user *a);
+void floorEstate();
+void changePhone(user *a);
 
 void main()
 {
@@ -234,7 +236,7 @@ void signUp() // TODO: check validation
 {
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
-    char temp_pass1[16], temp_pass2[16], ch;
+    char temp_pass1[20], temp_pass2[20], ch;
     FILE *profiles, *number;
     int index = 0, users;
 
@@ -363,7 +365,7 @@ void logIn() // TODO: 2-step verification
     FILE *profiles;
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
-    char username[20], password[16], ch;
+    char username[20], password[20], ch;
     int index = 0;
 
     printf("%50s--== Log In ==--\n\n", " ");
@@ -443,7 +445,7 @@ void logIn() // TODO: 2-step verification
                         local = localtime(&t);
                         sprintf(User->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
 
-                        profiles = fopen("profiles.hex", "rb+");
+                        profiles = fopen("profiles.hex", "wb");
 
                         if (profiles) {
                             for (temp = start_user; temp; temp = temp->next)
@@ -455,7 +457,7 @@ void logIn() // TODO: 2-step verification
                             printf("ERROR: Could not access profiles. Please try again later.");
 
                         mainMenu(User);
-                        break;
+                        return;
                     }
                     else
                         printf("\nERROR: Wrong password!! Please try agin.\n");
@@ -650,7 +652,8 @@ void settings(user *a) // TODO: complete
 
     printf("1. Change password\n");
     printf("2. Change email\n");
-    printf("3. Rerun back\n\n");
+    printf("3. Change phone number\n");
+    printf("4. Rerun back\n\n");
 
     printf("Choose an action from above menu: ");
     scanf("%d", &choice);
@@ -664,22 +667,159 @@ void settings(user *a) // TODO: complete
         break;
     
     case 2:
+        changeEmail(a);
         break;
     
     case 3:
+        changePhone(a);
+        break;
+    
+    case 4:
         return;
         break;
     
     default:
+        printf("ERROR: Invalid input.\n");
         break;
     }
 }
 
 void changePass(user *a)
 {
+    char temp_pass1[20], temp_pass2[20];
+    char ch;
+    int index = 0;
+    FILE *profiles;
 
+    while (1) {
+        while (1) {
+            printf("New Password: ");
+            // Loop until user press enter
+            do {
+                ch = getch();
+
+                if (ch == 13)
+                    break;
+                // If user press backspace key, remove last character
+                else if (ch == 8) {
+                    printf("\b \b");
+                    index--;
+                    continue;
+                }
+
+                putchar('*'); // display * instead of password for better security
+                temp_pass1[index++] = ch;
+            } while (1); 
+
+            temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
+            index = 0;
+
+            if (strcmp(temp_pass1, a->password))
+                break;
+
+            printf("\nNew password cannot be as last one!!!\n\n");
+        }
+
+        printf("\nConfirm Your Password: ");
+        // Loop until user press enter
+        do {
+            ch = getch();
+
+            if (ch == 13)
+                break;
+            // If user press backspace key, remove last character
+            else if (ch == 8) {
+                printf("\b \b");
+                index--;
+                continue;
+            }
+                    
+            putchar('*'); // display * instead of password for better security
+            temp_pass2[index++] = ch;
+        } while (1);
+
+        temp_pass2[index] = '\0'; // Initialize the last character to \0 manually
+        printf("\n");
+
+        // If two passwords are same, save it and break
+        if (!strcmp(temp_pass1, temp_pass2)) {
+            strcpy(a->password, temp_pass1);
+            break;
+        }
+
+        printf("\nPasswords don't match.\n\n");
+    }
+
+    profiles = fopen("profiles.hex", "wb");
+
+    if (profiles) {
+        for (temp = start_user; temp; temp = temp->next)
+            fwrite (temp, sizeof(user), 1, profiles);
+
+        fclose(profiles);
+    }
+    else
+        printf("ERROR: Could not access profiles. Please try again later.");
 }
 
+void changeEmail(user *a) // TODO: check availability of email
+{
+    char temp_email[50];
+    FILE *profiles;
+
+    while (1) {
+        printf("New email: ");
+        gets(temp_email);
+
+        if (strcmp(temp_email, a->email)) {
+            strcpy(a->email, temp_email);
+            break;
+        }
+
+        printf("\nNew email cannot be as last one!!\n\n");
+    }
+
+    profiles = fopen("profiles.hex", "wb");
+
+    if (profiles) {
+        for (temp = start_user; temp; temp = temp->next)
+            fwrite (temp, sizeof(user), 1, profiles);
+
+        fclose(profiles);
+    }
+    else
+        printf("ERROR: Could not access profiles. Please try again later.");
+}
+
+void changePhone(user *a) // TODO: check availability of phone number 
+{
+    char temp_phone[12];
+    FILE *profiles;
+
+    while (1) {
+        printf("New phone number: ");
+        gets(temp_phone);
+
+        if (strcmp(temp_phone, a->phone_no)) {
+            strcpy(a->phone_no, temp_phone);
+            break;
+        }
+
+        printf("\nNew phone number cannot be as last one\n\n");
+    }
+
+    profiles = fopen("profiles.hex", "wb");
+
+    if (profiles) {
+        for (temp = start_user; temp; temp = temp->next)
+            fwrite (temp, sizeof(user), 1, profiles);
+
+        fclose(profiles);
+    }
+    else
+        printf("ERROR: Could not access profiles. Please try again later.");
+}
+// TODO: change DeleteEstate
 void report(user *a) // TODO: users in sort
 {
     if (readRents() || readSales())
@@ -844,7 +984,6 @@ void freeEstates()
     while (Sale_house) {
         free(Sale_house);
         Sale_house = Sale_house->next;
-
     }
             
     Sale_office = start_sale_office;
