@@ -150,7 +150,6 @@ void Register(user *a);
 void ageEstate();
 void Delete(user *a);
 void municipalityArea();
-void monthRentEstate();
 void report(user *a);
 int readSales();
 void settings(user *a);
@@ -183,6 +182,8 @@ void floorEstate();
 void changePhone(user *a);
 void userSortRegister();
 int bubbleSort(user **head, int count);
+void monthRentEstate();
+int validID(char *id);
 
 void main()
 {
@@ -2416,6 +2417,11 @@ int availableUser(char *username)
             return 1; // Username is taken
 
     return 0; // Username is not taken
+}
+
+int validID(char *id)
+{
+    
 }
 
 static int from_year, from_month, from_day;
