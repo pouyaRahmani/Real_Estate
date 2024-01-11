@@ -141,6 +141,7 @@ rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land, *temp_rent_land;
 
 
 // Prototypes of functions
+user *swap(user *usr1, user *usr2);
 void signUp();
 void mainMenu(user *a);
 void logIn();
@@ -180,6 +181,8 @@ void freeUsers();
 void changeEmail(user *a);
 void floorEstate();
 void changePhone(user *a);
+void userSortRegister();
+int bubbleSort(user **head, int count);
 
 void main()
 {
@@ -195,15 +198,7 @@ void main()
         strcpy(admin->estates, "0");
     }
     else
-        printf("ERROR: Your computer is low on memory.");
-
-    readProfiles();
-
-    for (temp = start_user; temp; temp = temp->next) {
-        puts(temp->username);
-        puts(temp->email);
-        puts(temp->password);
-    }    
+        printf("ERROR: Your computer is low on memory.");  
 
     system("color 0b");
     while (1) {
@@ -979,6 +974,7 @@ void report(user *a) // TODO: users in sort
                 break;
             
             case 12:
+                userSortRegister();
                 break;
             
             case 13:
@@ -1167,6 +1163,79 @@ void updateUserEstate(user *a)
     }
 
 }
+
+void userSortRegister()
+{
+    FILE *number;
+    int users;
+
+    number = fopen("number_of_users.txt", "r");
+
+    if (number)
+        fscanf(number, "%d", &users); 
+    else
+        printf("ERROR: Could not access profiles. Please try again later.");
+
+    bubbleSort(&start_user, users);
+
+    printf("%65sUsers in sort of estate registration\n\n", " ");
+
+    printf("| %25s%16s | %6s     |%s | %27s%22s | %14s       | %s |\n", "Full Name", " ", "ID", "Phone number", "email", " ", "username", "number of registered estates");
+    printf("|-------------------------------------------|------------|-------------|---------------------------------------------------|----------------------|------------------------------|\n");
+
+    temp = start_user;
+    while (temp) {
+        printf("| %s %-*s | %s | %s | %-49s | %-20s |  %*s%*s |\n", temp->name, 40-strlen(temp->name), temp->family, temp->id, temp->phone_no, temp->email, temp->username, 13 - strlen(temp->estates)/2, temp->estates, 14 - strlen(temp->estates)/2, " ");
+
+        temp = temp->next;
+    }
+
+    printf("\nPress any key to go back to reports menu...");
+    getch();
+    system("cls");
+}
+
+user *swap(user *usr1, user *usr2)
+{
+    temp = usr2->next;
+    usr2->next = usr1;
+    usr1->next = temp;
+
+    return usr2;
+}
+ 
+// Function to sort the list 
+int bubbleSort(user **head, int count)
+{
+    user **h;
+    int i, j, swapped;
+ 
+    for (i = 0; i <= count; i++) {
+ 
+        h = head;
+        swapped = 0;
+ 
+        for (j = 0; j < count - i - 1; j++) {
+ 
+            user *user1 = *h;
+            user *user2 = user1->next;
+ 
+            if (atoi(user1->estates) < atoi(user2->estates)) {
+ 
+                // update the link after swapping
+                *h = swap(user1, user2);
+                swapped = 1;
+            }
+ 
+            h = &(*h)->next;
+        }
+ 
+        // break if the loop ended without any swap
+        if (swapped == 0)
+            break;
+    }
+}
+ 
 
 static char parking[4], warehouse[4], elevator[4], telephone[4];
 
