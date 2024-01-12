@@ -681,7 +681,7 @@ void Register(user *a)
     }
 }
 
-void settings(user *a) // TODO: complete
+void settings(user *a)
 {
     int choice;
 
@@ -836,7 +836,7 @@ void changeEmail(user *a) // TODO: check availability of email
         printf("ERROR: Could not access profiles. Please try again later.");
 }
 
-void changePhone(user *a) // TODO: check availability of phone number 
+void changePhone(user *a)
 {
     char temp_phone[12];
     FILE *profiles;
@@ -845,12 +845,12 @@ void changePhone(user *a) // TODO: check availability of phone number
         printf("New phone number: ");
         gets(temp_phone);
 
-        if (strcmp(temp_phone, a->phone_no)) {
+        if (strcmp(temp_phone, a->phone_no) || validPhone(temp_phone)) {
             strcpy(a->phone_no, temp_phone);
             break;
         }
 
-        printf("\nNew phone number cannot be as last one\n\n");
+        printf("\nNew phone number cannot be as last one, or is taken by another user.\n\n");
     }
 
     profiles = fopen("profiles.hex", "wb");
@@ -869,7 +869,7 @@ void changePhone(user *a) // TODO: check availability of phone number
         printf("ERROR: Could not access profiles. Please try again later.");
 }
 // TODO: change DeleteEstate
-void report(user *a) // TODO: users in sort
+void report(user *a)
 {
     if (readRents() || readSales())
         return;
