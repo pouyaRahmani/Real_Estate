@@ -185,6 +185,7 @@ void monthRentEstate();
 int validID(char *id);
 void dateEstate();
 int validPhone(char *phone);
+int validPass(char *pass, int size);
 
 void main()
 {
@@ -275,8 +276,7 @@ void signUp() // TODO: check validation
 
             while (1) {
                 printf("Phone Number: ");
-                //gets(temp->phone_no);
-                strcpy(temp->phone_no, "091226263778");
+                gets(temp->phone_no);
                 
                 if (validPhone(temp->phone_no))
                     break;
@@ -299,25 +299,38 @@ void signUp() // TODO: check validation
             
             // Get the password twice to avoid typing mistakes
             while (1) {
-                printf("Password: ");
-                // Loop until user press enter
-                do {
-                    ch = getch();
+                while (1) {
+                    printf("Password: ");
+                    // Loop until user press enter
+                    do {
+                        ch = getch();
 
-                    if (ch == 13)
+                        if (ch == 13)
+                            break;
+                        // If user press backspace key, remove last character
+                        else if (ch == 8) {
+                            printf("\b \b");
+                            index--;
+                            continue;
+                        }
+
+                        putchar('*'); // display * instead of password for better security
+                        temp_pass1[index++] = ch;
+                    } while (1); 
+
+                    temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
+
+                    if (validPass(temp_pass1, strlen(temp_pass1)))
                         break;
-                    // If user press backspace key, remove last character
-                    else if (ch == 8) {
-                        printf("\b \b");
-                        index--;
-                        continue;
-                    }
 
-                    putchar('*'); // display * instead of password for better security
-                    temp_pass1[index++] = ch;
-                } while (1); 
+                    printf("\n\nPassword must have below conditions:\n\n");
 
-                temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
+                    printf("1. More than 8 characters.\n");
+                    printf("2. Atleast one capital letter, one lowercase letter and one special character.\n\n");
+
+                    index = 0;
+                }
+
                 index = 0;
 
                 printf("\nConfirm Your Password: ");
@@ -612,10 +625,10 @@ void mainMenu(user *a)
 
 void freeUsers()
 {
-    temp = start_user;
-    while (temp) {
-        free(temp);
-        temp = temp->next;
+    User = start_user;
+    while (User) {
+        free(User);
+        User = User->next;
     }
 }
 
@@ -2419,25 +2432,6 @@ void rent(user *a)
     }
 }
 
-int availableUser(char *username)
-{
-    if (!strcmp(admin->username, username))
-        return 0; // Username is taken
-
-    if (readProfiles()) 
-        return 0; // Could not access profiles
-
-    for (User = start_user; User; User = User->next) {
-        if (!strcmp(User->username, username)) {
-            freeUsers();
-            return 0; // Username is taken
-        }
-    }
-
-    freeUsers();
-    return 1; // Username is not taken
-}
-
 int validID(char *id)
 {
     if (strlen(id) != 10)
@@ -2450,14 +2444,10 @@ int validID(char *id)
     if (readProfiles())
         return 0;
 
-    for (temp = start_user; temp; temp = temp->next) {
-        if (!strcmp(temp->id, id)) {
-            freeUsers();
+    for (User = start_user; User; User = User->next)
+        if (!strcmp(User->id, id))
             return 0;
-        }
-    }
 
-    freeUsers();
     return 1;
 }
 
@@ -2470,18 +2460,57 @@ int validPhone(char *phone)
         if (!isdigit(phone[digit]))
             return 0;
 
-    if (readProfiles())
-        return 0;
-
-    for (temp = start_user; temp; temp = temp->next) {
-        if (!strcmp(temp->phone_no, phone)) {
-            freeUsers();
+    for (User = start_user; User; User = User->next)
+        if (!strcmp(User->phone_no, phone))
             return 0;
-        }
+
+    return 1;
+}
+
+int availableUser(char *username)
+{
+    if (!strcmp(admin->username, username))
+        return 0; // Username is taken
+
+    for (User = start_user; User; User = User->next)
+        if (!strcmp(User->username, username))
+            return 0; // Username is taken
+
+    return 1; // Username is not taken
+}
+
+int validPass(char *pass, int size)
+{
+    int cap = 0, low = 0, special = 0, space = 0, num = 0;
+
+    puts(pass);
+
+    if (size < 8) {
+        freeUsers();
+        return 0;
     }
 
-    freeUsers();
-    return 1;
+    for (int ch = 0; ch < size; ch++) {
+        if (islower(pass[ch]))
+            low = 1;
+        else if (isupper(pass[ch]))
+            cap = 1;
+        else if (ispunct(pass[ch]))
+            special = 1;
+        else if(isspace(pass[ch]))
+            space = 1;
+        else if (isdigit(pass[ch]))
+            num = 1;
+    }
+
+    if (low == 1 && cap == 1 && special == 1 && num == 1 && space == 0) {
+        freeUsers();
+        return 1;
+    }
+    else {
+        freeUsers();
+        return 0;
+    }
 }
 
 static int from_year, from_month, from_day;
