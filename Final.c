@@ -868,7 +868,7 @@ void changePhone(user *a)
     else
         printf("ERROR: Could not access profiles. Please try again later.");
 }
-// TODO: change DeleteEstate
+
 void report(user *a)
 {
     if (readRents() || readSales())
@@ -1264,7 +1264,6 @@ int bubbleSort(user **head, int count)
             break;
     }
 }
- 
 
 static char parking[4], warehouse[4], elevator[4], telephone[4];
 
