@@ -180,7 +180,7 @@ void changeEmail(user *a);
 void floorEstate();
 void changePhone(user *a);
 void userSortRegister();
-int bubbleSort(user **head, int count);
+void bubbleSort(user **head, int count);
 void monthRentEstate();
 int validID(char *id);
 void dateEstate();
@@ -653,7 +653,7 @@ void Delete(user *a) // TODO: complete
         getchar();
         system("cls");
 
-        switch (choice)
+        /*switch (choice)
         {
         case 1:
             deleteSale();
@@ -670,7 +670,7 @@ void Delete(user *a) // TODO: complete
         default:
             printf("ERROR: Invalid input.\n");
             break;
-        }
+        }*/
     }
 }
 
@@ -937,124 +937,58 @@ void report(user *a)
         getchar(); // Avoid exta enter
         system("cls");
 
-        if (strcmp(a->username, admin->username)) {
-            switch (choice)
-            {
-            case 1:
-                freeEstates();
-                return;
-                break;
-
-            case 2:
-                countReport();
-                break;
-            
-            case 3:
-                municipalityArea();
-                break;
-            
-            case 4:
-                ageEstate();
-                break;
-            
-            case 5:
-                infrastructureEstate();
-                break;
-            
-            case 6:
-                totalPriceEstate();
-                break;
-            
-            case 7:
-                meterPriceEstate();
-                break;
-            
-            case 8:
-                roomsEstate();
-                break;
-            
-            case 9:
-                RentEstate();
-                break;
-            
-            case 10:
-                floorEstate();
-                break;
-            
-            default:
-                printf("ERROR: Invalid input.\n");
-                break;
-            }
+        if (choice == 1) {
+            freeEstates();
+            return;
         }
-        else {
-            switch (choice)
-            {
-            case 1:
-                freeEstates();
-                return;
-                break;
+        else if (choice == 2) 
+            countReport();
 
-            case 2:
-                countReport();
-                break;
+        else if (choice == 3)
+            municipalityArea();
             
-            case 3:
-                municipalityArea();
-                break;
+        else if (choice == 4)
+            ageEstate();
             
-            case 4:
-                ageEstate();
-                break;
+        else if (choice == 5)
+            infrastructureEstate();
             
-            case 5:
-                infrastructureEstate();
-                break;
+        else if (choice == 6)
+            totalPriceEstate();
             
-            case 6:
-                totalPriceEstate();
-                break;
+        else if (choice == 7)
+            meterPriceEstate();
             
-            case 7:
-                meterPriceEstate();
-                break;
+        else if (choice == 8)
+            roomsEstate();
             
-            case 8:
-                roomsEstate();
-                break;
+        else if (choice == 9)
+            RentEstate();
+                
+        else if (choice == 10)
+            floorEstate(); 
             
-            case 9:
-                RentEstate();
-                break;
-            
-            case 10:
-                floorEstate();
-                break;
-            
-            case 11:
+        else if (!strcmp(a->username, admin->username)) {
+            if (choice == 11)
                 valueEstate();
-                break;
             
-            case 12:
+            else if (choice == 12)
                 userSortRegister();
-                break;
-            
-            case 13:
+                
+            else if (choice == 13)
                 dateEstate();
-                break;
-
-            case 14:
+                
+            else if (choice == 14)
                 DeleteEstate();
-                break;
-
-            case 15:
+                
+            else if (choice == 15)
                 userActivity();
-                break;
-            
-            default:
-                printf("ERROR: Invalid input.\n");
-                break;
+            else
+                printf("ERROR: Invalid input.\n"); 
             }
-        }
+
+        else
+            printf("ERROR: Invalid input.\n");
 
         i = 1;
     }
@@ -1266,7 +1200,7 @@ user *swap(user *usr1, user *usr2)
 }
  
 // Function to sort the list 
-int bubbleSort(user **head, int count)
+void bubbleSort(user **head, int count)
 {
     user **h;
     int i, j, swapped;
