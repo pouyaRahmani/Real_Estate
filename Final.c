@@ -653,7 +653,7 @@ void Delete(user *a) // TODO: complete
         getchar();
         system("cls");
 
-        switch (choice)
+        /*switch (choice)
         {
         case 1:
             deleteSale();
@@ -670,7 +670,7 @@ void Delete(user *a) // TODO: complete
         default:
             printf("ERROR: Invalid input.\n");
             break;
-        }
+        }*/
     }
 }
 
@@ -937,99 +937,56 @@ void report(user *a)
         getchar(); // Avoid exta enter
         system("cls");
 
-        if (strcmp(a->username, admin->username)) {
-            switch (choice)
-            {
-            case 1:
-                freeEstates();
-                return;
-                break;
+        if (choice > 10 && strcmp(admin->username, a->username))
+            printf("ERROR: Invalid input.\n");
 
-            case 2:
-                countReport();
-                break;
+        switch (choice)
+        {
+        case 1:
+            freeEstates();
+            return;
+            break;
+
+        case 2:
+            countReport();
+            break;
             
-            case 3:
-                municipalityArea();
-                break;
+        case 3:
+            municipalityArea();
+            break;
             
-            case 4:
-                ageEstate();
-                break;
+        case 4:
+            ageEstate();
+            break;
             
-            case 5:
-                infrastructureEstate();
-                break;
+        case 5:
+            infrastructureEstate();
+            break;
             
-            case 6:
-                totalPriceEstate();
-                break;
+        case 6:
+            totalPriceEstate();
+            break;
             
-            case 7:
-                meterPriceEstate();
-                break;
+        case 7:
+            meterPriceEstate();
+            break;
             
-            case 8:
-                roomsEstate();
-                break;
+        case 8:
+            roomsEstate();
+            break;
             
-            case 9:
-                RentEstate();
-                break;
+        case 9:
+            RentEstate();
+            break;
             
-            case 10:
-                floorEstate();
-                break;
-            
-            default:
-                printf("ERROR: Invalid input.\n");
-                break;
-            }
+        case 10:
+            floorEstate();
+            break;
         }
-        else {
+
+        if (!strcmp(admin->username, a->username)) {
             switch (choice)
             {
-            case 1:
-                freeEstates();
-                return;
-                break;
-
-            case 2:
-                countReport();
-                break;
-            
-            case 3:
-                municipalityArea();
-                break;
-            
-            case 4:
-                ageEstate();
-                break;
-            
-            case 5:
-                infrastructureEstate();
-                break;
-            
-            case 6:
-                totalPriceEstate();
-                break;
-            
-            case 7:
-                meterPriceEstate();
-                break;
-            
-            case 8:
-                roomsEstate();
-                break;
-            
-            case 9:
-                RentEstate();
-                break;
-            
-            case 10:
-                floorEstate();
-                break;
-            
             case 11:
                 valueEstate();
                 break;
