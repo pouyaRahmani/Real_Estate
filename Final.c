@@ -937,99 +937,56 @@ void report(user *a)
         getchar(); // Avoid exta enter
         system("cls");
 
-        if (strcmp(a->username, admin->username)) {
-            switch (choice)
-            {
-            case 1:
-                freeEstates();
-                return;
-                break;
+        if (choice > 10 && strcmp(admin->username, a->username))
+            printf("ERROR: Invalid input.\n");
 
-            case 2:
-                countReport();
-                break;
+        switch (choice)
+        {
+        case 1:
+            freeEstates();
+            return;
+            break;
+
+        case 2:
+            countReport();
+            break;
             
-            case 3:
-                municipalityArea();
-                break;
+        case 3:
+            municipalityArea();
+            break;
             
-            case 4:
-                ageEstate();
-                break;
+        case 4:
+            ageEstate();
+            break;
             
-            case 5:
-                infrastructureEstate();
-                break;
+        case 5:
+            infrastructureEstate();
+            break;
             
-            case 6:
-                totalPriceEstate();
-                break;
+        case 6:
+            totalPriceEstate();
+            break;
             
-            case 7:
-                meterPriceEstate();
-                break;
+        case 7:
+            meterPriceEstate();
+            break;
             
-            case 8:
-                roomsEstate();
-                break;
+        case 8:
+            roomsEstate();
+            break;
             
-            case 9:
-                RentEstate();
-                break;
+        case 9:
+            RentEstate();
+            break;
             
-            case 10:
-                floorEstate();
-                break;
-            
-            default:
-                printf("ERROR: Invalid input.\n");
-                break;
-            }
+        case 10:
+            floorEstate();
+            break;
         }
-        else {
+
+        if (!strcmp(admin->username, a->username)) {
             switch (choice)
             {
-            case 1:
-                freeEstates();
-                return;
-                break;
-
-            case 2:
-                countReport();
-                break;
-            
-            case 3:
-                municipalityArea();
-                break;
-            
-            case 4:
-                ageEstate();
-                break;
-            
-            case 5:
-                infrastructureEstate();
-                break;
-            
-            case 6:
-                totalPriceEstate();
-                break;
-            
-            case 7:
-                meterPriceEstate();
-                break;
-            
-            case 8:
-                roomsEstate();
-                break;
-            
-            case 9:
-                RentEstate();
-                break;
-            
-            case 10:
-                floorEstate();
-                break;
-            
             case 11:
                 valueEstate();
                 break;
@@ -1693,7 +1650,7 @@ void infrastructureEstate()
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (atoi(Rent_office->infrastructure) <= to_infrastructure && atoi(Rent_office->infrastructure) >= from_infrastructure && !strcmp(Rent_office->deleter, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
