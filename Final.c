@@ -653,7 +653,7 @@ void Delete(user *a) // TODO: complete
         getchar();
         system("cls");
 
-        switch (choice)
+        /*switch (choice)
         {
         case 1:
             deleteSale();
@@ -670,7 +670,7 @@ void Delete(user *a) // TODO: complete
         default:
             printf("ERROR: Invalid input.\n");
             break;
-        }
+        }*/
     }
 }
 
