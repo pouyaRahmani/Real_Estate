@@ -141,13 +141,15 @@ rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land, *temp_rent_land;
 
 
 // Prototypes of functions
+void valueEstate();
 user *swap(user *usr1, user *usr2);
 void signUp();
+void roomsEstate();
 void mainMenu(user *a);
 void logIn();
-void valueEstate();
 void Register(user *a);
 void ageEstate();
+void freeEstates();
 void Delete(user *a);
 void municipalityArea();
 void report(user *a);
@@ -158,12 +160,10 @@ void sale(user *a);
 int readRents();
 void rent(user *a);
 void countReport();
-void roomsEstate();
 void saleEstate(user *a, char *type);
 void infrastructureEstate();
 void rentEstate(user *a, char *type);
 void totalPriceEstate();
-void freeEstates();
 double unitPicker(double a);
 void meterPriceEstate();
 double unitConverter(char *price);
@@ -185,7 +185,9 @@ void monthRentEstate();
 int validID(char *id);
 void dateEstate();
 int validPhone(char *phone);
+void deleteSale();
 int validPass(char *pass, int size);
+void deleteRent();
 
 void main()
 {
@@ -635,12 +637,41 @@ void freeUsers()
 
 void Delete(user *a) // TODO: complete
 {
-    if (readRents() || readSales())
-        return;
+    int choice;
 
-    printf("");
-    
-    freeEstates();
+    while (1) {
+        printf("%53s--== Delete ==--\n\n", " ");
+
+        printf("What do you want to delete?\n\n");
+
+        printf("1. Sales estate\n");
+        printf("2. Rent estate\n");
+        printf("3. Return back\n\n");
+
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar();
+        system("cls");
+
+        switch (choice)
+        {
+        case 1:
+            deleteSale();
+            break;
+        
+        case 2:
+            deleteRent();
+            break;
+        
+        case 3:
+            return;
+            break;
+        
+        default:
+            printf("ERROR: Invalid input.\n");
+            break;
+        }
+    }
 }
 
 void Register(user *a)
