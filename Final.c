@@ -238,7 +238,7 @@ void main()
 }
 
 // Function to do the sign in proccess
-void signUp() // TODO: check validation
+void signUp()
 {
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
@@ -326,7 +326,8 @@ void signUp() // TODO: check validation
                     printf("\n\nPassword must have below conditions:\n\n");
 
                     printf("1. More than 8 characters.\n");
-                    printf("2. Atleast one capital letter, one lowercase letter and one special character.\n\n");
+                    printf("2. Atleast one capital letter, one lowercase letter and one special character.\n");
+                    printf("3. No spaces!!\n\n");
 
                     index = 0;
                 }
