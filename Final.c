@@ -842,7 +842,7 @@ void changePass(user *a)
         printf("ERROR: Could not access profiles. Please try again later.");
 }
 
-void changeEmail(user *a) // TODO: check availability of email
+void changeEmail(user *a) 
 {
     char temp_email[50];
     FILE *profiles;
