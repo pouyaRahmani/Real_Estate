@@ -151,7 +151,7 @@ void mainMenu(user *a);
 void logIn();
 void Register(user *a);
 void ageEstate();
-void Delete(user *a);
+void Delete();
 void municipalityArea();
 void report(user *a);
 int readSales();
@@ -608,7 +608,7 @@ void mainMenu(user *a)
             break;
         
         case 2:
-            Delete(a);
+            Delete();
             break;
         
         case 3:
@@ -644,7 +644,7 @@ void freeUsers()
     }
 }
 
-void Delete(user *a) // TODO: complete
+void Delete()
 {
     int choice;
 
