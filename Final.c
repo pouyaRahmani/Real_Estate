@@ -286,8 +286,15 @@ void signUp()
                 printf("This phone number is taken by another user or it's not valid!!!\n\n");
             }
             
-            printf("Email: ");
-            gets(temp->email);
+            while (1) {
+                printf("Email: ");
+                gets(temp->email);
+
+                if (validEmail(temp->email))
+                    break;
+
+                printf("This email address is taken by another user or it's not valid!!!\n\n");  
+            }
             
             while (1) {
                 printf("Username: "); // TODO: the word before username
@@ -844,7 +851,7 @@ void changeEmail(user *a) // TODO: check availability of email
         printf("New email: ");
         gets(temp_email);
 
-        if (strcmp(temp_email, a->email)) {
+        if (validEmail(temp_email)) {
             strcpy(a->email, temp_email);
             break;
         }
@@ -877,7 +884,7 @@ void changePhone(user *a)
         printf("New phone number: ");
         gets(temp_phone);
 
-        if (strcmp(temp_phone, a->phone_no) || validPhone(temp_phone)) {
+        if (validPhone(temp_phone)) {
             strcpy(a->phone_no, temp_phone);
             break;
         }
@@ -2499,6 +2506,36 @@ int validPass(char *pass, int size)
         freeUsers();
         return 0;
     }
+}
+
+int validEmail(char *email)
+{
+    int adSign_count = 0, dot_count = 0;
+    int adSign_index;
+
+    for (int i = 0; email[i] != '\0'; i++) {
+        if (email[i] == '@'){
+            if (i == 0)
+                return 0;
+            else
+                adSign_index = i;
+
+            adSign_count++;
+            if (adSign_count > 1)
+                return 0;
+        }
+        else if (email[i] == '.')
+            dot_count++;
+    }
+
+    if (adSign_count != 1 || dot_count <= 0)
+        return 0;
+    
+    for (User = start_user; User; User = User->next)
+        if (!strcmp(User->email, email))
+            return 0;
+
+    return 1;
 }
 
 static int from_year, from_month, from_day;
