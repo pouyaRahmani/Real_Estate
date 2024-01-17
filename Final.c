@@ -5,6 +5,9 @@
 #include <string.h>
 #include <ctype.h>
 
+
+// TODO: add comments
+
 // Defining some structures 
 typedef struct u { // Structure to represent an user
     char name[20];
@@ -131,16 +134,17 @@ typedef struct rent_land { // Structure to represent a land for rent
 // Some pointers for every structure to make linked list
 user *start_user = NULL, *end_user, *User, *admin, *temp;
 
-sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house;
-sale_office *start_sale_office = NULL, *end_sale_office, *Sale_office;
-sale_land *start_sale_land = NULL, *end_sale_land, *Sale_land;
+sale_house *start_sale_house = NULL, *end_sale_house, *Sale_house, *temp_sale_house;
+sale_office *start_sale_office = NULL, *end_sale_office, *Sale_office, *temp_sale_office;
+sale_land *start_sale_land = NULL, *end_sale_land, *Sale_land, *temp_sale_land;
 
-rent_house *start_rent_house = NULL, *end_rent_house, *Rent_house;
-rent_office *start_rent_office = NULL, *end_rent_office, *Rent_office;
-rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land;
+rent_house *start_rent_house = NULL, *end_rent_house, *Rent_house, *temp_rent_house;
+rent_office *start_rent_office = NULL, *end_rent_office, *Rent_office, *temp_rent_office;
+rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land, *temp_rent_land;
 
 
 // Prototypes of functions
+int validEmail(char *email);
 void deleteRent();
 void DeleteRent(char *type);
 void valueEstate();
@@ -181,7 +185,7 @@ void changeEmail(user *a);
 void floorEstate();
 void changePhone(user *a);
 void userSortRegister();
-int bubbleSort(user **head, int count);
+void bubbleSort(user **head, int count);
 void monthRentEstate();
 int validID(char *id);
 void dateEstate();
@@ -456,7 +460,7 @@ void logIn() // TODO: 2-step verification
             index = 0;
         }
     }
-    else { // FIXME: pass loop
+    else {
         // Loop throw users to match username and password
         User = start_user;
         while (User) {
@@ -639,8 +643,9 @@ void freeUsers()
 {
     User = start_user;
     while (User) {
+        temp = User->next;
         free(User);
-        User = User->next;
+        User = temp;
     }
 }
 
@@ -729,7 +734,7 @@ void deleteSale()
 
 void DeleteSale(char *type)
 {
-    char temp_address;
+    char temp_address[500];
     time_t t;
     struct tm *local;
 
@@ -801,7 +806,7 @@ void DeleteSale(char *type)
     FILE *lands = fopen("lands_sale.hex", "wb");
 
     if (lands) {
-        for (Sale_land = start_user; Sale_land; Sale_land = Sale_land->next)
+        for (Sale_land = start_sale_land; Sale_land; Sale_land = Sale_land->next)
             fwrite (Sale_land, sizeof(sale_land), 1, lands);
 
         fclose(lands);
@@ -858,7 +863,7 @@ void deleteRent()
 
 void DeleteRent(char *type)
 {
-    char temp_address;
+    char temp_address[500];
     time_t t;
     struct tm *local;
 
@@ -1288,38 +1293,44 @@ void freeEstates()
 {
     Sale_house = start_sale_house;
     while (Sale_house) {
+        temp_sale_house = Sale_house->next;
         free(Sale_house);
-        Sale_house = Sale_house->next;
+        Sale_house = temp_sale_house;
     }
             
     Sale_office = start_sale_office;
     while (Sale_office) {
+        temp_sale_office = Sale_office->next;
         free(Sale_office);
-        Sale_office = Sale_office->next;
+        Sale_office = temp_sale_office;
     }
 
     Sale_land = start_sale_land;
     while (Sale_land) {
+        temp_sale_land = Sale_land->next;
         free(Sale_land);
-        Sale_land = Sale_land->next;
+        Sale_land = temp_sale_land;
     }
 
     Rent_house = start_rent_house;
     while (Rent_house) {
+        temp_rent_house = Rent_house->next;
         free(Rent_house);
-        Rent_house = Rent_house->next;
+        Rent_house = temp_rent_house;
     }
 
     Rent_office = start_rent_office;
     while (Rent_office) {
+        temp_rent_office = Rent_office->next;
         free(Rent_office);
-        Rent_office = Rent_office->next;
+        Rent_office = temp_rent_office;
     }
 
     Rent_land = start_rent_land;
     while (Rent_land) {
+        temp_rent_land = Rent_land->next;
         free(Rent_land);
-        Rent_land = Rent_land->next;
+        Rent_land = temp_rent_land;
     }
 }
 
@@ -1490,7 +1501,7 @@ user *swap(user *usr1, user *usr2)
 }
  
 // Function to sort the list 
-int bubbleSort(user **head, int count)
+void bubbleSort(user **head, int count)
 {
     user **h;
     int i, j, swapped;
@@ -1646,7 +1657,7 @@ void municipalityArea()
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (!strcmp(area, Rent_office->area) && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -1788,7 +1799,7 @@ void ageEstate()
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (atoi(Rent_office->age) <= to_age && atoi(Rent_office->age) >= from_age && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -2178,7 +2189,7 @@ void RentEstate()
     while (Rent_office) {
         if (unitConverter(Rent_office->mortgage) <= to_mortgage && unitConverter(Rent_office->mortgage) >= from_mortgage &&
             unitConverter(Rent_office->rent) <= to_rent && unitConverter(Rent_office->rent) >= from_rent && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -2924,7 +2935,7 @@ void dateEstate()
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (datecmp(Rent_office->date) && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -2965,7 +2976,7 @@ void DeleteEstate()
 
     Sale_house = start_sale_house;
     while (Sale_house) {
-        if (datecmp(Sale_house->date) && strcmp(Sale_house->deleteDate, "0")) {
+        if (datecmp(Sale_house->deleteDate) && strcmp(Sale_house->deleteDate, "0")) {
             if (Sale_house->parking == 'Y')
                 strcpy(parking, "Yes");
             else
@@ -3003,7 +3014,7 @@ void DeleteEstate()
             
     Sale_office = start_sale_office;
     while (Sale_office) {
-        if (datecmp(Sale_office->date) && strcmp(Sale_office->deleteDate, "0"))
+        if (datecmp(Sale_office->deleteDate) && strcmp(Sale_office->deleteDate, "0"))
             printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
                                                                                         Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
                                                                                         Sale_office->price, Sale_office->tot_price);
@@ -3017,7 +3028,7 @@ void DeleteEstate()
 
     Sale_land = start_sale_land;
     while (Sale_land) {
-        if (datecmp(Sale_land->date) && strcmp(Sale_land->deleteDate, "0"))
+        if (datecmp(Sale_land->deleteDate) && strcmp(Sale_land->deleteDate, "0"))
             printf("%10s | %-7s | %-9s | %-18s | %-15s | %-11s |\n", " ", Sale_land->type, Sale_land->land, Sale_land->owner_phone_no, Sale_land->price, Sale_land->tot_price);
 
         Sale_land = Sale_land->next;
@@ -3032,7 +3043,7 @@ void DeleteEstate()
 
     Rent_house = start_rent_house;
     while (Rent_house) {
-        if (datecmp(Rent_house->date) && strcmp(Rent_house->deleteDate, "0")) {
+        if (datecmp(Rent_house->deleteDate) && strcmp(Rent_house->deleteDate, "0")) {
             if (Rent_house->parking == 'Y')
                 strcpy(parking, "Yes");
             else
@@ -3070,8 +3081,8 @@ void DeleteEstate()
 
     Rent_office = start_rent_office;
     while (Rent_office) {
-        if (datecmp(Rent_office->date) && strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+        if (datecmp(Rent_office->deleteDate) && strcmp(Rent_office->deleteDate, "0"))
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -3084,7 +3095,7 @@ void DeleteEstate()
 
     Rent_land = start_rent_land;
     while (Rent_land) {
-        if (datecmp(Rent_land->date) && strcmp(Rent_land->deleteDate, "0"))
+        if (datecmp(Rent_land->deleteDate) && strcmp(Rent_land->deleteDate, "0"))
             printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
 
         Rent_land = Rent_land->next;
