@@ -1500,35 +1500,24 @@ user *swap(user *usr1, user *usr2)
     return usr2;
 }
  
-// Function to sort the list 
+// Function to sort the linked list 
 void bubbleSort(user **head, int count)
 {
-    user **h;
-    int i, j, swapped;
+    user **current;
  
-    for (i = 0; i <= count; i++) {
+    for (int i = 0; i <= count; i++) { 
+        current = head;
  
-        h = head;
-        swapped = 0;
- 
-        for (j = 0; j < count - i - 1; j++) {
- 
-            user *user1 = *h;
+        for (int j = 0; j < count - i - 1; j++) {
+            user *user1 = *current;
             user *user2 = user1->next;
  
-            if (atoi(user1->estates) < atoi(user2->estates)) {
- 
+            if (atoi(user1->estates) < atoi(user2->estates))
                 // update the link after swapping
-                *h = swap(user1, user2);
-                swapped = 1;
-            }
+                *current = swap(user1, user2);
  
-            h = &(*h)->next;
+            current = &((*current)->next);
         }
- 
-        // break if the loop ended without any swap
-        if (swapped == 0)
-            break;
     }
 }
 
