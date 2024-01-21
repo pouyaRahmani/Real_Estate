@@ -408,6 +408,7 @@ void signUp()
         printf("ERROR: Could not access profiles. Please try again later.");
 }
 
+// Function to do log in proccess
 void logIn() // TODO: 2-step verification
 {
     FILE *profiles;
@@ -491,8 +492,9 @@ void logIn() // TODO: 2-step verification
                         system("cls"); // Clear screen for better ui
                         t = time(NULL);
                         local = localtime(&t);
-                        sprintf(User->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
+                        sprintf(User->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday); // Update User last activity
 
+                        // Apply Updates and save to file
                         profiles = fopen("profiles.hex", "wb");
 
                         if (profiles) {
@@ -535,7 +537,8 @@ void logIn() // TODO: 2-step verification
     }
 }
 
-int readProfiles()
+// Function to read user profiles
+int readProfiles() // TODO: add comments
 {
     FILE *profiles, *number;
     int users;
@@ -665,7 +668,7 @@ void Delete()
         printf("Enter your choice: ");
         scanf("%d", &choice);
         getchar();
-        system("cls");
+        system("cls"); // Clear screen for better ui
 
         switch (choice)
         {
@@ -999,7 +1002,7 @@ void settings(user *a)
     printf("Choose an action from above menu: ");
     scanf("%d", &choice);
     getchar();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     switch (choice)
     {
@@ -1099,7 +1102,7 @@ void changePass(user *a)
 
         printf("\nYour password have been changed successfully...");
         getch();
-        system("cls");
+        system("cls"); // Clear screen for better ui
 
         fclose(profiles);
     }
@@ -1132,7 +1135,7 @@ void changeEmail(user *a)
 
         printf("\nYour email have been changed successfully...");
         getch();
-        system("cls");
+        system("cls"); // Clear screen for better ui
 
         fclose(profiles);
     }
@@ -1165,7 +1168,7 @@ void changePhone(user *a)
 
         printf("\nYour phone number have been changed successfully...");
         getch();
-        system("cls");
+        system("cls"); // Clear screen for better ui
 
         fclose(profiles);
     }
@@ -1207,7 +1210,7 @@ void report(user *a)
         printf("\nEnter your choice: ");
         scanf("%d", &choice);
         getchar(); // Avoid exta enter
-        system("cls");
+        system("cls"); // Clear screen for better ui
 
         if (choice > 10 && strcmp(admin->username, a->username))
             printf("ERROR: Invalid input.\n");
@@ -1394,7 +1397,7 @@ void countReport()
     printf("    | %8d%7s | %8d%8s | %7d%7s | %8d%7s | %8d%8s | %7d%7s |\n", sale_house, " ", sale_office, " ", sale_land, " ",
                                                                       rent_house, " ", rent_office, " ", rent_land, " ");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void userActivity()
@@ -1413,7 +1416,7 @@ void userActivity()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void updateUserEstate(user *a)
@@ -1488,7 +1491,7 @@ void userSortRegister()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 user *swap(user *usr1, user *usr2)
@@ -1529,7 +1532,7 @@ void municipalityArea()
 
     printf("Enter dedicated municipality area: ");
     gets(area);
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     printf("%38sHouses for sale in municipality area %s\n\n", " ", area);
 
@@ -1667,7 +1670,7 @@ void municipalityArea()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void ageEstate()
@@ -1684,7 +1687,7 @@ void ageEstate()
         from_age = temp;
     }
 
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     printf("%38sHouses for sale in age rang from %d to %d\n\n", " ", from_age, to_age);
 
@@ -1796,7 +1799,7 @@ void ageEstate()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void infrastructureEstate()
@@ -1813,7 +1816,7 @@ void infrastructureEstate()
         from_infrastructure = temp;
     }
 
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     printf("%38sHouses for sale in infrastructure rang from %d to %d\n\n", " ", from_infrastructure, to_infrastructure);
 
@@ -1925,7 +1928,7 @@ void infrastructureEstate()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void totalPriceEstate()
@@ -1942,7 +1945,7 @@ void totalPriceEstate()
         from_price = temp;
     }
 
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     printf("%38sHouses for sale in total price rang from %lld to %lld\n\n", " ", from_price, to_price);
 
@@ -2013,7 +2016,7 @@ void totalPriceEstate()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void meterPriceEstate()
@@ -2030,7 +2033,7 @@ void meterPriceEstate()
         from_price = temp;
     }
 
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     printf("%38sHouses for sale in price per meter rang from %d to %d\n\n", " ", from_price, to_price);
 
@@ -2101,7 +2104,7 @@ void meterPriceEstate()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void RentEstate()
@@ -2126,7 +2129,7 @@ void RentEstate()
         from_rent = temp;
     }
 
-    system("cls");
+    system("cls"); // Clear screen for better ui
     
     printf("\n%38sHouses for Rent in mortgage range from %d to %d and monthly rent range from %d to %d\n\n", " ", from_mortgage, to_mortgage, from_rent, to_rent);
 
@@ -2200,7 +2203,7 @@ void RentEstate()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void floorEstate() 
@@ -2211,7 +2214,7 @@ void floorEstate()
     scanf("%d", &floor);
     getchar();
 
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     printf("%38sHouses for sale on %d floor\n\n", " ", floor);
 
@@ -2296,7 +2299,7 @@ void roomsEstate()
 
     printf("Enter dedicated rooms number: ");
     scanf("%d", &rooms);
-    system("cls");
+    system("cls"); // Clear screen for better ui
 
     printf("%73sHouses for sale with %d rooms\n\n", " ", rooms);
 
@@ -2376,7 +2379,7 @@ void roomsEstate()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 int readSales()
@@ -2945,7 +2948,7 @@ void dateEstate()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void DeleteEstate()
@@ -3092,7 +3095,7 @@ void DeleteEstate()
 
     printf("\nPress any key to go back to reports menu...");
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 int datecmp(char *date_str)
@@ -3143,7 +3146,7 @@ void valueEstate()
 
     printf("Total value of all Estates for sale: %.0lf %c", unitPicker((double)value), unit);
     getch();
-    system("cls");
+    system("cls"); // Clear screen for better ui
 }
 
 void saleEstate(user *a, char *type)
