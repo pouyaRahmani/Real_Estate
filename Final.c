@@ -190,7 +190,6 @@ void dateEstate();
 int validPhone(char *phone);
 void deleteSale();
 int validPass(char *pass, int size);
-void freeEstates();
 void DeleteSale(char *type);
 
 void main()
@@ -536,25 +535,32 @@ void logIn() // TODO: 2-step verification
 }
 
 // Function to read user profiles
-int readProfiles() // TODO: add comments
+int readProfiles()
 {
     FILE *profiles, *number;
     int users;
 
+    // Open the profiles file in binary read mode
     profiles = fopen("profiles.hex", "rb");
+    
+    // Open the file containing the number of users
     number = fopen("number_of_users.txt", "r");
 
+    // Check if both files are successfully opened
     if (profiles && number) {
+        // Read the number of users from the file
         fscanf(number, "%d", &users);
 
-        // Seek throw file to extract information
+        // Seek through the file to extract user information
         while (users) {
             User = malloc(sizeof(user));
 
+            // Check if memory allocation was successful
             if (User) {
+                // Read user information from the profiles file
                 fread(User, sizeof(user), 1, profiles);
 
-                // Checks if linked list is empty
+                // Check if the linked list is empty
                 if (start_user == NULL) {
                     start_user = User;
                     end_user = User;
@@ -569,31 +575,39 @@ int readProfiles() // TODO: add comments
                 users--;
             }
             else {
+                // Display an error message if memory allocation fails
                 printf("ERROR: Your computer is low on memory.");
-                getch(); // Wait for a key press before clearing screen
-                return 1;
+                getch(); // Wait for a key press before clearing the screen
+                return 1; // Return 1 to indicate an error
             }
         }
 
+        // Close both files
         fclose(profiles);
-        return 0;
+        fclose(number);
+
+        return 0; // Return 0 to indicate success
     }
     else {
+        // Display an error message if file opening fails
         printf("ERROR: Could not access profiles. Please try again later.");
-        getch(); // Wait for a key press before clearing screen
-        return 1;
+        getch();
+        return 1; // Return 1 to indicate an error
     }
-    
 }
 
+// Main menu function to display options for user interaction
 void mainMenu(user *a)
 {
     int choice;
 
+    // Infinite loop for continuous menu display
     while (1) {
+        // Display welcome message with user's name
         printf("%40s--== Welcome back %s %s ==--\n\n", " ", a->name, a->family);
         printf("What do you want to do?\n\n");
 
+        // Display menu options
         printf("1. Register New Estate\n");
         printf("2. Delete Estate\n");
         printf("3. Reports\n");
@@ -601,41 +615,42 @@ void mainMenu(user *a)
         printf("5. Log Out\n");
         printf("6. Exit App\n\n");
 
+        // Prompt user to choose an action
         printf("Choose an action from above menu: ");
         scanf("%d", &choice);
-        getchar(); // Avoid exta enter
-        system("cls"); // Clear screen for better ui
+        getchar(); // Avoid extra enter
+        system("cls"); // Clear screen for better UI
 
-        switch (choice)
-        {
-        case 1:
-            Register(a);
-            break;
-        
-        case 2:
-            Delete();
-            break;
-        
-        case 3:
-            report(a);
-            break;
-        
-        case 4:
-            settings(a);
-            break;
-        
-        case 5:
-            return;
-            break;
-        
-        case 6:
-            freeUsers();
-            exit(0);
-            break;
-        
-        default:
-            printf("ERROR: Invalid input.\n");
-            break;
+        // Switch case to execute selected action
+        switch (choice) {
+            case 1:
+                Register(a);
+                break;
+            
+            case 2:
+                Delete();
+                break;
+            
+            case 3:
+                report(a);
+                break;
+            
+            case 4:
+                settings(a);
+                break;
+            
+            case 5:
+                return; // Return to caller function
+                break;
+            
+            case 6:
+                freeUsers(); // Free allocated memory for users
+                exit(0); // Exit the application
+                break;
+            
+            default:
+                printf("ERROR: Invalid input.\n");
+                break;
         }
     }
 }
@@ -723,7 +738,6 @@ void deleteSale()
         break;
 
     case 4:
-        freeEstates();
         return;
         break;
         
@@ -852,7 +866,6 @@ void deleteRent()
         break;
 
     case 4:
-        freeEstates();
         return;
         break;
         
@@ -1216,7 +1229,6 @@ void report(user *a)
         switch (choice)
         {
         case 1:
-            freeEstates();
             return;
             break;
 
@@ -1287,51 +1299,6 @@ void report(user *a)
         }
 
         i = 1;
-    }
-}
-
-void freeEstates()
-{
-    Sale_house = start_sale_house;
-    while (Sale_house) {
-        temp_sale_house = Sale_house->next;
-        free(Sale_house);
-        Sale_house = temp_sale_house;
-    }
-            
-    Sale_office = start_sale_office;
-    while (Sale_office) {
-        temp_sale_office = Sale_office->next;
-        free(Sale_office);
-        Sale_office = temp_sale_office;
-    }
-
-    Sale_land = start_sale_land;
-    while (Sale_land) {
-        temp_sale_land = Sale_land->next;
-        free(Sale_land);
-        Sale_land = temp_sale_land;
-    }
-
-    Rent_house = start_rent_house;
-    while (Rent_house) {
-        temp_rent_house = Rent_house->next;
-        free(Rent_house);
-        Rent_house = temp_rent_house;
-    }
-
-    Rent_office = start_rent_office;
-    while (Rent_office) {
-        temp_rent_office = Rent_office->next;
-        free(Rent_office);
-        Rent_office = temp_rent_office;
-    }
-
-    Rent_land = start_rent_land;
-    while (Rent_land) {
-        temp_rent_land = Rent_land->next;
-        free(Rent_land);
-        Rent_land = temp_rent_land;
     }
 }
 
@@ -1505,6 +1472,7 @@ user *swap(user *usr1, user *usr2)
 void bubbleSort(user **head, int count)
 {
     user **current;
+    int checker = 0;
  
     for (int i = 0; i <= count; i++) { 
         current = head;
@@ -1513,12 +1481,17 @@ void bubbleSort(user **head, int count)
             user *user1 = *current;
             user *user2 = user1->next;
  
-            if (atoi(user1->estates) < atoi(user2->estates))
+            if (atoi(user1->estates) < atoi(user2->estates)) {
                 // update the link after swapping
                 *current = swap(user1, user2);
+                checker = 0;
+            }
  
             current = &((*current)->next);
         }
+
+        if (checker)
+            break;
     }
 }
 
