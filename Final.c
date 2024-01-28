@@ -5,9 +5,6 @@
 #include <string.h>
 #include <ctype.h>
 
-
-// TODO: add comments
-
 // Defining some structures 
 typedef struct u { // Structure to represent an user
     char name[20];
@@ -22,7 +19,7 @@ typedef struct u { // Structure to represent an user
     char last_activity[9];
     struct u *next;
 } user;
-// TODO: complete structures
+
 typedef struct sale_house { // Structure to represent a house for sale
     char registrar[20];
     char deleteDate[20];
@@ -304,7 +301,7 @@ void signUp()
             }
             
             while (1) {
-                printf("Username: "); // TODO: the word before username
+                printf("Username: ");
                 gets(temp->username);
 
                 if (availableUser(temp->username))
@@ -516,7 +513,7 @@ void logIn() // TODO: 2-step verification
                     index = 0;
                 }
             }
-            else if (!User->next->next) {
+            else if (!User->next) {
                 printf("Username you entered wasn't found.\n");
                 printf("Do you want to sign up (Y/N)?\n");
 
