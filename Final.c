@@ -144,17 +144,17 @@ int Sale = 1, Rent = 1;
 // Prototypes of functions
 int validEmail(char *email);
 void deleteRent();
+void municipalityArea();
 void DeleteRent(char *type);
 void valueEstate();
 user *swap(user *usr1, user *usr2);
 void signUp();
-void roomsEstate();
 void mainMenu(user *a);
 void logIn();
 void Register(user *a);
 void ageEstate();
+void takePass(char *password);
 void Delete();
-void municipalityArea();
 void report(user *a);
 int readSales();
 void settings(user *a);
@@ -190,6 +190,7 @@ void dateEstate();
 int validPhone(char *phone);
 void deleteSale();
 int validPass(char *pass, int size);
+void roomsEstate();
 void DeleteSale(char *type);
 
 void main()
@@ -247,9 +248,9 @@ void signUp()
 {
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
-    char temp_pass1[20], temp_pass2[20], ch;
+    char temp_pass1[20], temp_pass2[20];
     FILE *profiles, *number;
-    int index = 0, users;
+    int users;
 
     local = malloc(sizeof(struct tm));
     profiles = fopen("profiles.hex", "ab+");
@@ -313,24 +314,7 @@ void signUp()
             while (1) {
                 while (1) {
                     printf("Password: ");
-                    // Loop until user press enter
-                    do {
-                        ch = getch();
-
-                        if (ch == 13)
-                            break;
-                        // If user press backspace key, remove last character
-                        else if (ch == 8) {
-                            printf("\b \b");
-                            index--;
-                            continue;
-                        }
-
-                        putchar('*'); // display * instead of password for better security
-                        temp_pass1[index++] = ch;
-                    } while (1); 
-
-                    temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
+                    takePass(temp_pass1);
 
                     if (validPass(temp_pass1, strlen(temp_pass1)))
                         break;
@@ -340,31 +324,11 @@ void signUp()
                     printf("1. More than 8 characters.\n");
                     printf("2. Atleast one capital letter, one lowercase letter and one special character.\n");
                     printf("3. No spaces!!\n\n");
-
-                    index = 0;
                 }
-
-                index = 0;
 
                 printf("\nConfirm Your Password: ");
                 // Loop until user press enter
-                do {
-                    ch = getch();
-
-                    if (ch == 13)
-                        break;
-                    // If user press backspace key, remove last character
-                    else if (ch == 8) {
-                        printf("\b \b");
-                        index--;
-                        continue;
-                    }
-                    
-                    putchar('*'); // display * instead of password for better security
-                    temp_pass2[index++] = ch;
-                } while (1);
-
-                temp_pass2[index] = '\0'; // Initialize the last character to \0 manually
+                takePass(temp_pass2);
                 printf("\n");
 
                 // If two passwords are same, save it and break
@@ -406,13 +370,13 @@ void signUp()
 }
 
 // Function to do log in proccess
-void logIn() // TODO: 2-step verification
+void logIn()
 {
     FILE *profiles;
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
     char username[20], password[20], ch;
-    int index = 0;
+    int attempts = 1;
 
     printf("%50s--== Log In ==--\n\n", " ");
     
@@ -427,25 +391,7 @@ void logIn() // TODO: 2-step verification
     if (!strcmp(username, admin->username)) {
         while (1) {
             printf("Admin password: ");
-        
-            // Loop until user press enter
-            do {
-                ch = getch();
-
-                if (ch == 13)
-                    break;
-                // If user press backspace key, remove last character
-                else if (ch == 8) {
-                    printf("\b \b");
-                    index--;
-                    continue;
-                }
-
-                putchar('*'); // display * instead of password for better security
-                password[index] = ch;
-                index++;
-            } while (1);
-            password[index] = '\0'; // Initialize the last character to \0 manually
+            takePass(password);
 
             if (!strcmp(password, admin->password)) {
                 system("cls"); // Clear screen for better ui
@@ -454,8 +400,6 @@ void logIn() // TODO: 2-step verification
             }
             else
                 printf("\nERROR: Wrong password!! Please try agin.\n");
-
-            index = 0;
         }
     }
     else {
@@ -464,28 +408,24 @@ void logIn() // TODO: 2-step verification
         while (User) {
             if (!strcmp(username, User->username)) {
                 for (int i = 0; i < 5; i++) {
-                    printf("Password: ");
-
-                    // Loop until user press enter
-                    do {
-                        ch = getch();
-
-                        if (ch == 13)
-                            break;
-                        // If user press backspace key, remove last character
-                        else if (ch == 8) {
-                            printf("\b \b");
-                            index--;
-                            continue;
-                        }
-
-                        putchar('*'); // display * instead of password for better security
-                        password[index] = ch;
-                        index++;
-                    } while (1);
-                    password[index] = '\0'; // Initialize the last character to \0 manually
+                    printf("\nPassword: ");
+                    takePass(password);
 
                     if (!strcmp(password, User->password)) {
+                        if (attempts > 2) {
+                            char temp_id[11];
+
+                            while (1) {
+                                printf("\nSuspicious login!!\nPlease enter your ID to validate your identity: ");
+                                gets(temp_id);
+
+                                if (!strcmp(temp_id, User->id))
+                                    break;
+
+                                printf("ID does not match!!\n");
+                            }
+                        }
+                        
                         system("cls"); // Clear screen for better ui
                         t = time(NULL);
                         local = localtime(&t);
@@ -506,10 +446,32 @@ void logIn() // TODO: 2-step verification
                         mainMenu(User);
                         return;
                     }
-                    else
-                        printf("\nERROR: Wrong password!! Please try agin.\n");
 
-                    index = 0;
+                    if (attempts > 1) {
+                        printf("ERROR: Wrong password!!\nForgot password (Y/N)? ");
+                        ch = getche();
+
+                        if (toupper(ch) == 'Y') {
+                            char temp_id[11];
+
+                            while (1) {
+                                printf("\nPlease enter your ID to validate your identity: ");
+                                gets(temp_id);
+
+                                if (!strcmp(temp_id, User->id)) {
+                                    changePass(User);
+                                    attempts = 0;
+                                    break;
+                                }
+
+                                printf("ID does not match!!\n");
+                            }
+                        }
+                    }
+                    else
+                        printf("\nERROR: Wrong password!! Please try agin.");
+                    
+                    attempts++;
                 }
             }
             else if (!User->next) {
@@ -1042,32 +1004,12 @@ void settings(user *a)
 void changePass(user *a)
 {
     char temp_pass1[20], temp_pass2[20];
-    char ch;
-    int index = 0;
     FILE *profiles;
 
     while (1) {
         while (1) {
             printf("New Password: ");
-            // Loop until user press enter
-            do {
-                ch = getch();
-
-                if (ch == 13)
-                    break;
-                // If user press backspace key, remove last character
-                else if (ch == 8) {
-                    printf("\b \b");
-                    index--;
-                    continue;
-                }
-
-                putchar('*'); // display * instead of password for better security
-                temp_pass1[index++] = ch;
-            } while (1); 
-
-            temp_pass1[index] = '\0'; // Initialize the last character to \0 manually
-            index = 0;
+            takePass(temp_pass1);
 
             if (strcmp(temp_pass1, a->password))
                 break;
@@ -1076,24 +1018,7 @@ void changePass(user *a)
         }
 
         printf("\nConfirm Your Password: ");
-        // Loop until user press enter
-        do {
-            ch = getch();
-
-            if (ch == 13)
-                break;
-            // If user press backspace key, remove last character
-            else if (ch == 8) {
-                printf("\b \b");
-                index--;
-                continue;
-            }
-                    
-            putchar('*'); // display * instead of password for better security
-            temp_pass2[index++] = ch;
-        } while (1);
-
-        temp_pass2[index] = '\0'; // Initialize the last character to \0 manually
+        takePass(temp_pass2);
         printf("\n");
 
         // If two passwords are same, save it and break
@@ -1493,6 +1418,31 @@ void bubbleSort(user **head, int count)
         if (checker)
             break;
     }
+}
+
+void takePass(char *password)
+{
+    int index = 0;
+    char ch;
+
+    // Loop until user press enter
+    do {
+        ch = getch();
+
+        if (ch == 13)
+            break;
+        // If user press backspace key, remove last character
+        else if (ch == 8) {
+            printf("\b \b");
+            index--;
+            continue;
+        }
+
+        putchar('*'); // display * instead of password for better security
+        password[index++] = ch;
+    } while (1);
+
+    password[index] = '\0'; // Initialize the last character to \0 manually
 }
 
 static char parking[4], warehouse[4], elevator[4], telephone[4];
