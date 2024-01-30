@@ -2755,7 +2755,10 @@ int validEmail(char *email)
                 return 0;
         }
         else if (email[i] == '.')
-            dot_count++;
+            if (email[i+1] == '\0')
+                return 0;
+            else
+                dot_count++;
     }
 
     if (adSign_count != 1 || dot_count <= 0)
