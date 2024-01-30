@@ -651,7 +651,7 @@ void freeEstates()
     }
 
     for (Sale_office = start_sale_office; Sale_office; Sale_office = temp_sale_office) {
-        temp_sale_house = Sale_office->next;
+        temp_sale_office = Sale_office->next;
         free(Sale_office);
     }
 
