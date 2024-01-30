@@ -144,6 +144,7 @@ int Sale = 1, Rent = 1;
 // Prototypes of functions
 int validEmail(char *email);
 void deleteRent();
+int validName(char *name);
 void municipalityArea();
 void DeleteRent(char *type);
 void valueEstate();
@@ -264,11 +265,25 @@ void signUp()
         temp = malloc(sizeof(user));
         if (temp) {
             // Promote user to enter specific information
-            printf("Surname: ");
-            gets(temp->name);
+            while (1) {
+                printf("Surname: ");
+                gets(temp->name);
+
+                if (validName(temp->name))
+                    break;
+
+                printf("This Surname is not valid!!!\n\n");
+            }
             
-            printf("Last Name: ");
-            gets(temp->family);
+            while (1) {
+                printf("Last name: ");
+                gets(temp->family);
+
+                if (validName(temp->family))
+                    break;
+
+                printf("This Last name is not valid!!!\n\n");
+            }
             
             while (1) {
                 printf("ID: ");
@@ -634,6 +649,7 @@ void Delete()
     while (1) {
         printf("%53s--== Delete ==--\n\n", " ");
 
+        // Promote menu of deletion
         printf("What do you want to delete?\n\n");
 
         printf("1. Sales estate\n");
@@ -1420,6 +1436,7 @@ void bubbleSort(user **head, int count)
     }
 }
 
+// Function to take password from input
 void takePass(char *password)
 {
     int index = 0;
@@ -2721,6 +2738,15 @@ int validEmail(char *email)
     
     for (User = start_user; User; User = User->next)
         if (!strcmp(User->email, email))
+            return 0;
+
+    return 1;
+}
+
+int validName(char *name)
+{
+    for (int i = 0; name[i] != '\0'; i++)
+        if (!isalpha(name[i]) && !isspace(name[i]))
             return 0;
 
     return 1;
