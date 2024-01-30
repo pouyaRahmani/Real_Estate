@@ -193,6 +193,7 @@ void deleteSale();
 int validPass(char *pass, int size);
 void roomsEstate();
 void DeleteSale(char *type);
+void freeEstates();
 
 void main()
 {
@@ -642,6 +643,39 @@ void freeUsers()
     }
 }
 
+void freeEstates()
+{
+    for (Sale_house = start_sale_house; Sale_house; Sale_house = temp_sale_house) {
+        temp_sale_house = Sale_house->next;
+        free(Sale_house);
+    }
+
+    for (Sale_office = start_sale_office; Sale_office; Sale_office = temp_sale_office) {
+        temp_sale_house = Sale_office->next;
+        free(Sale_office);
+    }
+
+    for (Sale_land = start_sale_land; Sale_land; Sale_land = temp_sale_land) {
+        temp_sale_land = Sale_land->next;
+        free(Sale_land);
+    }
+
+    for (Rent_house = start_rent_house; Rent_house; Rent_house = temp_rent_house) {
+        temp_rent_house = Rent_house->next;
+        free(Rent_house);
+    }
+
+    for (Rent_office = start_rent_office; Rent_office; Rent_office = temp_rent_office) {
+        temp_rent_office = Rent_office->next;
+        free(Rent_office);
+    }
+
+    for (Rent_land = start_rent_land; Rent_land; Rent_land = temp_rent_land) {
+        temp_rent_land = Rent_land->next;
+        free(Rent_land);
+    }
+}
+
 void Delete()
 {
     int choice;
@@ -672,6 +706,7 @@ void Delete()
             break;
         
         case 3:
+            freeEstates();
             return;
             break;
         
@@ -731,13 +766,17 @@ void DeleteSale(char *type)
     time_t t;
     struct tm *local;
 
+    for (Sale_house = start_sale_house; Sale_house; Sale_house = Sale_house->next) {
+        puts(Sale_house->address);
+    }
+
     printf("Enter the address of property you want to delete: ");
     gets(temp_address);
 
     if (!strcmp(type, "house")) {
         Sale_house = start_sale_house;
         while (Sale_house) {
-            if (!strcmp(Sale_house->address, temp_address)){
+            if (!strcmp(Sale_house->address, temp_address)) {
                 t = time(NULL);
                 local = localtime(&t);
                 sprintf(Sale_house->deleteDate, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
@@ -746,6 +785,17 @@ void DeleteSale(char *type)
 
             Sale_house = Sale_house->next;
         }
+
+        FILE *houses = fopen("houses_sale.hex", "wb");
+
+        if (houses) {
+            for (Sale_house = start_sale_house; Sale_house; Sale_house = Sale_house->next)
+                fwrite (Sale_house, sizeof(sale_house), 1, houses);
+
+            fclose(houses);
+        }
+        else
+            printf("ERROR: Could not access houses. Please try again later.");
     }
     else if (!strcmp(type, "office")) {
         Sale_office = start_sale_office;
@@ -759,6 +809,17 @@ void DeleteSale(char *type)
 
             Sale_office = Sale_office->next;
         }
+
+        FILE *offices = fopen("offices_sale.hex", "wb");
+
+        if (offices) {
+            for (Sale_office = start_sale_office; Sale_office; Sale_office = Sale_office->next)
+                fwrite (Sale_office, sizeof(sale_office), 1, offices);
+
+            fclose(offices);
+        }
+        else
+            printf("ERROR: Could not access offices. Please try again later.");
     }
     else {
         Sale_land = start_sale_land;
@@ -772,42 +833,18 @@ void DeleteSale(char *type)
 
             Sale_land = Sale_land->next;
         }
+
+        FILE *lands = fopen("lands_sale.hex", "wb");
+
+        if (lands) {
+            for (Sale_land = start_sale_land; Sale_land; Sale_land = Sale_land->next)
+                fwrite (Sale_land, sizeof(sale_land), 1, lands);
+
+            fclose(lands);
+        }
+        else
+            printf("ERROR: Could not access lands. Please try again later.");
     }
-
-    FILE *houses = fopen("houses_sale.hex", "wb");
-
-    if (houses) {
-        for (Sale_house = start_sale_house; Sale_house; Sale_house = Sale_house->next)
-            fwrite (Sale_house, sizeof(sale_house), 1, houses);
-
-        fclose(houses);
-    }
-    else
-        printf("ERROR: Could not access houses. Please try again later.");
-
-    FILE *offices = fopen("offices_sale.hex", "wb");
-
-    if (offices) {
-        for (Sale_office = start_sale_office; Sale_office; Sale_office = Sale_office->next)
-            fwrite (Sale_office, sizeof(sale_office), 1, offices);
-
-        fclose(offices);
-    }
-    else
-        printf("ERROR: Could not access offices. Please try again later.");
-
-    FILE *lands = fopen("lands_sale.hex", "wb");
-
-    if (lands) {
-        for (Sale_land = start_sale_land; Sale_land; Sale_land = Sale_land->next)
-            fwrite (Sale_land, sizeof(sale_land), 1, lands);
-
-        fclose(lands);
-    }
-    else
-        printf("ERROR: Could not access lands. Please try again later.");
-
-    free(local);
 }
 
 void deleteRent()
@@ -874,6 +911,17 @@ void DeleteRent(char *type)
 
             Rent_house = Rent_house->next;
         }
+
+        FILE *houses = fopen("houses_rent.hex", "wb");
+
+        if (houses) {
+            for (Rent_house = start_rent_house; Rent_house; Rent_house = Rent_house->next)
+                fwrite (Rent_house, sizeof(rent_house), 1, houses);
+
+            fclose(houses);
+        }
+        else
+            printf("ERROR: Could not access houses. Please try again later.");
     }
     else if (!strcmp(type, "office")) {
         Rent_office = start_rent_office;
@@ -887,6 +935,17 @@ void DeleteRent(char *type)
 
             Rent_office = Rent_office->next;
         }
+
+        FILE *offices = fopen("offices_rent.hex", "wb");
+
+        if (offices) {
+            for (Rent_office = start_rent_office; Rent_office; Rent_office = Rent_office->next)
+                fwrite (Rent_office, sizeof(rent_office), 1, offices);
+
+            fclose(offices);
+        }
+        else
+            printf("ERROR: Could not access offices. Please try again later.");
     }
     else {
         Rent_land = start_rent_land;
@@ -900,42 +959,18 @@ void DeleteRent(char *type)
 
             Rent_land = Rent_land->next;
         }
+
+        FILE *lands = fopen("lands_rent.hex", "wb");
+
+        if (lands) {
+            for (Rent_land = start_rent_land; Rent_land; Rent_land = Rent_land->next)
+                fwrite (Rent_land, sizeof(rent_land), 1, lands);
+
+            fclose(lands);
+        }
+        else
+            printf("ERROR: Could not access lands. Please try again later.");
     }
-
-    FILE *houses = fopen("houses_rent.hex", "wb");
-
-    if (houses) {
-        for (Rent_house = start_rent_house; Rent_house; Rent_house = Rent_house->next)
-            fwrite (Rent_house, sizeof(rent_house), 1, houses);
-
-        fclose(houses);
-    }
-    else
-        printf("ERROR: Could not access houses. Please try again later.");
-
-    FILE *offices = fopen("offices_rent.hex", "wb");
-
-    if (offices) {
-        for (Rent_office = start_rent_office; Rent_office; Rent_office = Rent_office->next)
-            fwrite (Rent_office, sizeof(rent_office), 1, offices);
-
-        fclose(offices);
-    }
-    else
-        printf("ERROR: Could not access offices. Please try again later.");
-
-    FILE *lands = fopen("lands_rent.hex", "wb");
-
-    if (lands) {
-        for (Rent_land = start_rent_land; Rent_land; Rent_land = Rent_land->next)
-            fwrite (Rent_land, sizeof(rent_land), 1, lands);
-
-        fclose(lands);
-    }
-    else
-        printf("ERROR: Could not access lands. Please try again later.");
-
-    free(local);
 }
 
 void Register(user *a)
@@ -2323,6 +2358,7 @@ void roomsEstate()
 int readSales()
 {
     FILE *estate;
+
     if (Sale) {
         Sale = 0;
         estate = fopen("houses_sale.hex", "rb");
@@ -2333,18 +2369,16 @@ int readSales()
 
                 if (Sale_house) {
                     fread(Sale_house, sizeof(sale_house), 1, estate);
-
-                    if (strlen(Sale_house->deleteDate) == 1) {
-                        if (start_sale_house == NULL) {
-                            start_sale_house =Sale_house;
-                            end_sale_house = Sale_house;
-                            Sale_house->next = NULL;
-                        }
-                        else {
-                            end_sale_house->next = Sale_house;
-                            end_sale_house = Sale_house;
-                            Sale_house->next = NULL;
-                        }
+        
+                    if (start_sale_house == NULL) {
+                        start_sale_house =Sale_house;
+                        end_sale_house = Sale_house;
+                        Sale_house->next = NULL;
+                    }
+                    else {
+                        end_sale_house->next = Sale_house;
+                        end_sale_house = Sale_house;
+                        Sale_house->next = NULL;
                     }
                 }
                 else {
@@ -2369,17 +2403,15 @@ int readSales()
                 if (Sale_office) {
                     fread(Sale_office, sizeof(sale_office), 1, estate);
 
-                    if (strlen(Sale_office->deleteDate) == 1) {
-                        if (start_sale_office == NULL) {
-                            start_sale_office = Sale_office;
-                            end_sale_office = start_sale_office;
-                            start_sale_office->next = NULL;
-                        }
-                        else {
-                            end_sale_office->next = Sale_office;
-                            end_sale_office = Sale_office;
-                            Sale_office->next = NULL;
-                        }
+                    if (start_sale_office == NULL) {
+                        start_sale_office = Sale_office;
+                        end_sale_office = start_sale_office;
+                        start_sale_office->next = NULL;
+                    }
+                    else {
+                        end_sale_office->next = Sale_office;
+                        end_sale_office = Sale_office;
+                        Sale_office->next = NULL;
                     }
                 }
                 else {
@@ -2404,17 +2436,15 @@ int readSales()
                 if (Sale_house) {
                     fread(Sale_land, sizeof(sale_land), 1, estate);
 
-                    if (strlen(Sale_land->deleteDate) == 1) {
-                        if (start_sale_land == NULL) {
-                            start_sale_land = Sale_land;
-                            end_sale_land = start_sale_land;
-                            start_sale_land->next = NULL;
-                        }
-                        else {
-                            end_sale_land->next = Sale_land;
-                            end_sale_land = Sale_land;
-                            end_sale_land->next = NULL;
-                        }
+                    if (start_sale_land == NULL) {
+                        start_sale_land = Sale_land;
+                        end_sale_land = start_sale_land;
+                        start_sale_land->next = NULL;
+                    }
+                    else {
+                        end_sale_land->next = Sale_land;
+                        end_sale_land = Sale_land;
+                        end_sale_land->next = NULL;
                     }
                 }
                 else {
@@ -2437,6 +2467,7 @@ int readSales()
 int readRents()
 {
     FILE *estate;
+
     if (Rent) {
         Rent = 0;
         estate = fopen("houses_rent.hex", "rb");
@@ -2448,17 +2479,15 @@ int readRents()
                 if (Rent_house) {
                     fread(Rent_house, sizeof(rent_house), 1, estate);
 
-                    if (strlen(Rent_house->deleteDate) == 1) {
-                        if (start_rent_house == NULL) {
-                            start_rent_house = Rent_house;
-                            end_rent_house = Rent_house;
-                            Rent_house->next = NULL;
-                        }
-                        else {
-                            end_rent_house->next = Rent_house;
-                            end_rent_house = Rent_house;
-                            Rent_house->next = NULL;
-                        }
+                    if (start_rent_house == NULL) {
+                        start_rent_house = Rent_house;
+                        end_rent_house = Rent_house;
+                        Rent_house->next = NULL;
+                    }
+                    else {
+                        end_rent_house->next = Rent_house;
+                        end_rent_house = Rent_house;
+                        Rent_house->next = NULL;
                     }
                 }
                 else {
@@ -2483,17 +2512,15 @@ int readRents()
                 if (Rent_office) {
                     fread(Rent_office, sizeof(rent_office), 1, estate);
 
-                    if (strlen(Rent_office->deleteDate) == 1) {
-                        if (start_rent_office == NULL) {
-                            start_rent_office = Rent_office;
-                            end_rent_office = start_rent_office;
-                            start_rent_office->next = NULL;
-                        }
-                        else {
-                            end_rent_office->next = Rent_office;
-                            end_rent_office = Rent_office;
-                            end_rent_office->next = NULL;
-                        }
+                    if (start_rent_office == NULL) {
+                        start_rent_office = Rent_office;
+                        end_rent_office = start_rent_office;
+                        start_rent_office->next = NULL;
+                    }
+                    else {
+                        end_rent_office->next = Rent_office;
+                        end_rent_office = Rent_office;
+                        end_rent_office->next = NULL;
                     }
                 }
                 else {
@@ -2518,17 +2545,15 @@ int readRents()
                 if (Rent_land) {
                     fread(Rent_land, sizeof(rent_land), 1, estate);
 
-                    if (strlen(Rent_land->deleteDate) == 1) {
-                        if (start_rent_land == NULL) {
-                            start_rent_land = Rent_land;
-                            end_rent_land = start_rent_land;
-                            start_rent_land->next = NULL;
-                        }
-                        else {
-                            end_rent_land->next = Rent_land;
-                            end_rent_land = Rent_land;
-                            end_rent_land->next = NULL;
-                        }
+                    if (start_rent_land == NULL) {
+                        start_rent_land = Rent_land;
+                        end_rent_land = start_rent_land;
+                        start_rent_land->next = NULL;
+                    }
+                    else {
+                        end_rent_land->next = Rent_land;
+                        end_rent_land = Rent_land;
+                        end_rent_land->next = NULL;
                     }
                 }
                 else { 
