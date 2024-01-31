@@ -199,6 +199,7 @@ int validPass(char *pass, int size);
 void roomsEstate();
 void DeleteSale(char *type);
 void freeEstates();
+void changeVerification(user *a);
 
 void main()
 {
@@ -456,18 +457,55 @@ void logIn()
                     takePass(password);
 
                     if (!strcmp(password, User->password)) {
-                        if (attempts > 2) {
-                            char temp_id[11];
+                        switch (User->two_step_verification)
+                        {
+                        case '1':
+                            char temp_verification[11];
 
-                            while (1) {
-                                printf("\nSuspicious login!!\nPlease enter your ID to validate your identity: ");
-                                gets(temp_id);
+                            do {
+                                printf("\nPlease enter your national ID for 2-step verification: ");
+                                gets(temp_verification);
 
-                                if (!strcmp(temp_id, User->id))
+                                if (!strcmp(temp_verification, User->id))
                                     break;
+                                
+                                printf("\nNational ID does not match!!!\n");
+                            } while (1);
 
-                                printf("ID does not match!!\n");
-                            }
+                            break;
+                        
+                        case '2':
+                            char temp_verification[12];
+
+                            do {
+                                printf("\nPlease enter your phone number for 2-step verification: ");
+                                gets(temp_verification);
+
+                                if (!strcmp(temp_verification, User->phone_no))
+                                    break;
+                                
+                                printf("\nPhone number does not match!!!\n");
+                            } while (1);
+
+                            break;
+                        
+                        case '3':
+                            char temp_verification[50];
+
+                            do {
+                                printf("\nPlease enter your email for 2-step verification: ");
+                                gets(temp_verification);
+
+                                if (!strcmp(temp_verification, User->email))
+                                    break;
+                                
+                                printf("\nEmail does not match!!!\n");
+                            } while (1);
+
+                            break;
+                        
+                        default:
+                            break;
                         }
                         
                         system("cls"); // Clear screen for better ui
@@ -1049,7 +1087,8 @@ void settings(user *a)
     printf("1. Change password\n");
     printf("2. Change email\n");
     printf("3. Change phone number\n");
-    printf("4. Rerun back\n\n");
+    printf("4. Enable\\Disable 2-step verification\n");
+    printf("5. Rerun back\n\n");
 
     printf("Choose an action from above menu: ");
     scanf("%d", &choice);
@@ -1071,6 +1110,10 @@ void settings(user *a)
         break;
     
     case 4:
+        changeVerification(a);
+        break;
+    
+    case 5:
         return;
         break;
     
@@ -1198,6 +1241,49 @@ void changePhone(user *a)
     }
     else
         printf("ERROR: Could not access profiles. Please try again later.");
+}
+
+void changeVerification(user *a)
+{
+    char choice;
+
+    if (a->two_step_verification == '0') {
+        printf("For enabling 2-step verification choose a method first\n\n");
+
+        printf("\n1. National ID\n");
+        printf("2. Phone Number\n");
+        printf("3. Email\n");
+                
+        while (1) {
+            printf("\nWhat do you want to be your identity validator: ");
+            scanf("%c", &choice);
+
+            if (!isdigit(choice) || choice > '3')
+                printf("ERROR: Invalid input.\n");
+            else {
+                temp->two_step_verification = choice;
+                break;
+            }
+        }
+    }
+    else {
+        printf("\n0. Disable 2-step verification\n");
+        printf("1. National ID\n");
+        printf("2. Phone Number\n");
+        printf("3. Email\n");
+                
+        while (1) {
+            printf("\nWhat do you want to be your identity validator: ");
+            scanf("%c", &choice);
+
+            if (!isdigit(choice) || choice > '3')
+                printf("ERROR: Invalid input.\n");
+            else {
+                temp->two_step_verification = choice;
+                break;
+            }
+        }
+    }
 }
 
 void report(user *a)
