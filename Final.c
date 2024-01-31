@@ -13,10 +13,11 @@ typedef struct u { // Structure to represent an user
     char phone_no[12];
     char email[50];
     char username[20];
-    char password[16];
+    char password[20];
     char date[9];
     char estates[3];
     char last_activity[9];
+    char two_step_verification;
     struct u *next;
 } user;
 
@@ -141,6 +142,10 @@ rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land, *temp_rent_land;
 
 int Sale = 1, Rent = 1;
 
+/* John_6670 3
+Matin_6670 5
+Ali/66 0 */
+
 // Prototypes of functions
 int validEmail(char *email);
 void deleteRent();
@@ -250,7 +255,7 @@ void signUp()
 {
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
-    char temp_pass1[20], temp_pass2[20];
+    char temp_pass1[20], temp_pass2[20], choice;
     FILE *profiles, *number;
     int users;
 
@@ -277,7 +282,7 @@ void signUp()
             }
             
             while (1) {
-                printf("Last name: ");
+                printf("\nLast name: ");
                 gets(temp->family);
 
                 if (validName(temp->family))
@@ -287,7 +292,7 @@ void signUp()
             }
             
             while (1) {
-                printf("ID: ");
+                printf("\nID: ");
                 gets(temp->id);
 
                 if (validID(temp->id))
@@ -297,7 +302,7 @@ void signUp()
             }
 
             while (1) {
-                printf("Phone Number: ");
+                printf("\nPhone Number: ");
                 gets(temp->phone_no);
                 
                 if (validPhone(temp->phone_no))
@@ -307,7 +312,7 @@ void signUp()
             }
             
             while (1) {
-                printf("Email: ");
+                printf("\nEmail: ");
                 gets(temp->email);
 
                 if (validEmail(temp->email))
@@ -317,7 +322,7 @@ void signUp()
             }
             
             while (1) {
-                printf("Username: ");
+                printf("\nUsername: ");
                 gets(temp->username);
 
                 if (availableUser(temp->username))
@@ -329,7 +334,7 @@ void signUp()
             // Get the password twice to avoid typing mistakes
             while (1) {
                 while (1) {
-                    printf("Password: ");
+                    printf("\nPassword: ");
                     takePass(temp_pass1);
 
                     if (validPass(temp_pass1, strlen(temp_pass1)))
@@ -349,26 +354,49 @@ void signUp()
 
                 // If two passwords are same, save it and break
                 if (!strcmp(temp_pass1, temp_pass2)) {
-                    strcpy(temp->password, temp_pass1);
+                    strcpy(temp->password, temp_pass2);
                     break;
                 }
 
                 printf("\nPasswords don't match.\n");
             }
+
+            printf("\n\nDo you want to enable 2 step verification for your account (Y/N)? ");
+            choice = getche();
+
+            if (toupper(choice) == 'Y') {
+                printf("\n1. National ID\n");
+                printf("2. Phone Number\n");
+                printf("3. Email\n");
+                
+                while (1) {
+                    printf("\nWhat do you want to be your identity validator: ");
+                    scanf("%c", &choice);
+
+                    if (!isdigit(choice) || choice > '3')
+                        printf("ERROR: Invalid input.\n");
+                    else {
+                        temp->two_step_verification = choice;
+                        break;
+                    }
+                }
+            }
+            else
+                temp->two_step_verification = '0';
             
             // Save the sign up date
             t = time(NULL);
             local = localtime(&t);
             sprintf(temp->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
             sprintf(temp->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
-            strcpy(temp->estates, "0"); // At first user haven't registered any estates
+            strcpy(temp->estates, "5"); // At first user haven't registered any estates
             fwrite(temp, sizeof(user), 1, profiles); // Write the information in file
 
-            fscanf(number, "%d", &users);
+            /*fscanf(number, "%d", &users);
             users++;
             printf("%d", users);
             rewind(number);
-            fprintf(number, "%d", users);
+            fprintf(number, "%d", users);*/
 
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
@@ -399,7 +427,7 @@ void logIn()
     // Read information from file
     if (readProfiles())
         return;
-    
+
     printf("Username: ");
     gets(username);
 
@@ -1062,10 +1090,19 @@ void changePass(user *a)
             printf("New Password: ");
             takePass(temp_pass1);
 
-            if (strcmp(temp_pass1, a->password))
-                break;
+            if (strcmp(temp_pass1, a->password)) {
+                if (validPass(temp_pass1, strlen(temp_pass1)))
+                    break;
+                else {
+                    printf("\n\nPassword must have below conditions:\n\n");
 
-            printf("\nNew password cannot be as last one!!!\n\n");
+                    printf("1. More than 8 characters.\n");
+                    printf("2. Atleast one capital letter, one lowercase letter and one special character.\n");
+                    printf("3. No spaces!!\n\n");
+                }
+            }
+            else
+                printf("\nNew password cannot be as last one!!!\n\n");
         }
 
         printf("\nConfirm Your Password: ");
@@ -2708,8 +2745,6 @@ int validPass(char *pass, int size)
 {
     int cap = 0, low = 0, special = 0, space = 0, num = 0;
 
-    puts(pass);
-
     if (size < 8) {
         freeUsers();
         return 0;
@@ -2754,11 +2789,12 @@ int validEmail(char *email)
             if (adSign_count > 1)
                 return 0;
         }
-        else if (email[i] == '.')
+        else if (email[i] == '.') {
             if (email[i+1] == '\0')
                 return 0;
             else
                 dot_count++;
+        }
     }
 
     if (adSign_count != 1 || dot_count <= 0)
