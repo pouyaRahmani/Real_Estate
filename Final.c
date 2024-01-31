@@ -457,11 +457,11 @@ void logIn()
                     takePass(password);
 
                     if (!strcmp(password, User->password)) {
+                        char temp_verification[50];
+                        
                         switch (User->two_step_verification)
                         {
                         case '1':
-                            char temp_verification[11];
-
                             do {
                                 printf("\nPlease enter your national ID for 2-step verification: ");
                                 gets(temp_verification);
@@ -475,8 +475,6 @@ void logIn()
                             break;
                         
                         case '2':
-                            char temp_verification[12];
-
                             do {
                                 printf("\nPlease enter your phone number for 2-step verification: ");
                                 gets(temp_verification);
@@ -490,8 +488,6 @@ void logIn()
                             break;
                         
                         case '3':
-                            char temp_verification[50];
-
                             do {
                                 printf("\nPlease enter your email for 2-step verification: ");
                                 gets(temp_verification);
