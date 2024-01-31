@@ -366,7 +366,7 @@ void signUp()
             choice = getche();
 
             if (toupper(choice) == 'Y') {
-                printf("\n1. National ID\n");
+                printf("\n\n1. National ID\n");
                 printf("2. Phone Number\n");
                 printf("3. Email\n");
                 
@@ -428,6 +428,10 @@ void logIn()
     // Read information from file
     if (readProfiles())
         return;
+
+    for (User = start_user; User; User = User->next) {
+        puts(User->username);
+    }
 
     printf("Username: ");
     gets(username);
@@ -579,6 +583,7 @@ int readProfiles()
 {
     FILE *profiles, *number;
     int users;
+    char usernames[20];
 
     // Open the profiles file in binary read mode
     profiles = fopen("profiles.hex", "rb");
@@ -589,7 +594,7 @@ int readProfiles()
     // Check if both files are successfully opened
     if (profiles && number) {
         // Read the number of users from the file
-        fscanf(number, "%d", &users);
+        fscanf(number, "%d\n", &users);
 
         // Seek through the file to extract user information
         while (users) {
@@ -599,20 +604,29 @@ int readProfiles()
             if (User) {
                 // Read user information from the profiles file
                 fread(User, sizeof(user), 1, profiles);
+                puts(User->username);
 
-                // Check if the linked list is empty
-                if (start_user == NULL) {
-                    start_user = User;
-                    end_user = User;
-                    end_user->next = NULL;
-                }
-                else {
-                    end_user->next = User;
-                    end_user = User;
-                    end_user->next = NULL;
+                while (!feof(number)) {
+                    fscanf(number, "%s\n", usernames);
+                    if (!strcmp(User->username, usernames)) {
+                        // Check if the linked list is empty
+                        if (start_user == NULL) {
+                            start_user = User;
+                            end_user = User;
+                            end_user->next = NULL;
+                        }
+                        else {
+                            end_user->next = User;
+                            end_user = User;
+                            end_user->next = NULL;
+                        }
+
+                        users--;
+                    }
                 }
 
-                users--;
+                rewind(number);
+                fscanf(number, "%d\n", &users);
             }
             else {
                 // Display an error message if memory allocation fails
@@ -2827,10 +2841,8 @@ int validPass(char *pass, int size)
 {
     int cap = 0, low = 0, special = 0, space = 0, num = 0;
 
-    if (size < 8) {
-        freeUsers();
+    if (size < 8)
         return 0;
-    }
 
     for (int ch = 0; ch < size; ch++) {
         if (islower(pass[ch]))
@@ -2845,14 +2857,10 @@ int validPass(char *pass, int size)
             num = 1;
     }
 
-    if (low == 1 && cap == 1 && special == 1 && num == 1 && space == 0) {
-        freeUsers();
+    if (low == 1 && cap == 1 && special == 1 && num == 1 && space == 0)
         return 1;
-    }
-    else {
-        freeUsers();
+    else
         return 0;
-    }
 }
 
 int validEmail(char *email)
