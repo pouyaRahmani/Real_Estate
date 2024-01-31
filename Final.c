@@ -1614,15 +1614,15 @@ void municipalityArea()
 
     printf("\n%38sOffices for rent in municipality area %s\n\n", " ", area);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (!strcmp(area, Rent_office->area) && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -1756,15 +1756,15 @@ void ageEstate()
 
     printf("\n%38sOffices for rent in age rang from %d to %d\n\n", " ", from_age, to_age);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (atoi(Rent_office->age) <= to_age && atoi(Rent_office->age) >= from_age && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -1885,15 +1885,15 @@ void infrastructureEstate()
 
     printf("\n%38sOffices for rent in infrastructure rang from %d to %d\n\n", " ", from_infrastructure, to_infrastructure);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (atoi(Rent_office->infrastructure) <= to_infrastructure && atoi(Rent_office->infrastructure) >= from_infrastructure && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -2145,16 +2145,16 @@ void RentEstate()
 
     printf("\n%38sOffices for rent in mortgage range from %d to %d and monthly rent range from %d to %d\n\n", " ", from_mortgage, to_mortgage, from_rent, to_rent);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (unitConverter(Rent_office->mortgage) <= to_mortgage && unitConverter(Rent_office->mortgage) >= from_mortgage &&
             unitConverter(Rent_office->rent) <= to_rent && unitConverter(Rent_office->rent) >= from_rent && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -2890,15 +2890,15 @@ void dateEstate()
 
     printf("\n%38sOffices for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (datecmp(Rent_office->date) && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -3037,15 +3037,15 @@ void DeleteEstate()
 
     printf("\n%38sOffices for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (datecmp(Rent_office->deleteDate) && strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
