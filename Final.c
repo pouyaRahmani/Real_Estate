@@ -267,7 +267,7 @@ void signUp()
         if (temp) {
             // Promote user to enter specific information
             while (1) {
-                printf("Surname: ");
+                printf("\nSurname: ");
                 gets(temp->name);
 
                 if (validName(temp->name))
@@ -277,7 +277,7 @@ void signUp()
             }
             
             while (1) {
-                printf("Last name: ");
+                printf("\nLast name: ");
                 gets(temp->family);
 
                 if (validName(temp->family))
@@ -287,7 +287,7 @@ void signUp()
             }
             
             while (1) {
-                printf("ID: ");
+                printf("\nNational ID: ");
                 gets(temp->id);
 
                 if (validID(temp->id))
@@ -297,7 +297,7 @@ void signUp()
             }
 
             while (1) {
-                printf("Phone Number: ");
+                printf("\nPhone Number: ");
                 gets(temp->phone_no);
                 
                 if (validPhone(temp->phone_no))
@@ -307,7 +307,7 @@ void signUp()
             }
             
             while (1) {
-                printf("Email: ");
+                printf("\nEmail: ");
                 gets(temp->email);
 
                 if (validEmail(temp->email))
@@ -317,7 +317,7 @@ void signUp()
             }
             
             while (1) {
-                printf("Username: ");
+                printf("\nUsername: ");
                 gets(temp->username);
 
                 if (availableUser(temp->username))
@@ -329,7 +329,7 @@ void signUp()
             // Get the password twice to avoid typing mistakes
             while (1) {
                 while (1) {
-                    printf("Password: ");
+                    printf("\nPassword: ");
                     takePass(temp_pass1);
 
                     if (validPass(temp_pass1, strlen(temp_pass1)))
@@ -2708,12 +2708,8 @@ int validPass(char *pass, int size)
 {
     int cap = 0, low = 0, special = 0, space = 0, num = 0;
 
-    puts(pass);
-
-    if (size < 8) {
-        freeUsers();
+    if (size < 8)
         return 0;
-    }
 
     for (int ch = 0; ch < size; ch++) {
         if (islower(pass[ch]))
@@ -2728,14 +2724,10 @@ int validPass(char *pass, int size)
             num = 1;
     }
 
-    if (low == 1 && cap == 1 && special == 1 && num == 1 && space == 0) {
-        freeUsers();
+    if (low == 1 && cap == 1 && special == 1 && num == 1 && space == 0)
         return 1;
-    }
-    else {
-        freeUsers();
+    else
         return 0;
-    }
 }
 
 int validEmail(char *email)
