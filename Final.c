@@ -1,4 +1,4 @@
-#include <stdio.h> // TODO: add Beep
+#include <stdio.h>
 #include <conio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -141,10 +141,6 @@ rent_office *start_rent_office = NULL, *end_rent_office, *Rent_office, *temp_ren
 rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land, *temp_rent_land;
 
 int Sale = 1, Rent = 1;
-
-/* John_6670 3
-Matin_6670 5
-Ali/66 0 */
 
 // Prototypes of functions
 int validEmail(char *email);
@@ -373,6 +369,7 @@ void signUp()
                 while (1) {
                     printf("\nWhat do you want to be your identity validator: ");
                     scanf("%c", &choice);
+                    getchar();
 
                     if (!isdigit(choice) || choice > '3')
                         printf("ERROR: Invalid input.\n");
@@ -390,14 +387,15 @@ void signUp()
             local = localtime(&t);
             sprintf(temp->date, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
             sprintf(temp->last_activity, "%0d/%0d/%0d", local->tm_year-100, local->tm_mon+1, local->tm_mday);
-            strcpy(temp->estates, "5"); // At first user haven't registered any estates
+            strcpy(temp->estates, "0"); // At first user haven't registered any estates
             fwrite(temp, sizeof(user), 1, profiles); // Write the information in file
 
-            /*fscanf(number, "%d", &users);
+            fscanf(number, "%d", &users);
             users++;
-            printf("%d", users);
             rewind(number);
-            fprintf(number, "%d", users);*/
+            fprintf(number, "%d", users);
+            number = freopen("number_of_users.txt", "a+", number);
+            fprintf(number, "%s\n", temp->username);
 
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
@@ -428,10 +426,6 @@ void logIn()
     // Read information from file
     if (readProfiles())
         return;
-
-    for (User = start_user; User; User = User->next) {
-        puts(User->username);
-    }
 
     printf("Username: ");
     gets(username);
@@ -582,7 +576,7 @@ void logIn()
 int readProfiles()
 {
     FILE *profiles, *number;
-    int users;
+    int users, garbage;
     char usernames[20];
 
     // Open the profiles file in binary read mode
@@ -604,7 +598,6 @@ int readProfiles()
             if (User) {
                 // Read user information from the profiles file
                 fread(User, sizeof(user), 1, profiles);
-                puts(User->username);
 
                 while (!feof(number)) {
                     fscanf(number, "%s\n", usernames);
@@ -626,7 +619,7 @@ int readProfiles()
                 }
 
                 rewind(number);
-                fscanf(number, "%d\n", &users);
+                fscanf(number, "%d\n", &garbage);
             }
             else {
                 // Display an error message if memory allocation fails
@@ -1255,7 +1248,8 @@ void changePhone(user *a)
 
 void changeVerification(user *a)
 {
-    char choice;
+    char temp_verification[50], choice;
+    FILE *profiles;
 
     if (a->two_step_verification == '0') {
         printf("For enabling 2-step verification choose a method first\n\n");
@@ -1267,13 +1261,57 @@ void changeVerification(user *a)
         while (1) {
             printf("\nWhat do you want to be your identity validator: ");
             scanf("%c", &choice);
+            getchar();
 
-            if (!isdigit(choice) || choice > '3')
+            switch (choice)
+            {
+            case '1':
+                do {
+                    printf("\nPlease enter your national ID for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->id))
+                        break;
+                                
+                    printf("\nNational ID does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            case '2':
+                do {
+                    printf("\nPlease enter your phone number for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->phone_no))
+                        break;
+                                
+                    printf("\nPhone number does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            case '3':
+                do {
+                    printf("\nPlease enter your email for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->email))
+                        break;
+                            
+                    printf("\nEmail does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            default:
                 printf("ERROR: Invalid input.\n");
-            else {
-                temp->two_step_verification = choice;
                 break;
             }
+
+            if (isdigit(choice) && choice < '3')
+                a->two_step_verification = choice;
+                break;
         }
     }
     else {
@@ -1285,15 +1323,77 @@ void changeVerification(user *a)
         while (1) {
             printf("\nWhat do you want to be your identity validator: ");
             scanf("%c", &choice);
+            getchar();
 
-            if (!isdigit(choice) || choice > '3')
+            switch (choice)
+            {
+            case '0':
+                break;
+            
+            case '1':
+                do {
+                    printf("\nPlease enter your national ID for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->id))
+                        break;
+                                
+                    printf("\nNational ID does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            case '2':
+                do {
+                    printf("\nPlease enter your phone number for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->phone_no))
+                        break;
+                                
+                    printf("\nPhone number does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            case '3':
+                do {
+                    printf("\nPlease enter your email for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->email))
+                        break;
+                            
+                    printf("\nEmail does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            default:
                 printf("ERROR: Invalid input.\n");
-            else {
-                temp->two_step_verification = choice;
                 break;
             }
+
+            if (isdigit(choice) && choice < '3')
+                a->two_step_verification = choice;
+                break;
         }
     }
+
+    profiles = fopen("profiles.hex", "wb");
+
+    if (profiles) {
+        for (temp = start_user; temp; temp = temp->next)
+            fwrite (temp, sizeof(user), 1, profiles);
+
+        printf("\nYour 2-step verification have been changed successfully...");
+        getch();
+        system("cls"); // Clear screen for better ui
+
+        fclose(profiles);
+    }
+    else
+        printf("ERROR: Could not access profiles. Please try again later.");
 }
 
 void report(user *a)
@@ -1311,12 +1411,12 @@ void report(user *a)
         printf("%2d. return back\n", i++);
         printf("%2d. Count of Estates in system\n", i++);
         printf("%2d. Estates in system by municipality area\n", i++);
-        printf("%2d. Estates in system by age\n", i++);
-        printf("%2d. Estates in system by infrastructure (house area)\n", i++);
-        printf("%2d. Estates in system by specific total price\n", i++);
-        printf("%2d. Estates in system by specific meter price\n", i++);
+        printf("%2d. Estates in system by age range\n", i++);
+        printf("%2d. Estates in system by infrastructure range (house area)\n", i++);
+        printf("%2d. Estates in system by specific total price range\n", i++);
+        printf("%2d. Estates in system by specific meter price range\n", i++);
         printf("%2d. Houses in system by number of rooms\n", i++);
-        printf("%2d. Estates in system by mortgage and rent\n", i++);
+        printf("%2d. Estates in system by mortgage and rent range\n", i++);
         printf("%2d. Apartments in system by floor\n", i++);
 
         if (!strcmp(a->username, admin->username)) {
@@ -1747,15 +1847,15 @@ void municipalityArea()
 
     printf("\n%38sOffices for rent in municipality area %s\n\n", " ", area);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (!strcmp(area, Rent_office->area) && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -1889,15 +1989,15 @@ void ageEstate()
 
     printf("\n%38sOffices for rent in age rang from %d to %d\n\n", " ", from_age, to_age);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (atoi(Rent_office->age) <= to_age && atoi(Rent_office->age) >= from_age && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -2018,15 +2118,15 @@ void infrastructureEstate()
 
     printf("\n%38sOffices for rent in infrastructure rang from %d to %d\n\n", " ", from_infrastructure, to_infrastructure);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (atoi(Rent_office->infrastructure) <= to_infrastructure && atoi(Rent_office->infrastructure) >= from_infrastructure && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -2278,16 +2378,16 @@ void RentEstate()
 
     printf("\n%38sOffices for rent in mortgage range from %d to %d and monthly rent range from %d to %d\n\n", " ", from_mortgage, to_mortgage, from_rent, to_rent);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (unitConverter(Rent_office->mortgage) <= to_mortgage && unitConverter(Rent_office->mortgage) >= from_mortgage &&
             unitConverter(Rent_office->rent) <= to_rent && unitConverter(Rent_office->rent) >= from_rent && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -3024,15 +3124,15 @@ void dateEstate()
 
     printf("\n%38sOffices for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (datecmp(Rent_office->date) && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
@@ -3171,15 +3271,15 @@ void DeleteEstate()
 
     printf("\n%38sOffices for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
 
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
                                                                                     "Owner phone number", "Amount of rooms", "Rent per month",
                                                                                     "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|----------|\n");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
 
     Rent_office = start_rent_office;
     while (Rent_office) {
         if (datecmp(Rent_office->deleteDate) && strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.8s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
                                                                                         Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
                                                                                         Rent_office->rent, Rent_office->mortgage);
         Rent_office = Rent_office->next;
