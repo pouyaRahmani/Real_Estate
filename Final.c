@@ -269,7 +269,7 @@ void signUp()
         if (temp) {
             // Promote user to enter specific information
             while (1) {
-                printf("\nSurname: ");
+                printf("Surname: ");
                 gets(temp->name);
 
                 if (validName(temp->name))
@@ -289,7 +289,7 @@ void signUp()
             }
             
             while (1) {
-                printf("ID: ");
+                printf("\nID: ");
                 gets(temp->id);
 
                 if (validID(temp->id))
@@ -1087,42 +1087,52 @@ void settings(user *a)
 
     printf("%46s--== Settings ==--\n\n", " ");
 
-    printf("1. Change password\n");
-    printf("2. Change email\n");
-    printf("3. Change phone number\n");
-    printf("4. Enable\\Disable 2-step verification\n");
-    printf("5. Rerun back\n\n");
+    printf("1. Rerun back\n");
+    printf("2. Change password\n");
+    printf("3. Change email\n");
+    printf("4. Change phone number\n");
+
+    if (strcmp(a->username, admin->username))
+        printf("5. Enable\\Disable 2-step verification\n\n");
 
     printf("Choose an action from above menu: ");
     scanf("%d", &choice);
     getchar();
     system("cls"); // Clear screen for better ui
 
+    if (choice > 4 && !strcmp(admin->username, a->username))
+        printf("ERROR: Invalid input.\n");
+
     switch (choice)
     {
     case 1:
+        return;
+        break;
+
+    case 2:
         changePass(a);
         break;
     
-    case 2:
+    case 3:
         changeEmail(a);
         break;
     
-    case 3:
+    case 4:
         changePhone(a);
         break;
+    }
+
+    if (strcmp(a->username, admin->username)) {
+        switch (choice)
+        {
+        case 5:
+            changeVerification(a);
+            break;
     
-    case 4:
-        changeVerification(a);
-        break;
-    
-    case 5:
-        return;
-        break;
-    
-    default:
-        printf("ERROR: Invalid input.\n");
-        break;
+        default:
+            printf("ERROR: Invalid input.\n");
+            break;
+    }
     }
 }
 
@@ -2402,300 +2412,6 @@ void RentEstate()
     while (Rent_land) {
         if (unitConverter(Rent_land->mortgage) <= to_mortgage && unitConverter(Rent_land->mortgage) >= from_mortgage &&
             unitConverter(Rent_land->rent) <= to_rent && unitConverter(Rent_land->rent) >= from_rent && !strcmp(Rent_land->deleteDate, "0"))
-            printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
-
-        Rent_land = Rent_land->next;
-    }
-
-    printf("\nPress any key to go back to reports menu...");
-    getch();
-    system("cls"); // Clear screen for better ui
-}
-
-void dateEstate()
-{
-    printf("Enter the start date (YY/MM/DD): ");
-    scanf("%d%*c%d%*c%d", &from_year, &from_month, &from_day);
-
-    printf("Enter the finish date (YY/MM/DD): ");
-    scanf("%d%*c%d%*c%d", &to_year, &to_month, &to_day);
-
-    printf("%63sHouses for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
-                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
-                                                                                    "Total price", "Parking", "Warehouse", "Elevator", "Telephone");
-    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|---------|-----------|----------|-----------|\n");
-
-    Sale_house = start_sale_house;
-    while (Sale_house) {
-        if (datecmp(Sale_house->date) && !strcmp(Sale_house->deleteDate, "0")) {
-            if (Sale_house->parking == 'Y')
-                strcpy(parking, "Yes");
-            else
-                strcpy(parking, "No");
-                
-            if (Sale_house->warehouse == 'Y')
-                strcpy(warehouse, "Yes");
-            else
-                strcpy(warehouse, "No");
-
-            if (Sale_house->elevator == 'Y')
-                strcpy(elevator, "Yes");
-            else
-                strcpy(elevator, "No");
-
-            if (Sale_house->telephone == 'Y')
-                strcpy(telephone, "Yes");
-            else
-                strcpy(telephone, "No");
-
-            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s | %-7s | %-9s | %-8s | %-9s |\n", Sale_house->type, Sale_house->age, Sale_house->infrastructure,
-                                                                                        Sale_house->floor, Sale_house->land, Sale_house->owner_phone_no, Sale_house->rooms,
-                                                                                        Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
-        }
-
-        Sale_house = Sale_house->next;
-    }
-
-    printf("\n%60sOffices for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("%18s| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", " ", "Type", "Age", "Infrastructure", "Floor", "Base area",
-                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
-                                                                                    "Total price");
-    printf("%18s|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|\n", " ");
-            
-    Sale_office = start_sale_office;
-    while (Sale_office) {
-        if (datecmp(Sale_office->date) && !strcmp(Sale_office->deleteDate, "0"))
-            printf("%18s| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", " ", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
-                                                                                        Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
-                                                                                        Sale_office->price, Sale_office->tot_price);
-        Sale_office = Sale_office->next;
-    }
-
-    printf("\n%40sLands for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Price per meter", "Total price");
-    printf("%10s |---------|-----------|--------------------|-----------------|-------------|\n", " ");
-
-    Sale_land = start_sale_land;
-    while (Sale_land) {
-        if (datecmp(Sale_land->date) && !strcmp(Sale_land->deleteDate, "0"))
-            printf("%10s | %-7s | %-9s | %-18s | %-15s | %-11s |\n", " ", Sale_land->type, Sale_land->land, Sale_land->owner_phone_no, Sale_land->price, Sale_land->tot_price);
-
-        Sale_land = Sale_land->next;
-    }
-
-    printf("%73sHouses for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
-                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
-                                                                                    "Mortgage", "Parking", "Warehouse", "Elevator", "Telephone");
-    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|---------|-----------|----------|-----------|\n");
-
-    Rent_house = start_rent_house;
-    while (Rent_house) {
-        if (datecmp(Rent_house->date) && !strcmp(Rent_house->deleteDate, "0")) {
-            if (Rent_house->parking == 'Y')
-                strcpy(parking, "Yes");
-            else
-                strcpy(parking, "No");
-                
-            if (Rent_house->warehouse == 'Y')
-                strcpy(warehouse, "Yes");
-            else
-                strcpy(warehouse, "No");
-
-            if (Rent_house->elevator == 'Y')
-                strcpy(elevator, "Yes");
-            else
-                strcpy(elevator, "No");
-
-            if (Rent_house->telephone == 'Y')
-                strcpy(telephone, "Yes");
-            else
-                strcpy(telephone, "No");
-
-            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14.9s | %-9.9s | %-7s | %-9s | %-8s | %-9s |\n", Rent_house->type, Rent_house->age, Rent_house->infrastructure,
-                                                                                        Rent_house->floor, Rent_house->land, Rent_house->owner_phone_no, Rent_house->rooms,
-                                                                                        Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
-        }
-
-        Rent_house = Rent_house->next;
-    }
-
-    printf("\n%38sOffices for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
-                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
-                                                                                    "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
-
-    Rent_office = start_rent_office;
-    while (Rent_office) {
-        if (datecmp(Rent_office->date) && !strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
-                                                                                        Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
-                                                                                        Rent_office->rent, Rent_office->mortgage);
-        Rent_office = Rent_office->next;
-    }
-
-    printf("\n%40sLands for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Rent per month", " Mortgage");
-    printf("%10s |---------|-----------|--------------------|----------------|-----------|\n", " ");
-
-    Rent_land = start_rent_land;
-    while (Rent_land) {
-        if (datecmp(Rent_land->date) && !strcmp(Rent_land->deleteDate, "0"))
-            printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
-
-        Rent_land = Rent_land->next;
-    }
-
-    printf("\nPress any key to go back to reports menu...");
-    getch();
-    system("cls"); // Clear screen for better ui
-}
-
-void DeleteEstate()
-{
-    printf("Enter the start date (YY/MM/DD): ");
-    scanf("%d%*c%d%*c%d", &from_year, &from_month, &from_day);
-
-    printf("Enter the finish date (YY/MM/DD): ");
-    scanf("%d%*c%d%*c%d", &to_year, &to_month, &to_day);
-
-    printf("%73sHouses for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
-                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
-                                                                                    "Total price", "Parking", "Warehouse", "Elevator", "Telephone");
-    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|---------|-----------|----------|-----------|\n");
-
-    Sale_house = start_sale_house;
-    while (Sale_house) {
-        if (datecmp(Sale_house->deleteDate) && strcmp(Sale_house->deleteDate, "0")) {
-            if (Sale_house->parking == 'Y')
-                strcpy(parking, "Yes");
-            else
-                strcpy(parking, "No");
-                
-            if (Sale_house->warehouse == 'Y')
-                strcpy(warehouse, "Yes");
-            else
-                strcpy(warehouse, "No");
-
-            if (Sale_house->elevator == 'Y')
-                strcpy(elevator, "Yes");
-            else
-                strcpy(elevator, "No");
-
-            if (Sale_house->telephone == 'Y')
-                strcpy(telephone, "Yes");
-            else
-                strcpy(telephone, "No");
-
-            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s | %-7s | %-9s | %-8s | %-9s |\n", Sale_house->type, Sale_house->age, Sale_house->infrastructure,
-                                                                                        Sale_house->floor, Sale_house->land, Sale_house->owner_phone_no, Sale_house->rooms,
-                                                                                        Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
-        }
-
-        Sale_house = Sale_house->next;
-    }
-
-    printf("\n%38sOffices for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
-                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
-                                                                                    "Total price");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|\n");
-            
-    Sale_office = start_sale_office;
-    while (Sale_office) {
-        if (datecmp(Sale_office->deleteDate) && strcmp(Sale_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
-                                                                                        Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
-                                                                                        Sale_office->price, Sale_office->tot_price);
-        Sale_office = Sale_office->next;
-    }
-
-    printf("\n%40sLands for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Price per meter", "Total price");
-    printf("%10s |---------|-----------|--------------------|-----------------|-------------|\n", " ");
-
-    Sale_land = start_sale_land;
-    while (Sale_land) {
-        if (datecmp(Sale_land->deleteDate) && strcmp(Sale_land->deleteDate, "0"))
-            printf("%10s | %-7s | %-9s | %-18s | %-15s | %-11s |\n", " ", Sale_land->type, Sale_land->land, Sale_land->owner_phone_no, Sale_land->price, Sale_land->tot_price);
-
-        Sale_land = Sale_land->next;
-    }
-
-    printf("%73sHouses for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
-                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
-                                                                                    "Mortgage", "Parking", "Warehouse", "Elevator", "Telephone");
-    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|---------|-----------|----------|-----------|\n");
-
-    Rent_house = start_rent_house;
-    while (Rent_house) {
-        if (datecmp(Rent_house->deleteDate) && strcmp(Rent_house->deleteDate, "0")) {
-            if (Rent_house->parking == 'Y')
-                strcpy(parking, "Yes");
-            else
-                strcpy(parking, "No");
-                
-            if (Rent_house->warehouse == 'Y')
-                strcpy(warehouse, "Yes");
-            else
-                strcpy(warehouse, "No");
-
-            if (Rent_house->elevator == 'Y')
-                strcpy(elevator, "Yes");
-            else
-                strcpy(elevator, "No");
-
-            if (Rent_house->telephone == 'Y')
-                strcpy(telephone, "Yes");
-            else
-                strcpy(telephone, "No");
-
-            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14.9s | %-9.9s | %-7s | %-9s | %-8s | %-9s |\n", Rent_house->type, Rent_house->age, Rent_house->infrastructure,
-                                                                                        Rent_house->floor, Rent_house->land, Rent_house->owner_phone_no, Rent_house->rooms,
-                                                                                        Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
-        }
-
-        Rent_house = Rent_house->next;
-    }
-
-    printf("\n%38sOffices for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
-                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
-                                                                                    "Mortgage");
-    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
-
-    Rent_office = start_rent_office;
-    while (Rent_office) {
-        if (datecmp(Rent_office->deleteDate) && strcmp(Rent_office->deleteDate, "0"))
-            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
-                                                                                        Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
-                                                                                        Rent_office->rent, Rent_office->mortgage);
-        Rent_office = Rent_office->next;
-    }
-
-    printf("\n%40sLands for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
-
-    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Rent per month", " Mortgage");
-    printf("%10s |---------|-----------|--------------------|----------------|-----------|\n", " ");
-
-    Rent_land = start_rent_land;
-    while (Rent_land) {
-        if (datecmp(Rent_land->deleteDate) && strcmp(Rent_land->deleteDate, "0"))
             printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
 
         Rent_land = Rent_land->next;
