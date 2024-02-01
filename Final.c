@@ -1,4 +1,4 @@
-#include <stdio.h> // TODO: add Beep
+#include <stdio.h>
 #include <conio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -13,10 +13,11 @@ typedef struct u { // Structure to represent an user
     char phone_no[12];
     char email[50];
     char username[20];
-    char password[16];
+    char password[20];
     char date[9];
     char estates[3];
     char last_activity[9];
+    char two_step_verification;
     struct u *next;
 } user;
 
@@ -194,6 +195,7 @@ int validPass(char *pass, int size);
 void roomsEstate();
 void DeleteSale(char *type);
 void freeEstates();
+void changeVerification(user *a);
 
 void main()
 {
@@ -250,7 +252,7 @@ void signUp()
 {
     time_t t; // Variable to store time
     struct tm *local; // pointer to structure of tm
-    char temp_pass1[20], temp_pass2[20];
+    char temp_pass1[20], temp_pass2[20], choice;
     FILE *profiles, *number;
     int users;
 
@@ -287,7 +289,7 @@ void signUp()
             }
             
             while (1) {
-                printf("\nNational ID: ");
+                printf("ID: ");
                 gets(temp->id);
 
                 if (validID(temp->id))
@@ -349,12 +351,36 @@ void signUp()
 
                 // If two passwords are same, save it and break
                 if (!strcmp(temp_pass1, temp_pass2)) {
-                    strcpy(temp->password, temp_pass1);
+                    strcpy(temp->password, temp_pass2);
                     break;
                 }
 
                 printf("\nPasswords don't match.\n");
             }
+
+            printf("\n\nDo you want to enable 2 step verification for your account (Y/N)? ");
+            choice = getche();
+
+            if (toupper(choice) == 'Y') {
+                printf("\n\n1. National ID\n");
+                printf("2. Phone Number\n");
+                printf("3. Email\n");
+                
+                while (1) {
+                    printf("\nWhat do you want to be your identity validator: ");
+                    scanf("%c", &choice);
+                    getchar();
+
+                    if (!isdigit(choice) || choice > '3')
+                        printf("ERROR: Invalid input.\n");
+                    else {
+                        temp->two_step_verification = choice;
+                        break;
+                    }
+                }
+            }
+            else
+                temp->two_step_verification = '0';
             
             // Save the sign up date
             t = time(NULL);
@@ -366,9 +392,10 @@ void signUp()
 
             fscanf(number, "%d", &users);
             users++;
-            printf("%d", users);
             rewind(number);
             fprintf(number, "%d", users);
+            number = freopen("number_of_users.txt", "a+", number);
+            fprintf(number, "%s\n", temp->username);
 
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
             getch(); // Wait for a key press before clearing screen
@@ -399,7 +426,7 @@ void logIn()
     // Read information from file
     if (readProfiles())
         return;
-    
+
     printf("Username: ");
     gets(username);
 
@@ -428,18 +455,51 @@ void logIn()
                     takePass(password);
 
                     if (!strcmp(password, User->password)) {
-                        if (attempts > 2) {
-                            char temp_id[11];
+                        char temp_verification[50];
+                        
+                        switch (User->two_step_verification)
+                        {
+                        case '1':
+                            do {
+                                printf("\nPlease enter your national ID for 2-step verification: ");
+                                gets(temp_verification);
 
-                            while (1) {
-                                printf("\nSuspicious login!!\nPlease enter your ID to validate your identity: ");
-                                gets(temp_id);
-
-                                if (!strcmp(temp_id, User->id))
+                                if (!strcmp(temp_verification, User->id))
                                     break;
+                                
+                                printf("\nNational ID does not match!!!\n");
+                            } while (1);
 
-                                printf("ID does not match!!\n");
-                            }
+                            break;
+                        
+                        case '2':
+                            do {
+                                printf("\nPlease enter your phone number for 2-step verification: ");
+                                gets(temp_verification);
+
+                                if (!strcmp(temp_verification, User->phone_no))
+                                    break;
+                                
+                                printf("\nPhone number does not match!!!\n");
+                            } while (1);
+
+                            break;
+                        
+                        case '3':
+                            do {
+                                printf("\nPlease enter your email for 2-step verification: ");
+                                gets(temp_verification);
+
+                                if (!strcmp(temp_verification, User->email))
+                                    break;
+                                
+                                printf("\nEmail does not match!!!\n");
+                            } while (1);
+
+                            break;
+                        
+                        default:
+                            break;
                         }
                         
                         system("cls"); // Clear screen for better ui
@@ -516,7 +576,8 @@ void logIn()
 int readProfiles()
 {
     FILE *profiles, *number;
-    int users;
+    int users, garbage;
+    char usernames[20];
 
     // Open the profiles file in binary read mode
     profiles = fopen("profiles.hex", "rb");
@@ -527,7 +588,7 @@ int readProfiles()
     // Check if both files are successfully opened
     if (profiles && number) {
         // Read the number of users from the file
-        fscanf(number, "%d", &users);
+        fscanf(number, "%d\n", &users);
 
         // Seek through the file to extract user information
         while (users) {
@@ -538,19 +599,27 @@ int readProfiles()
                 // Read user information from the profiles file
                 fread(User, sizeof(user), 1, profiles);
 
-                // Check if the linked list is empty
-                if (start_user == NULL) {
-                    start_user = User;
-                    end_user = User;
-                    end_user->next = NULL;
-                }
-                else {
-                    end_user->next = User;
-                    end_user = User;
-                    end_user->next = NULL;
+                while (!feof(number)) {
+                    fscanf(number, "%s\n", usernames);
+                    if (!strcmp(User->username, usernames)) {
+                        // Check if the linked list is empty
+                        if (start_user == NULL) {
+                            start_user = User;
+                            end_user = User;
+                            end_user->next = NULL;
+                        }
+                        else {
+                            end_user->next = User;
+                            end_user = User;
+                            end_user->next = NULL;
+                        }
+
+                        users--;
+                    }
                 }
 
-                users--;
+                rewind(number);
+                fscanf(number, "%d\n", &garbage);
             }
             else {
                 // Display an error message if memory allocation fails
@@ -1021,7 +1090,8 @@ void settings(user *a)
     printf("1. Change password\n");
     printf("2. Change email\n");
     printf("3. Change phone number\n");
-    printf("4. Rerun back\n\n");
+    printf("4. Enable\\Disable 2-step verification\n");
+    printf("5. Rerun back\n\n");
 
     printf("Choose an action from above menu: ");
     scanf("%d", &choice);
@@ -1043,6 +1113,10 @@ void settings(user *a)
         break;
     
     case 4:
+        changeVerification(a);
+        break;
+    
+    case 5:
         return;
         break;
     
@@ -1062,10 +1136,19 @@ void changePass(user *a)
             printf("New Password: ");
             takePass(temp_pass1);
 
-            if (strcmp(temp_pass1, a->password))
-                break;
+            if (strcmp(temp_pass1, a->password)) {
+                if (validPass(temp_pass1, strlen(temp_pass1)))
+                    break;
+                else {
+                    printf("\n\nPassword must have below conditions:\n\n");
 
-            printf("\nNew password cannot be as last one!!!\n\n");
+                    printf("1. More than 8 characters.\n");
+                    printf("2. Atleast one capital letter, one lowercase letter and one special character.\n");
+                    printf("3. No spaces!!\n\n");
+                }
+            }
+            else
+                printf("\nNew password cannot be as last one!!!\n\n");
         }
 
         printf("\nConfirm Your Password: ");
@@ -1163,6 +1246,156 @@ void changePhone(user *a)
         printf("ERROR: Could not access profiles. Please try again later.");
 }
 
+void changeVerification(user *a)
+{
+    char temp_verification[50], choice;
+    FILE *profiles;
+
+    if (a->two_step_verification == '0') {
+        printf("For enabling 2-step verification choose a method first\n\n");
+
+        printf("\n1. National ID\n");
+        printf("2. Phone Number\n");
+        printf("3. Email\n");
+                
+        while (1) {
+            printf("\nWhat do you want to be your identity validator: ");
+            scanf("%c", &choice);
+            getchar();
+
+            switch (choice)
+            {
+            case '1':
+                do {
+                    printf("\nPlease enter your national ID for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->id))
+                        break;
+                                
+                    printf("\nNational ID does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            case '2':
+                do {
+                    printf("\nPlease enter your phone number for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->phone_no))
+                        break;
+                                
+                    printf("\nPhone number does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            case '3':
+                do {
+                    printf("\nPlease enter your email for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->email))
+                        break;
+                            
+                    printf("\nEmail does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            default:
+                printf("ERROR: Invalid input.\n");
+                break;
+            }
+
+            if (isdigit(choice) && choice < '3')
+                a->two_step_verification = choice;
+                break;
+        }
+    }
+    else {
+        printf("\n0. Disable 2-step verification\n");
+        printf("1. National ID\n");
+        printf("2. Phone Number\n");
+        printf("3. Email\n");
+                
+        while (1) {
+            printf("\nWhat do you want to be your identity validator: ");
+            scanf("%c", &choice);
+            getchar();
+
+            switch (choice)
+            {
+            case '0':
+                break;
+            
+            case '1':
+                do {
+                    printf("\nPlease enter your national ID for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->id))
+                        break;
+                                
+                    printf("\nNational ID does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            case '2':
+                do {
+                    printf("\nPlease enter your phone number for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->phone_no))
+                        break;
+                                
+                    printf("\nPhone number does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            case '3':
+                do {
+                    printf("\nPlease enter your email for 2-step verification: ");
+                    gets(temp_verification);
+
+                    if (!strcmp(temp_verification, a->email))
+                        break;
+                            
+                    printf("\nEmail does not match!!!\n");
+                } while (1);
+
+                break;
+                        
+            default:
+                printf("ERROR: Invalid input.\n");
+                break;
+            }
+
+            if (isdigit(choice) && choice < '3')
+                a->two_step_verification = choice;
+                break;
+        }
+    }
+
+    profiles = fopen("profiles.hex", "wb");
+
+    if (profiles) {
+        for (temp = start_user; temp; temp = temp->next)
+            fwrite (temp, sizeof(user), 1, profiles);
+
+        printf("\nYour 2-step verification have been changed successfully...");
+        getch();
+        system("cls"); // Clear screen for better ui
+
+        fclose(profiles);
+    }
+    else
+        printf("ERROR: Could not access profiles. Please try again later.");
+}
+
 void report(user *a)
 {
     if (readRents() || readSales())
@@ -1178,12 +1411,12 @@ void report(user *a)
         printf("%2d. return back\n", i++);
         printf("%2d. Count of Estates in system\n", i++);
         printf("%2d. Estates in system by municipality area\n", i++);
-        printf("%2d. Estates in system by age\n", i++);
-        printf("%2d. Estates in system by infrastructure (house area)\n", i++);
-        printf("%2d. Estates in system by specific total price\n", i++);
-        printf("%2d. Estates in system by specific meter price\n", i++);
+        printf("%2d. Estates in system by age range\n", i++);
+        printf("%2d. Estates in system by infrastructure range (house area)\n", i++);
+        printf("%2d. Estates in system by specific total price range\n", i++);
+        printf("%2d. Estates in system by specific meter price range\n", i++);
         printf("%2d. Houses in system by number of rooms\n", i++);
-        printf("%2d. Estates in system by mortgage and rent\n", i++);
+        printf("%2d. Estates in system by mortgage and rent range\n", i++);
         printf("%2d. Apartments in system by floor\n", i++);
 
         if (!strcmp(a->username, admin->username)) {
@@ -3040,11 +3273,12 @@ int validEmail(char *email)
             if (adSign_count > 1)
                 return 0;
         }
-        else if (email[i] == '.')
+        else if (email[i] == '.') {
             if (email[i+1] == '\0')
                 return 0;
             else
                 dot_count++;
+        }
     }
 
     if (adSign_count != 1 || dot_count <= 0)
@@ -3068,6 +3302,300 @@ int validName(char *name)
 
 static int from_year, from_month, from_day;
 static int to_year, to_month, to_day;
+
+void dateEstate()
+{
+    printf("Enter the start date (YY/MM/DD): ");
+    scanf("%d%*c%d%*c%d", &from_year, &from_month, &from_day);
+
+    printf("Enter the finish date (YY/MM/DD): ");
+    scanf("%d%*c%d%*c%d", &to_year, &to_month, &to_day);
+
+    printf("%63sHouses for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|---------|-----------|----------|-----------|\n");
+
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        if (datecmp(Sale_house->date) && !strcmp(Sale_house->deleteDate, "0")) {
+            if (Sale_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Sale_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Sale_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Sale_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s | %-7s | %-9s | %-8s | %-9s |\n", Sale_house->type, Sale_house->age, Sale_house->infrastructure,
+                                                                                        Sale_house->floor, Sale_house->land, Sale_house->owner_phone_no, Sale_house->rooms,
+                                                                                        Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
+        }
+
+        Sale_house = Sale_house->next;
+    }
+
+    printf("\n%60sOffices for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("%18s| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", " ", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price");
+    printf("%18s|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|\n", " ");
+            
+    Sale_office = start_sale_office;
+    while (Sale_office) {
+        if (datecmp(Sale_office->date) && !strcmp(Sale_office->deleteDate, "0"))
+            printf("%18s| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", " ", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
+                                                                                        Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
+                                                                                        Sale_office->price, Sale_office->tot_price);
+        Sale_office = Sale_office->next;
+    }
+
+    printf("\n%40sLands for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Price per meter", "Total price");
+    printf("%10s |---------|-----------|--------------------|-----------------|-------------|\n", " ");
+
+    Sale_land = start_sale_land;
+    while (Sale_land) {
+        if (datecmp(Sale_land->date) && !strcmp(Sale_land->deleteDate, "0"))
+            printf("%10s | %-7s | %-9s | %-18s | %-15s | %-11s |\n", " ", Sale_land->type, Sale_land->land, Sale_land->owner_phone_no, Sale_land->price, Sale_land->tot_price);
+
+        Sale_land = Sale_land->next;
+    }
+
+    printf("%73sHouses for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
+                                                                                    "Mortgage", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|---------|-----------|----------|-----------|\n");
+
+    Rent_house = start_rent_house;
+    while (Rent_house) {
+        if (datecmp(Rent_house->date) && !strcmp(Rent_house->deleteDate, "0")) {
+            if (Rent_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Rent_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Rent_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Rent_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14.9s | %-9.9s | %-7s | %-9s | %-8s | %-9s |\n", Rent_house->type, Rent_house->age, Rent_house->infrastructure,
+                                                                                        Rent_house->floor, Rent_house->land, Rent_house->owner_phone_no, Rent_house->rooms,
+                                                                                        Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
+        }
+
+        Rent_house = Rent_house->next;
+    }
+
+    printf("\n%38sOffices for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
+                                                                                    "Mortgage");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
+
+    Rent_office = start_rent_office;
+    while (Rent_office) {
+        if (datecmp(Rent_office->date) && !strcmp(Rent_office->deleteDate, "0"))
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+                                                                                        Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
+                                                                                        Rent_office->rent, Rent_office->mortgage);
+        Rent_office = Rent_office->next;
+    }
+
+    printf("\n%40sLands for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Rent per month", " Mortgage");
+    printf("%10s |---------|-----------|--------------------|----------------|-----------|\n", " ");
+
+    Rent_land = start_rent_land;
+    while (Rent_land) {
+        if (datecmp(Rent_land->date) && !strcmp(Rent_land->deleteDate, "0"))
+            printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
+
+        Rent_land = Rent_land->next;
+    }
+
+    printf("\nPress any key to go back to reports menu...");
+    getch();
+    system("cls"); // Clear screen for better ui
+}
+
+void DeleteEstate()
+{
+    printf("Enter the start date (YY/MM/DD): ");
+    scanf("%d%*c%d%*c%d", &from_year, &from_month, &from_day);
+
+    printf("Enter the finish date (YY/MM/DD): ");
+    scanf("%d%*c%d%*c%d", &to_year, &to_month, &to_day);
+
+    printf("%73sHouses for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|---------|-----------|----------|-----------|\n");
+
+    Sale_house = start_sale_house;
+    while (Sale_house) {
+        if (datecmp(Sale_house->deleteDate) && strcmp(Sale_house->deleteDate, "0")) {
+            if (Sale_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Sale_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Sale_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Sale_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s | %-7s | %-9s | %-8s | %-9s |\n", Sale_house->type, Sale_house->age, Sale_house->infrastructure,
+                                                                                        Sale_house->floor, Sale_house->land, Sale_house->owner_phone_no, Sale_house->rooms,
+                                                                                        Sale_house->price, Sale_house->tot_price, parking, warehouse, elevator, telephone);
+        }
+
+        Sale_house = Sale_house->next;
+    }
+
+    printf("\n%38sOffices for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Price per meter",
+                                                                                    "Total price");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|-----------------|-------------|\n");
+            
+    Sale_office = start_sale_office;
+    while (Sale_office) {
+        if (datecmp(Sale_office->deleteDate) && strcmp(Sale_office->deleteDate, "0"))
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-15s | %-11s |\n", Sale_office->type, Sale_office->age, Sale_office->infrastructure,
+                                                                                        Sale_office->floor, Sale_office->land, Sale_office->owner_phone_no, Sale_office->rooms,
+                                                                                        Sale_office->price, Sale_office->tot_price);
+        Sale_office = Sale_office->next;
+    }
+
+    printf("\n%40sLands for sale between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Price per meter", "Total price");
+    printf("%10s |---------|-----------|--------------------|-----------------|-------------|\n", " ");
+
+    Sale_land = start_sale_land;
+    while (Sale_land) {
+        if (datecmp(Sale_land->deleteDate) && strcmp(Sale_land->deleteDate, "0"))
+            printf("%10s | %-7s | %-9s | %-18s | %-15s | %-11s |\n", " ", Sale_land->type, Sale_land->land, Sale_land->owner_phone_no, Sale_land->price, Sale_land->tot_price);
+
+        Sale_land = Sale_land->next;
+    }
+
+    printf("%73sHouses for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("| %7s   | %s | %s | %s | %s | %s | %s | %s | %-9s | %s | %s | %s | %s |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
+                                                                                    "Mortgage", "Parking", "Warehouse", "Elevator", "Telephone");
+    printf("|-----------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|---------|-----------|----------|-----------|\n");
+
+    Rent_house = start_rent_house;
+    while (Rent_house) {
+        if (datecmp(Rent_house->deleteDate) && strcmp(Rent_house->deleteDate, "0")) {
+            if (Rent_house->parking == 'Y')
+                strcpy(parking, "Yes");
+            else
+                strcpy(parking, "No");
+                
+            if (Rent_house->warehouse == 'Y')
+                strcpy(warehouse, "Yes");
+            else
+                strcpy(warehouse, "No");
+
+            if (Rent_house->elevator == 'Y')
+                strcpy(elevator, "Yes");
+            else
+                strcpy(elevator, "No");
+
+            if (Rent_house->telephone == 'Y')
+                strcpy(telephone, "Yes");
+            else
+                strcpy(telephone, "No");
+
+            printf("| %9s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14.9s | %-9.9s | %-7s | %-9s | %-8s | %-9s |\n", Rent_house->type, Rent_house->age, Rent_house->infrastructure,
+                                                                                        Rent_house->floor, Rent_house->land, Rent_house->owner_phone_no, Rent_house->rooms,
+                                                                                        Rent_house->rent, Rent_house->mortgage, parking, warehouse, elevator, telephone);
+        }
+
+        Rent_house = Rent_house->next;
+    }
+
+    printf("\n%38sOffices for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("| %11s       | %s | %s | %s | %s | %s | %s | %s | %s  |\n", "Type", "Age", "Infrastructure", "Floor", "Base area",
+                                                                                    "Owner phone number", "Amount of rooms", "Rent per month",
+                                                                                    "Mortgage");
+    printf("|-------------------|-----|----------------|-------|-----------|--------------------|-----------------|----------------|-----------|\n");
+
+    Rent_office = start_rent_office;
+    while (Rent_office) {
+        if (datecmp(Rent_office->deleteDate) && strcmp(Rent_office->deleteDate, "0"))
+            printf("| %-17s | %-3s | %-14s | %-5s | %-9s | %-18s | %-15s | %-14s | %-8.9s |\n", Rent_office->type, Rent_office->age, Rent_office->infrastructure,
+                                                                                        Rent_office->floor, Rent_office->land, Rent_office->owner_phone_no, Rent_office->rooms,
+                                                                                        Rent_office->rent, Rent_office->mortgage);
+        Rent_office = Rent_office->next;
+    }
+
+    printf("\n%40sLands for rent between %d/%d/%d and %d/%d/%d\n\n", " ", from_year, from_month, from_day, to_year, to_month, to_day);
+
+    printf("%10s | %6s  | %s | %s | %s | %s |\n", " ", "Type", "Base area", "Owner phone number", "Rent per month", " Mortgage");
+    printf("%10s |---------|-----------|--------------------|----------------|-----------|\n", " ");
+
+    Rent_land = start_rent_land;
+    while (Rent_land) {
+        if (datecmp(Rent_land->deleteDate) && strcmp(Rent_land->deleteDate, "0"))
+            printf("%10s | %-7s | %-9s | %-18s | %-14s | %-9s |\n", " ", Rent_land->type, Rent_land->land, Rent_land->owner_phone_no, Rent_land->rent, Rent_land->mortgage);
+
+        Rent_land = Rent_land->next;
+    }
+
+    printf("\nPress any key to go back to reports menu...");
+    getch();
+    system("cls"); // Clear screen for better ui
+}
 
 int datecmp(char *date_str)
 {
