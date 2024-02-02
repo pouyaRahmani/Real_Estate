@@ -143,8 +143,10 @@ rent_land *start_rent_land = NULL, *end_rent_land, *Rent_land, *temp_rent_land;
 int Sale = 1, Rent = 1;
 
 // Prototypes of functions
+void red();
 int validEmail(char *email);
 void deleteRent();
+void green();
 int validName(char *name);
 void municipalityArea();
 void DeleteRent(char *type);
@@ -196,6 +198,7 @@ void roomsEstate();
 void DeleteSale(char *type);
 void freeEstates();
 void changeVerification(user *a);
+void reset();
 
 void main()
 {
@@ -210,8 +213,11 @@ void main()
         strcpy(admin->family, "");
         strcpy(admin->estates, "0");
     }
-    else
-        printf("ERROR: Your computer is low on memory.");  
+    else {
+        red();
+        printf("ERROR: Your computer is low on memory.");
+        reset();
+    }
 
     system("color 0b");
     while (1) {
@@ -241,7 +247,9 @@ void main()
             break;
         
         default:
-            printf("Invalid input.\n");
+            red();
+            printf("ERROR: Invalid input.\n");
+            reset();
             break;
         }
     }
@@ -371,8 +379,11 @@ void signUp()
                     scanf("%c", &choice);
                     getchar();
 
-                    if (!isdigit(choice) || choice > '3')
+                    if (!isdigit(choice) || choice > '3') {
+                        red();
                         printf("ERROR: Invalid input.\n");
+                        reset();
+                    }
                     else {
                         temp->two_step_verification = choice;
                         break;
@@ -397,19 +408,27 @@ void signUp()
             number = freopen("number_of_users.txt", "a+", number);
             fprintf(number, "%s\n", temp->username);
 
+            green();
             printf("\nYou have been signed up successfully. Enter a key to go back to log-in menu...");
+            reset();
             getch(); // Wait for a key press before clearing screen
             free(temp);
             system("cls"); // Clear screen for better ui
         }
-        else
+        else {
+            red();
             printf("ERROR: Your computer is low on memory.");
+            reset();
+        }
 
         fclose(profiles);
         fclose(number);
     }
-    else
+    else {
+        red();
         printf("ERROR: Could not access profiles. Please try again later.");
+        reset();
+    }
 }
 
 // Function to do log in proccess
@@ -441,8 +460,11 @@ void logIn()
                 mainMenu(admin);
                 break;
             }
-            else
+            else {
+                red();
                 printf("\nERROR: Wrong password!! Please try agin.\n");
+                reset();
+            }
         }
     }
     else {
@@ -516,15 +538,20 @@ void logIn()
 
                             fclose(profiles);
                         }
-                        else
+                        else {
+                            red();
                             printf("ERROR: Could not access profiles. Please try again later.");
+                            reset();
+                        }
 
                         mainMenu(User);
                         return;
                     }
 
                     if (attempts > 1) {
+                        red();
                         printf("ERROR: Wrong password!!\nForgot password (Y/N)? ");
+                        reset();
                         ch = getche();
 
                         if (toupper(ch) == 'Y') {
@@ -544,8 +571,11 @@ void logIn()
                             }
                         }
                     }
-                    else
+                    else {
+                        red();
                         printf("\nERROR: Wrong password!! Please try agin.");
+                        reset();
+                    }
                     
                     attempts++;
                 }
@@ -623,8 +653,10 @@ int readProfiles()
             }
             else {
                 // Display an error message if memory allocation fails
+                red();
                 printf("ERROR: Your computer is low on memory.");
                 getch(); // Wait for a key press before clearing the screen
+                reset();
                 return 1; // Return 1 to indicate an error
             }
         }
@@ -637,8 +669,10 @@ int readProfiles()
     }
     else {
         // Display an error message if file opening fails
+        red();
         printf("ERROR: Could not access profiles. Please try again later.");
         getch();
+        reset();
         return 1; // Return 1 to indicate an error
     }
 }
@@ -696,7 +730,9 @@ void mainMenu(user *a)
                 break;
             
             default:
+                red();
                 printf("ERROR: Invalid input.\n");
+                reset();
                 break;
         }
     }
@@ -780,7 +816,9 @@ void Delete()
             break;
         
         default:
+            red();
             printf("ERROR: Invalid input.\n");
+            reset();
             break;
         }
     }
@@ -824,7 +862,9 @@ void deleteSale()
         break;
         
     default:
+        red();
         printf("ERROR: Invalid input.\n");
+        reset();
         break;
     }
 }
@@ -863,8 +903,11 @@ void DeleteSale(char *type)
 
             fclose(houses);
         }
-        else
+        else {
+            red();
             printf("ERROR: Could not access houses. Please try again later.");
+            reset();
+        }
     }
     else if (!strcmp(type, "office")) {
         Sale_office = start_sale_office;
@@ -914,6 +957,11 @@ void DeleteSale(char *type)
         else
             printf("ERROR: Could not access lands. Please try again later.");
     }
+
+    green();
+    printf("Dedicated estate have been deleted successfully.\n");
+    getch();
+    reset();
 }
 
 void deleteRent()
@@ -954,7 +1002,9 @@ void deleteRent()
         break;
         
     default:
+        red();
         printf("ERROR: Invalid input.\n");
+        reset();
         break;
     }
 }
@@ -1040,6 +1090,11 @@ void DeleteRent(char *type)
         else
             printf("ERROR: Could not access lands. Please try again later.");
     }
+
+    green();
+    printf("Dedicated estate have been deleted successfully.\n");
+    getch();
+    reset();
 }
 
 void Register(user *a)
@@ -1075,7 +1130,9 @@ void Register(user *a)
             break;
             
         default:
+            red();
             printf("ERROR: Invalid input.\n");
+            reset();
             break;
         }
     }
@@ -1100,8 +1157,11 @@ void settings(user *a)
     getchar();
     system("cls"); // Clear screen for better ui
 
-    if (choice > 4 && !strcmp(admin->username, a->username))
+    if (choice > 4 && !strcmp(admin->username, a->username)) {
+        red();
         printf("ERROR: Invalid input.\n");
+        reset();
+    }
 
     switch (choice)
     {
@@ -1130,7 +1190,9 @@ void settings(user *a)
             break;
     
         default:
+            red();
             printf("ERROR: Invalid input.\n");
+            reset();
             break;
     }
     }
@@ -1180,8 +1242,10 @@ void changePass(user *a)
         for (temp = start_user; temp; temp = temp->next)
             fwrite (temp, sizeof(user), 1, profiles);
 
+        green();
         printf("\nYour password have been changed successfully...");
         getch();
+        reset();
         system("cls"); // Clear screen for better ui
 
         fclose(profiles);
@@ -1213,8 +1277,10 @@ void changeEmail(user *a)
         for (temp = start_user; temp; temp = temp->next)
             fwrite (temp, sizeof(user), 1, profiles);
 
+        green();
         printf("\nYour email have been changed successfully...");
         getch();
+        reset();
         system("cls"); // Clear screen for better ui
 
         fclose(profiles);
@@ -1246,8 +1312,10 @@ void changePhone(user *a)
         for (temp = start_user; temp; temp = temp->next)
             fwrite (temp, sizeof(user), 1, profiles);
 
+        green();
         printf("\nYour phone number have been changed successfully...");
         getch();
+        reset();
         system("cls"); // Clear screen for better ui
 
         fclose(profiles);
@@ -1315,7 +1383,9 @@ void changeVerification(user *a)
                 break;
                         
             default:
+                red();
                 printf("ERROR: Invalid input.\n");
+                reset();
                 break;
             }
 
@@ -1380,7 +1450,9 @@ void changeVerification(user *a)
                 break;
                         
             default:
+                red();
                 printf("ERROR: Invalid input.\n");
+                reset();
                 break;
             }
 
@@ -1442,8 +1514,11 @@ void report(user *a)
         getchar(); // Avoid exta enter
         system("cls"); // Clear screen for better ui
 
-        if (choice > 10 && strcmp(admin->username, a->username))
+        if (choice > 10 && strcmp(admin->username, a->username)) {
+            red();
             printf("ERROR: Invalid input.\n");
+            reset();
+        }
 
         switch (choice)
         {
@@ -1512,7 +1587,9 @@ void report(user *a)
                 break;
             
             default:
+                red();
                 printf("ERROR: Invalid input.\n");
+                reset();
                 break;
             }
         }
@@ -1738,6 +1815,21 @@ void takePass(char *password)
     } while (1);
 
     password[index] = '\0'; // Initialize the last character to \0 manually
+}
+
+void red ()
+{
+    printf("\033[1;31m");
+}
+
+void green()
+{
+    printf("\033[0;32m");
+}
+
+void reset ()
+{
+    printf("\033[0;36m");
 }
 
 static char parking[4], warehouse[4], elevator[4], telephone[4];
@@ -2853,7 +2945,9 @@ void sale(user *a)
         break;
         
     default:
+        red();
         printf("ERROR: Invalid input.\n");
+        reset();
         break;
     }
 }
@@ -2895,7 +2989,9 @@ void rent(user *a)
         break;
         
     default:
+        red();
         printf("ERROR: Invalid input.\n");
+        reset();
         break;
     }
 }
@@ -3446,8 +3542,11 @@ void saleEstate(user *a, char *type)
                 updateUserEstate(a);
 
                 fwrite(Sale_house, sizeof(sale_house), 1, house); // Write the information in file
+
+                green();
                 printf("\nRegister was successful. Press any key to go back to main menu...");
                 getch(); // Wait for a key press before clearing screen
+                reset();
                 system("cls"); // Clear screen for better ui
 
                 free(Sale_house);
@@ -3518,8 +3617,10 @@ void saleEstate(user *a, char *type)
                 updateUserEstate(a);
 
                 fwrite(Sale_office, sizeof(sale_office), 1, office); // Write the information in file
+                green();
                 printf("\nRegister was successful. Press any key to go back to main menu...");
                 getch(); // Wait for a key press before clearing screen
+                reset();
                 system("cls"); // Clear screen for better ui
 
                 free(Sale_office);
@@ -3579,8 +3680,10 @@ void saleEstate(user *a, char *type)
                 updateUserEstate(a);
 
                 fwrite(Sale_land, sizeof(sale_land), 1, land); // Write the information in file
+                green();
                 printf("\nRegister was successful. Press any key to go back to main menu...");
                 getch(); // Wait for a key press before clearing screen
+                reset();
                 system("cls"); // Clear screen for better ui
 
                 free(Sale_land);
@@ -3678,8 +3781,10 @@ void rentEstate(user *a, char *type)
                 updateUserEstate(a);
 
                 fwrite(Rent_house, sizeof(rent_house), 1, house); // Write the information in file
+                green();
                 printf("\nRegister was successful. Press any key to go back to main menu...");
                 getch(); // Wait for a key press before clearing screen
+                reset();
                 system("cls"); // Clear screen for better ui
 
                 free(Rent_house);
@@ -3752,8 +3857,10 @@ void rentEstate(user *a, char *type)
                 updateUserEstate(a);
 
                 fwrite(Rent_office, sizeof(rent_office), 1, office); // Write the information in file
+                green();
                 printf("\nRegister was successful. Press any key to go back to main menu...");
                 getch(); // Wait for a key press before clearing screen
+                reset();
                 system("cls"); // Clear screen for better ui
 
                 free(Rent_office);
@@ -3814,8 +3921,10 @@ void rentEstate(user *a, char *type)
                 updateUserEstate(a);
 
                 fwrite(Rent_land, sizeof(rent_land), 1, land); // Write the information in file
+                green();
                 printf("\nRegister was successful. Press any key to go back to main menu...");
                 getch(); // Wait for a key press before clearing screen
+                reset();
                 system("cls"); // Clear screen for better ui
 
                 free(Rent_land);
