@@ -308,6 +308,7 @@ void signUp()
 
             while (1) {
                 printf("\nPhone Number: ");
+            
                 gets(temp->phone_no);
                 
                 if (validPhone(temp->phone_no))
