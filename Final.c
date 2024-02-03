@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 // Defining some structures 
 typedef struct u { // Structure to represent an user
@@ -203,7 +204,7 @@ void reset();
 void main()
 {
     int choice;
-
+    bool pouya = true;
     // Create admin user dynamically
     admin = malloc(sizeof(user));
     if (admin) {
